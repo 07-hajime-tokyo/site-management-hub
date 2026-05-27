@@ -1,0 +1,9 @@
+{
+  "name": "site-management-hub",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check app.js && node --check api/shared-tools.js && node --check local-server.mjs",
+    "dev": "node local-server.mjs"
+  }
+}

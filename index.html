@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>業務ポータル</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="ポータルナビゲーション">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">M</div>
+          <div>
+            <h1>業務ハブ</h1>
+            <p class="brand-kicker">今日もよろしくね</p>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <p class="sidebar-label">表示</p>
+          <div class="source-switch" role="group" aria-label="表示範囲">
+            <button class="source-button is-active" type="button" data-source="personal" aria-pressed="true">
+              個人
+            </button>
+            <button class="source-button" type="button" data-source="shared" aria-pressed="false">
+              共有
+            </button>
+          </div>
+          <p class="source-note" id="sourceNote">個人データはこのブラウザに保存されます。</p>
+        </div>
+
+        <div class="sidebar-block">
+          <p class="sidebar-label">種類</p>
+          <div class="nav-list" id="typeNav"></div>
+        </div>
+
+        <div class="sidebar-block">
+          <p class="sidebar-label">カテゴリー</p>
+          <nav class="nav-list" id="categoryNav" aria-label="カテゴリ"></nav>
+        </div>
+
+        <div class="sidebar-note">
+          <span aria-hidden="true">●</span>
+          <div>
+            <strong>すぐ戻れる場所</strong>
+            <p><span id="sidebarTotal">0</span>件・固定 <span id="sidebarPinned">0</span></p>
+          </div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <label class="search-box" for="searchInput">
+            <i data-lucide="search" aria-hidden="true"></i>
+            <input id="searchInput" type="search" aria-label="検索" autocomplete="off" />
+            <kbd>Ctrl K</kbd>
+          </label>
+          <div class="topbar-actions">
+            <select id="sortSelect" class="sort-select" aria-label="並び順">
+              <option value="recent">最近開いた順</option>
+              <option value="name">名前順</option>
+              <option value="category">カテゴリ順</option>
+            </select>
+            <div class="segmented" role="group" aria-label="表示形式">
+              <button type="button" class="segment is-active" data-view="grid" aria-pressed="true" aria-label="カード表示">
+                <i data-lucide="layout-grid" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="segment" data-view="table" aria-pressed="false" aria-label="一覧表示">
+                <i data-lucide="list" aria-hidden="true"></i>
+              </button>
+            </div>
+            <button class="icon-text ghost" type="button" id="importButton">
+              <i data-lucide="upload" aria-hidden="true"></i>
+              取込
+            </button>
+            <input id="importFile" type="file" accept="application/json,.json" hidden />
+            <button class="icon-text ghost" type="button" id="exportButton">
+              <i data-lucide="download" aria-hidden="true"></i>
+              保存
+            </button>
+            <button class="icon-text primary" type="button" id="addButton">
+              <i data-lucide="plus" aria-hidden="true"></i>
+              登録
+            </button>
+          </div>
+        </header>
+
+        <section class="page-title" aria-label="現在の表示" hidden>
+          <div>
+            <p class="eyebrow">TOOLS / SHEETS / REPORTS</p>
+            <h2>必要な入口をすぐ見つける</h2>
+          </div>
+          <p>サイトもスプレッドシートも、カテゴリで整理します。</p>
+        </section>
+
+        <section class="metrics" aria-label="登録状況" hidden>
+          <div class="metric">
+            <span>登録</span>
+            <strong id="totalCount">0</strong>
+          </div>
+          <div class="metric">
+            <span>サイト</span>
+            <strong id="siteCount">0</strong>
+          </div>
+          <div class="metric">
+            <span>スプシ</span>
+            <strong id="sheetCount">0</strong>
+          </div>
+          <div class="metric">
+            <span>要確認</span>
+            <strong id="reviewCount">0</strong>
+          </div>
+        </section>
+
+        <section class="quick-access" aria-label="優先表示">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">PINNED</p>
+              <h3>ピン留め</h3>
+            </div>
+            <button class="icon-only" type="button" id="clearRecentButton" aria-label="最近開いた履歴を消す" hidden>
+              <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="quick-grid" id="quickGrid"></div>
+        </section>
+
+        <section class="library" aria-label="登録済み一覧">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">LIBRARY</p>
+              <h3 id="libraryTitle">すべて</h3>
+            </div>
+            <div class="result-note" id="resultNote">0件</div>
+          </div>
+          <div id="emptyState" class="empty-state" hidden>
+            <i data-lucide="folder-search" aria-hidden="true"></i>
+            <p>該当する登録はありません</p>
+          </div>
+          <div class="tool-grid" id="toolGrid"></div>
+          <div class="table-wrap" id="tableWrap" hidden>
+            <table>
+              <thead>
+                <tr>
+                  <th>名前</th>
+                  <th>カテゴリ</th>
+                  <th>種類</th>
+                  <th>状態</th>
+                  <th>最終オープン</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="toolTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="tool-dialog" id="toolDialog">
+      <form method="dialog" id="toolForm">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">ENTRY</p>
+            <h3 id="dialogTitle">登録</h3>
+          </div>
+          <button class="icon-only" type="button" id="closeDialogButton" aria-label="閉じる">
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <input type="hidden" id="toolId" />
+        <div class="form-grid">
+          <label>
+            名前
+            <input id="toolTitle" name="title" required maxlength="80" />
+          </label>
+          <label>
+            URL
+            <input id="toolUrl" name="url" required type="url" placeholder="https://..." />
+          </label>
+          <label>
+            カテゴリ
+            <input id="toolCategory" name="category" list="categoryOptions" required maxlength="32" />
+            <datalist id="categoryOptions"></datalist>
+          </label>
+          <label>
+            種類
+            <select id="toolType" name="type">
+              <option value="site">サイト</option>
+              <option value="sheet">スプレッドシート</option>
+              <option value="doc">ドキュメント</option>
+              <option value="report">レポート</option>
+            </select>
+          </label>
+          <label>
+            状態
+            <select id="toolStatus" name="status">
+              <option value="active">稼働中</option>
+              <option value="review">要確認</option>
+              <option value="draft">作成中</option>
+              <option value="archived">保管</option>
+            </select>
+          </label>
+          <label class="span-2">
+            説明
+            <textarea id="toolDescription" name="description" rows="4" maxlength="240"></textarea>
+          </label>
+        </div>
+
+        <div class="dialog-actions">
+          <button class="danger ghost" type="button" id="deleteButton" hidden>
+            <i data-lucide="trash-2" aria-hidden="true"></i>
+            削除
+          </button>
+          <div class="dialog-spacer"></div>
+          <button class="ghost" type="button" id="cancelButton">キャンセル</button>
+          <button class="primary" type="submit">
+            <i data-lucide="check" aria-hidden="true"></i>
+            保存
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

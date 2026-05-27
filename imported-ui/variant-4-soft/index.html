@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>おうちハブ · リソース管理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #f4ede0; overflow: hidden; }
+  body { font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif; }
+  #root { width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="react">
+// Shared dummy data for all 4 dashboard variants
+
+const CATEGORIES = [
+  { id: 'all',   label: 'すべて',           icon: '◯' },
+  { id: 'sheet', label: 'スプレッドシート', icon: '▦' },
+  { id: 'web',   label: 'Webサイト',        icon: '◐' },
+  { id: 'tool',  label: 'ツール',           icon: '▲' },
+  { id: 'doc',   label: 'ドキュメント',     icon: '▢' },
+];
+
+const TAGS = [
+  '仕事', '個人', '学習', 'デザイン', '開発',
+  'リサーチ', '資料', '重要', '趣味',
+];
+
+const RESOURCES = [
+  // --- スプレッドシート
+  { id: 'r01', title: '家計簿 2026',           cat: 'sheet', tags: ['個人','重要'],         emoji: '💰', favicon: 'sheets',  url: 'docs.google.com/spreadsheets/d/家計簿2026', last: '2日前',   pinned: true,  fav: true  },
+  { id: 'r02', title: '競合分析シート',         cat: 'sheet', tags: ['仕事','リサーチ'],      emoji: '📊', favicon: 'sheets',  url: 'docs.google.com/spreadsheets/d/competitor', last: '12分前',  pinned: false, fav: true  },
+  { id: 'r03', title: 'プロジェクト進捗管理',   cat: 'sheet', tags: ['仕事','資料'],         emoji: '✅', favicon: 'sheets',  url: 'docs.google.com/spreadsheets/d/projects',   last: '1時間前', pinned: true,  fav: false },
+  { id: 'r04', title: 'KPIダッシュボード',      cat: 'sheet', tags: ['仕事','重要'],         emoji: '📈', favicon: 'sheets',  url: 'docs.google.com/spreadsheets/d/kpi',        last: '昨日',    pinned: false, fav: false },
+  { id: 'r05', title: '読書リスト',             cat: 'sheet', tags: ['個人','学習'],         emoji: '📚', favicon: 'sheets',  url: 'docs.google.com/spreadsheets/d/books',      last: '1週間前', pinned: false, fav: false },
+
+  // --- Webサイト / LP
+  { id: 'r06', title: 'ポートフォリオサイト',   cat: 'web',   tags: ['個人','デザイン'],     emoji: '🪪', favicon: 'site',    url: 'yourname.dev',                              last: '3日前',   pinned: false, fav: true  },
+  { id: 'r07', title: '個人ブログ',             cat: 'web',   tags: ['個人','趣味'],         emoji: '📝', favicon: 'site',    url: 'blog.yourname.dev',                         last: '5日前',   pinned: false, fav: false },
+  { id: 'r08', title: 'note プロフィール',      cat: 'web',   tags: ['仕事','個人'],         emoji: '🟢', favicon: 'note',    url: 'note.com/yourname',                         last: '今日',    pinned: false, fav: false },
+  { id: 'r09', title: 'Zenn',                   cat: 'web',   tags: ['開発','学習'],         emoji: '🔷', favicon: 'zenn',    url: 'zenn.dev',                                  last: '昨日',    pinned: false, fav: false },
+
+  // --- ツール / SaaS
+  { id: 'r10', title: 'Figma',                  cat: 'tool',  tags: ['仕事','デザイン'],     emoji: '🎨', favicon: 'figma',   url: 'figma.com/files',                           last: '30分前',  pinned: true,  fav: true  },
+  { id: 'r11', title: 'ChatGPT',                cat: 'tool',  tags: ['仕事','学習'],         emoji: '💬', favicon: 'chatgpt', url: 'chatgpt.com',                               last: '今日',    pinned: true,  fav: true  },
+  { id: 'r12', title: 'Linear',                 cat: 'tool',  tags: ['仕事','開発'],         emoji: '⚡', favicon: 'linear',  url: 'linear.app',                                last: '今日',    pinned: false, fav: false },
+  { id: 'r13', title: 'GitHub',                 cat: 'tool',  tags: ['開発'],                emoji: '🐙', favicon: 'github',  url: 'github.com/yourname',                       last: '2時間前', pinned: false, fav: false },
+  { id: 'r14', title: 'Notion ワークスペース',  cat: 'tool',  tags: ['個人','仕事'],         emoji: '📓', favicon: 'notion',  url: 'notion.so/yourname',                        last: '今日',    pinned: false, fav: true  },
+
+  // --- ドキュメント / メモ
+  { id: 'r15', title: '議事録メモ',             cat: 'doc',   tags: ['仕事','資料'],         emoji: '📋', favicon: 'docs',    url: 'docs.google.com/document/d/minutes',        last: '昨日',    pinned: false, fav: false },
+  { id: 'r16', title: 'アイデアメモ',           cat: 'doc',   tags: ['個人','趣味'],         emoji: '💡', favicon: 'docs',    url: 'docs.google.com/document/d/ideas',          last: '3日前',   pinned: false, fav: false },
+];
+
+// Favicon SVG glyphs — simulated little badges so cards don't rely on emoji alone.
+// Each returns an SVG string colored to match the real product.
+const FAVICONS = {
+  sheets:  { bg: '#0F9D58', fg: '#fff', label: 'S' },
+  site:    { bg: '#6366f1', fg: '#fff', label: '◐' },
+  note:    { bg: '#41C9B4', fg: '#fff', label: 'n' },
+  zenn:    { bg: '#3EA8FF', fg: '#fff', label: 'Z' },
+  figma:   { bg: '#F24E1E', fg: '#fff', label: 'F' },
+  chatgpt: { bg: '#10A37F', fg: '#fff', label: '✦' },
+  linear:  { bg: '#5E6AD2', fg: '#fff', label: 'L' },
+  github:  { bg: '#181717', fg: '#fff', label: '⏣' },
+  notion:  { bg: '#fff',    fg: '#000', label: 'N' },
+  docs:    { bg: '#4285F4', fg: '#fff', label: 'D' },
+};
+
+// Shared interactive state hook + filter logic.
+// Variants only worry about styling.
+function useDashboard(initial = {}) {
+  const { useState, useMemo, useCallback } = React;
+  const [resources, setResources]   = useState(RESOURCES);
+  const [category,  setCategory]    = useState(initial.category  ?? 'all');
+  const [activeTags, setActiveTags] = useState(new Set(initial.activeTags ?? []));
+  const [query,     setQuery]       = useState('');
+  const [view,      setView]        = useState(initial.view ?? 'grid'); // grid | list
+  const [sort,      setSort]        = useState('recent');               // recent | name
+  const [dragId,    setDragId]      = useState(null);
+  const [overId,    setOverId]      = useState(null);
+
+  const toggleTag = useCallback((t) => {
+    setActiveTags(prev => {
+      const next = new Set(prev);
+      next.has(t) ? next.delete(t) : next.add(t);
+      return next;
+    });
+  }, []);
+
+  const toggleFav = useCallback((id) => {
+    setResources(prev => prev.map(r => r.id === id ? { ...r, fav: !r.fav } : r));
+  }, []);
+
+  const togglePin = useCallback((id) => {
+    setResources(prev => prev.map(r => r.id === id ? { ...r, pinned: !r.pinned } : r));
+  }, []);
+
+  // Drag-reorder within current visible list.
+  const onDragStart = useCallback((id) => setDragId(id), []);
+  const onDragOver  = useCallback((id) => setOverId(id), []);
+  const onDragEnd   = useCallback(() => {
+    if (dragId && overId && dragId !== overId) {
+      setResources(prev => {
+        const arr = [...prev];
+        const from = arr.findIndex(r => r.id === dragId);
+        const to   = arr.findIndex(r => r.id === overId);
+        if (from < 0 || to < 0) return prev;
+        const [m] = arr.splice(from, 1);
+        arr.splice(to, 0, m);
+        return arr;
+      });
+    }
+    setDragId(null);
+    setOverId(null);
+  }, [dragId, overId]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return resources.filter(r => {
+      if (category !== 'all' && r.cat !== category) return false;
+      if (activeTags.size && ![...activeTags].every(t => r.tags.includes(t))) return false;
+      if (q && !(r.title.toLowerCase().includes(q) || r.url.toLowerCase().includes(q))) return false;
+      return true;
+    });
+  }, [resources, category, activeTags, query]);
+
+  const pinned = useMemo(() => filtered.filter(r => r.pinned), [filtered]);
+  const rest   = useMemo(() => filtered.filter(r => !r.pinned), [filtered]);
+
+  const counts = useMemo(() => {
+    const c = { all: resources.length };
+    CATEGORIES.forEach(cat => {
+      if (cat.id !== 'all') c[cat.id] = resources.filter(r => r.cat === cat.id).length;
+    });
+    return c;
+  }, [resources]);
+
+  return {
+    resources, category, setCategory, activeTags, toggleTag,
+    query, setQuery, view, setView, sort, setSort,
+    toggleFav, togglePin,
+    filtered, pinned, rest, counts,
+    dragId, overId, onDragStart, onDragOver, onDragEnd,
+  };
+}
+
+// Favicon component — renders the colored chip in any variant's style.
+function Favicon({ id, size = 28, radius = 6, style }) {
+  const f = FAVICONS[id] || { bg: '#999', fg: '#fff', label: '?' };
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: radius,
+      background: f.bg, color: f.fg,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontWeight: 700, fontSize: size * 0.5, flexShrink: 0,
+      boxShadow: f.bg === '#fff' ? 'inset 0 0 0 1px rgba(0,0,0,.1)' : 'none',
+      ...style,
+    }}>{f.label}</div>
+  );
+}
+
+window.DASHBOARD_DATA = { CATEGORIES, TAGS, RESOURCES, FAVICONS };
+window.useDashboard = useDashboard;
+window.Favicon = Favicon;
+
+</script>
+
+<script type="text/babel" data-presets="react">
+// Variant 4 — Soft / Friendly
+// Warm beige/cream surfaces, rounded sans, gentle shadows, line icons.
+
+(function () {
+const { useState } = React;
+const { CATEGORIES, TAGS } = window.DASHBOARD_DATA;
+const { Favicon } = window;
+
+const S = {
+  bg:       '#f4ede0',
+  paper:    '#fbf6ec',
+  surface:  '#ffffff',
+  ink:      '#3d3328',
+  text:     '#4a3f33',
+  muted:    '#8b7d6c',
+  faint:    '#bbae9b',
+  border:   '#e5dccb',
+  borderDk: '#d4c8b0',
+  accent:   '#c97f5a',          // terracotta
+  accentDk: '#a8633f',
+  accentTint:'#f4e0d2',
+  leaf:     '#8aa67a',
+  honey:    '#d4a248',
+  font:     '"Zen Maru Gothic","Hiragino Maru Gothic ProN","Quicksand","Inter",sans-serif',
+};
+
+// Soft per-category color
+const CAT_SOFT = {
+  all:   { color: '#7a6d5a', tint: '#efe6d3' },
+  sheet: { color: '#6f8a5e', tint: '#e2ecd6' },
+  web:   { color: '#5a7e9e', tint: '#dce8f1' },
+  tool:  { color: '#c97f5a', tint: '#f5e1d3' },
+  doc:   { color: '#a8854a', tint: '#f0e3c8' },
+};
+
+// Line icons
+const Ico = {
+  search:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" {...p}><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>,
+  plus:    (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" {...p}><path d="M12 5v14M5 12h14"/></svg>,
+  grid:    (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" {...p}><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>,
+  list:    (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" {...p}><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>,
+  link:    (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10 14a4 4 0 0 1 0-5.7l3-3a4 4 0 1 1 5.7 5.7l-1.5 1.5"/><path d="M14 10a4 4 0 0 1 0 5.7l-3 3a4 4 0 1 1-5.7-5.7l1.5-1.5"/></svg>,
+  clock:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" {...p}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>,
+  star:    (p, filled) => <svg viewBox="0 0 24 24" fill={filled ? S.honey : 'none'} stroke={filled ? S.honey : 'currentColor'} strokeWidth="1.6" strokeLinejoin="round" {...p}><path d="M12 2.8l2.85 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.7l-5.75 3 1.1-6.5L2.65 9.6l6.5-.9L12 2.8z"/></svg>,
+  pin:     (p, filled) => <svg viewBox="0 0 24 24" fill={filled ? S.accent : 'none'} stroke={filled ? S.accent : 'currentColor'} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M9 4h6M10 4v7l-3 4h10l-3-4V4M12 15v5"/></svg>,
+  grip:    (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" {...p}><circle cx="9" cy="6" r=".9" fill="currentColor"/><circle cx="9" cy="12" r=".9" fill="currentColor"/><circle cx="9" cy="18" r=".9" fill="currentColor"/><circle cx="15" cy="6" r=".9" fill="currentColor"/><circle cx="15" cy="12" r=".9" fill="currentColor"/><circle cx="15" cy="18" r=".9" fill="currentColor"/></svg>,
+  sheet:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" {...p}><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg>,
+  globe:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" {...p}><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>,
+  tool:    (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" {...p}><path d="M14 7a3 3 0 1 0-3 3l-7 7 3 3 7-7a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>,
+  doc:     (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" {...p}><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>,
+  sparkle: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" {...p}><path d="M12 4v4M12 16v4M4 12h4M16 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></svg>,
+};
+const CAT_ICON = { all: Ico.sparkle, sheet: Ico.sheet, web: Ico.globe, tool: Ico.tool, doc: Ico.doc };
+
+function Card({ r, view, onFav, onPin, drag, isOver }) {
+  const c = CAT_SOFT[r.cat];
+  const Cic = CAT_ICON[r.cat];
+  const [hover, setHover] = useState(false);
+
+  if (view === 'list') {
+    return (
+      <div
+        draggable onDragStart={() => drag.onDragStart(r.id)}
+        onDragOver={e => { e.preventDefault(); drag.onDragOver(r.id); }}
+        onDragEnd={drag.onDragEnd}
+        onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+        style={{
+          display: 'grid', gridTemplateColumns: '24px 36px 1fr 130px 200px 130px 60px',
+          gap: 12, alignItems: 'center', padding: '12px 16px',
+          background: hover ? S.paper : S.surface,
+          borderRadius: 14, marginBottom: 8,
+          boxShadow: isOver ? `0 0 0 2px ${S.accent}` : '0 1px 0 rgba(0,0,0,0.02)',
+          border: `1px solid ${S.border}`,
+          cursor: 'grab', transition: 'all .15s',
+          opacity: drag.dragId === r.id ? 0.4 : 1,
+        }}>
+        <div style={{ color: hover ? S.muted : 'transparent', width: 12 }}><Ico.grip width="12" height="12" /></div>
+        <Favicon id={r.favicon} size={32} radius={8} />
+        <div style={{ overflow: 'hidden' }}>
+          <div style={{ fontSize: 14.5, fontWeight: 600, color: S.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.title}</div>
+          <div style={{ fontSize: 11.5, color: S.faint, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Ico.link width="11" height="11" /> {r.url}
+          </div>
+        </div>
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 5,
+          padding: '4px 11px', borderRadius: 999,
+          background: c.tint, color: c.color, fontSize: 12, fontWeight: 600,
+        }}>
+          <Cic width="13" height="13" />
+          {CATEGORIES.find(x => x.id === r.cat)?.label}
+        </div>
+        <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+          {r.tags.map(t => (<span key={t} style={tagS()}>{t}</span>))}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: S.muted, fontSize: 12 }}>
+          <Ico.clock width="13" height="13" /> {r.last}
+        </div>
+        <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+          <button onClick={() => onPin(r.id)} style={iconBtnS()}>{Ico.pin({ width: 16, height: 16 }, r.pinned)}</button>
+          <button onClick={() => onFav(r.id)} style={iconBtnS()}>{Ico.star({ width: 16, height: 16 }, r.fav)}</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      draggable onDragStart={() => drag.onDragStart(r.id)}
+      onDragOver={e => { e.preventDefault(); drag.onDragOver(r.id); }}
+      onDragEnd={drag.onDragEnd}
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{
+        position: 'relative', padding: 18,
+        background: S.surface,
+        borderRadius: 18,
+        border: `1px solid ${isOver ? S.accent : S.border}`,
+        boxShadow: hover
+          ? `0 10px 24px -8px rgba(122,93,60,0.18), 0 2px 6px rgba(122,93,60,0.08)`
+          : `0 2px 6px rgba(122,93,60,0.05)`,
+        transform: hover ? 'translateY(-3px)' : 'translateY(0)',
+        transition: 'all .2s cubic-bezier(.2,.7,.3,1)',
+        cursor: 'grab', opacity: drag.dragId === r.id ? 0.4 : 1,
+      }}>
+      {/* grip */}
+      <div style={{
+        position: 'absolute', top: 10, left: 8,
+        opacity: hover ? 0.6 : 0, transition: 'opacity .15s',
+        color: S.muted, userSelect: 'none',
+      }}><Ico.grip width="12" height="12" /></div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+        <Favicon id={r.favicon} size={40} radius={10} />
+        <div style={{ display: 'flex', gap: 2 }}>
+          <button onClick={() => onPin(r.id)} style={iconBtnS(hover || r.pinned)}>
+            {Ico.pin({ width: 16, height: 16 }, r.pinned)}
+          </button>
+          <button onClick={() => onFav(r.id)} style={iconBtnS(hover || r.fav)}>
+            {Ico.star({ width: 16, height: 16 }, r.fav)}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5,
+                    padding: '3px 10px', borderRadius: 999,
+                    background: c.tint, color: c.color,
+                    fontSize: 11.5, fontWeight: 600, marginBottom: 10 }}>
+        <Cic width="13" height="13" />
+        {CATEGORIES.find(x => x.id === r.cat)?.label}
+      </div>
+
+      <div style={{
+        fontSize: 15.5, fontWeight: 700, color: S.text,
+        marginBottom: 6, lineHeight: 1.45, letterSpacing: '0.005em',
+        overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+      }}>{r.title}</div>
+
+      <div style={{ fontSize: 11.5, color: S.faint, marginBottom: 14,
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <Ico.link width="11" height="11" />
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.url}</span>
+      </div>
+
+      <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: 12 }}>
+        {r.tags.map(t => (<span key={t} style={tagS()}>{t}</span>))}
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: S.muted, fontSize: 11.5,
+                    paddingTop: 12, borderTop: `1px dashed ${S.border}` }}>
+        <Ico.clock width="13" height="13" />
+        最終アクセス · {r.last}
+      </div>
+    </div>
+  );
+}
+
+const tagS = () => ({
+  display: 'inline-block', padding: '2px 10px', borderRadius: 999,
+  background: S.paper, color: S.muted, fontSize: 11, fontWeight: 500,
+  border: `1px solid ${S.border}`,
+});
+const iconBtnS = (visible = true) => ({
+  width: 30, height: 30, border: 'none', borderRadius: 8,
+  background: 'transparent', cursor: 'pointer',
+  display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
+  color: S.muted, opacity: visible ? 1 : 0, transition: 'all .12s',
+});
+
+function SoftDashboard() {
+  const D = window.useDashboard({ view: 'grid' });
+  const curCat = CATEGORIES.find(c => c.id === D.category);
+  const CurIcon = CAT_ICON[D.category];
+
+  return (
+    <div style={{
+      width: '100%', height: '100%',
+      display: 'grid', gridTemplateColumns: '252px 1fr',
+      background: S.bg, color: S.text, fontFamily: S.font, fontSize: 14,
+      overflow: 'hidden',
+    }}>
+      <aside style={{
+        background: S.paper,
+        borderRight: `1px solid ${S.border}`,
+        padding: '24px 16px',
+        display: 'flex', flexDirection: 'column', gap: 22, overflowY: 'auto',
+      }}>
+        <div style={{ padding: '0 6px', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 12,
+            background: `linear-gradient(135deg, ${S.accent}, ${S.honey})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff', boxShadow: '0 4px 10px rgba(201,127,90,0.3)',
+          }}><Ico.sparkle width="20" height="20" /></div>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: S.ink, letterSpacing: '0.01em' }}>おうちハブ</div>
+            <div style={{ fontSize: 11, color: S.muted }}>今日もよろしくね</div>
+          </div>
+        </div>
+
+        <div>
+          <div style={sectLabelS()}>カテゴリー</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {CATEGORIES.map(c => {
+              const cc = CAT_SOFT[c.id];
+              const CIc = CAT_ICON[c.id];
+              const active = D.category === c.id;
+              return (
+                <button key={c.id} onClick={() => D.setCategory(c.id)} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '9px 12px', borderRadius: 12,
+                  background: active ? cc.tint : 'transparent',
+                  color: active ? cc.color : S.text,
+                  border: 'none', cursor: 'pointer', font: 'inherit',
+                  fontWeight: active ? 700 : 500, fontSize: 13.5,
+                  transition: 'background .12s',
+                }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <CIc width="17" height="17" />
+                    {c.label}
+                  </span>
+                  <span style={{ fontSize: 11, color: active ? cc.color : S.faint, fontWeight: 600 }}>{D.counts[c.id] ?? 0}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <div style={sectLabelS()}>タグ</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, padding: '0 6px' }}>
+            {TAGS.map(t => (
+              <button key={t} onClick={() => D.toggleTag(t)} style={{
+                padding: '4px 11px', borderRadius: 999,
+                background: D.activeTags.has(t) ? S.accent : S.surface,
+                color: D.activeTags.has(t) ? '#fff' : S.muted,
+                border: `1px solid ${D.activeTags.has(t) ? S.accent : S.border}`,
+                cursor: 'pointer', font: 'inherit', fontSize: 12, fontWeight: 500,
+                transition: 'all .12s',
+              }}>{t}</button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{
+          marginTop: 'auto', padding: '14px 16px', borderRadius: 14,
+          background: `linear-gradient(135deg, ${S.accentTint}, ${S.paper})`,
+          fontSize: 12, color: S.text, lineHeight: 1.7,
+        }}>
+          <div style={{ fontWeight: 700, marginBottom: 4, color: S.accentDk }}>☕ 今日もおつかれさま</div>
+          <div style={{ color: S.muted }}>
+            全 <b style={{ color: S.text }}>{D.resources.length}</b> 件・
+            お気に入り <b style={{ color: S.honey }}>{D.resources.filter(r => r.fav).length}</b>
+          </div>
+        </div>
+      </aside>
+
+      <main style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
+        <header style={{
+          padding: '18px 28px',
+          display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
+          background: S.bg, borderBottom: `1px solid ${S.border}`,
+        }}>
+          <div style={{
+            flex: 1, maxWidth: 480, display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 16px',
+            background: S.surface, borderRadius: 14,
+            border: `1px solid ${S.border}`,
+          }}>
+            <span style={{ color: S.muted }}><Ico.search width="16" height="16" /></span>
+            <input value={D.query} onChange={e => D.setQuery(e.target.value)}
+              placeholder="ふんわり検索…"
+              style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', font: 'inherit', fontSize: 14, color: S.text }} />
+            <kbd style={{
+              fontSize: 11, color: S.muted, padding: '2px 7px', borderRadius: 6,
+              background: S.paper, border: `1px solid ${S.border}`, fontFamily: S.font, fontWeight: 600,
+            }}>⌘ K</kbd>
+          </div>
+
+          <div style={{ flex: 1 }} />
+
+          <select value={D.sort} onChange={e => D.setSort(e.target.value)} style={{
+            padding: '8px 14px', borderRadius: 12,
+            background: S.surface, border: `1px solid ${S.border}`,
+            font: 'inherit', fontSize: 13, color: S.text, cursor: 'pointer',
+          }}>
+            <option value="recent">最近開いた順</option>
+            <option value="name">名前順</option>
+          </select>
+
+          <div style={{ display: 'flex', background: S.surface, border: `1px solid ${S.border}`, borderRadius: 12, padding: 3 }}>
+            {[['grid',Ico.grid], ['list',Ico.list]].map(([k, Ic]) => (
+              <button key={k} onClick={() => D.setView(k)} style={{
+                padding: '5px 10px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                background: D.view === k ? S.accent : 'transparent',
+                color: D.view === k ? '#fff' : S.muted,
+                display: 'flex', alignItems: 'center',
+              }}><Ic width="15" height="15" /></button>
+            ))}
+          </div>
+
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '9px 18px', borderRadius: 12, border: 'none', cursor: 'pointer',
+            background: S.accent, color: '#fff',
+            font: 'inherit', fontSize: 13.5, fontWeight: 700,
+            boxShadow: '0 4px 10px rgba(201,127,90,0.3)',
+          }}>
+            <Ico.plus width="15" height="15" /> 新しく追加
+          </button>
+        </header>
+
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px 80px' }}>
+          <div style={{ marginBottom: 22 }}>
+            <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: '0.005em', color: S.ink,
+                          display: 'flex', alignItems: 'center', gap: 10 }}>
+              <CurIcon width="24" height="24" />
+              {curCat?.label}
+            </h1>
+            <div style={{ fontSize: 13, color: S.muted, marginTop: 6 }}>
+              {D.filtered.length}件のリソース
+              {D.activeTags.size > 0 && (<span>　・　{[...D.activeTags].map(t => `#${t}`).join('  ')}</span>)}
+            </div>
+          </div>
+
+          {D.pinned.length > 0 && (
+            <section style={{ marginBottom: 32 }}>
+              <div style={sectHeaderS()}>
+                {Ico.pin({ width: 16, height: 16 }, true)}
+                <span>ピン留め</span>
+                <span style={{ color: S.faint, fontWeight: 400 }}>· {D.pinned.length}</span>
+              </div>
+              {D.view === 'grid' ? (
+                <div style={gridS()}>
+                  {D.pinned.map(r => <Card key={r.id} r={r} view="grid" onFav={D.toggleFav} onPin={D.togglePin} drag={D} isOver={D.overId === r.id && D.dragId !== r.id} />)}
+                </div>
+              ) : (
+                <div>{D.pinned.map(r => <Card key={r.id} r={r} view="list" onFav={D.toggleFav} onPin={D.togglePin} drag={D} isOver={D.overId === r.id && D.dragId !== r.id} />)}</div>
+              )}
+            </section>
+          )}
+
+          <section>
+            <div style={sectHeaderS()}>
+              <Ico.sparkle width="16" height="16" />
+              <span>すべて</span>
+              <span style={{ color: S.faint, fontWeight: 400 }}>· {D.rest.length}</span>
+            </div>
+            {D.rest.length === 0 ? (
+              <div style={{ padding: 40, textAlign: 'center', color: S.muted, fontSize: 14 }}>
+                🌱 まだ何もないみたい
+              </div>
+            ) : D.view === 'grid' ? (
+              <div style={gridS()}>
+                {D.rest.map(r => <Card key={r.id} r={r} view="grid" onFav={D.toggleFav} onPin={D.togglePin} drag={D} isOver={D.overId === r.id && D.dragId !== r.id} />)}
+              </div>
+            ) : (
+              <div>{D.rest.map(r => <Card key={r.id} r={r} view="list" onFav={D.toggleFav} onPin={D.togglePin} drag={D} isOver={D.overId === r.id && D.dragId !== r.id} />)}</div>
+            )}
+          </section>
+        </div>
+
+        <button title="新規追加" style={{
+          position: 'absolute', right: 28, bottom: 24,
+          width: 60, height: 60, borderRadius: 30, border: 'none', cursor: 'pointer',
+          background: `linear-gradient(135deg, ${S.accent}, ${S.honey})`,
+          color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 10px 24px rgba(201,127,90,0.4)',
+        }}><Ico.plus width="22" height="22" /></button>
+      </main>
+    </div>
+  );
+}
+
+const sectLabelS = () => ({
+  fontSize: 11, color: S.muted, fontWeight: 700, padding: '0 10px', marginBottom: 6,
+  letterSpacing: '0.05em',
+});
+const sectHeaderS = () => ({
+  display: 'flex', alignItems: 'center', gap: 8,
+  fontSize: 15, fontWeight: 700, color: S.ink, marginBottom: 14,
+});
+const gridS = () => ({
+  display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px,1fr))', gap: 14,
+});
+
+window.SoftDashboard = SoftDashboard;
+})();
+
+</script>
+
+<script type="text/babel" data-presets="react">
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(window.SoftDashboard));
+</script>
+</body>
+</html>
