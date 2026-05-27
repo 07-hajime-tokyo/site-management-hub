@@ -1,6 +1,5 @@
 const STORAGE_KEY = "manus-portal-tools-v1";
 const RECENT_KEY = "manus-portal-recent-v1";
-const SOURCE_KEY = "manus-portal-source-v1";
 const PIN_OVERRIDES_KEY = "manus-portal-pin-overrides-v1";
 
 const typeLabels = {
@@ -208,7 +207,6 @@ function bindEvents() {
       state.type = "all";
       state.query = "";
       el.searchInput.value = "";
-      localStorage.setItem(SOURCE_KEY, state.source);
       render();
       if (state.source === "shared") {
         loadSharedTools();
@@ -317,14 +315,14 @@ function updateSourceControls() {
 
   if (shared) {
     if (state.sharedLoading) {
-      el.sourceNote.textContent = "Notionから共有データを読み込み中です。";
+      el.sourceNote.textContent = "共有データを読み込み中です。";
     } else if (state.sharedError) {
       el.sourceNote.textContent = state.sharedError;
     } else {
-      el.sourceNote.textContent = "共有データはNotionから読み込みます。";
+      el.sourceNote.textContent = "共有データを表示中です。";
     }
   } else {
-    el.sourceNote.textContent = "個人データはこのブラウザに保存されます。";
+    el.sourceNote.textContent = "ブラウザ保存のみ";
   }
 }
 
@@ -960,8 +958,7 @@ function loadPinOverrides() {
 }
 
 function loadSource() {
-  const source = localStorage.getItem(SOURCE_KEY);
-  return source === "shared" ? "shared" : "personal";
+  return "shared";
 }
 
 async function loadSharedTools() {
