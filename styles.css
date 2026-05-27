@@ -721,6 +721,13 @@ select:disabled {
   border-top: 1px dashed var(--border);
 }
 
+.sheet-group-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 38px;
+  align-items: stretch;
+  gap: 8px;
+}
+
 .sheet-group-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 20px;
@@ -733,6 +740,13 @@ select:disabled {
   color: var(--text);
   padding: 9px 11px;
   text-decoration: none;
+}
+
+.sheet-group-edit {
+  width: 38px;
+  min-height: 52px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.78);
 }
 
 .sheet-group-item:hover {

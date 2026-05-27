@@ -52,8 +52,8 @@ createServer(async (req, res) => {
 });
 
 async function handleSharedTools(req, res) {
-  if (req.method && !["GET", "POST"].includes(req.method)) {
-    res.writeHead(405, { Allow: "GET, POST" });
+  if (req.method && !["GET", "POST", "PUT"].includes(req.method)) {
+    res.writeHead(405, { Allow: "GET, POST, PUT" });
     res.end("Method not allowed");
     return;
   }
@@ -63,7 +63,7 @@ async function handleSharedTools(req, res) {
   const databaseId = process.env.NOTION_LINKS_DATABASE_ID || process.env.NOTION_DATABASE_ID;
 
   if (!token || (!dataSourceId && !databaseId)) {
-    if (req.method === "POST") {
+    if (req.method === "POST" || req.method === "PUT") {
       sendJson(res, 500, {
         configured: false,
         error:
@@ -100,6 +100,29 @@ async function handleSharedTools(req, res) {
           error instanceof Error
             ? error.message
             : "Notion DBに保存できませんでした。",
+      });
+    }
+    return;
+  }
+
+  if (req.method === "PUT") {
+    try {
+      const body = await readJsonBody(req);
+      const pageId = normalizeNotionPageId(body.id || body.pageId);
+      const tool = normalizeIncomingTool(body);
+      const page = await updateNotionToolPage(token, source, pageId, tool);
+      sendJson(res, 200, {
+        configured: true,
+        sourceType: source.type,
+        tool: mapNotionPageToTool(page),
+      });
+    } catch (error) {
+      sendJson(res, 500, {
+        configured: true,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Notion DBを更新できませんでした。",
       });
     }
     return;
@@ -157,6 +180,26 @@ async function createNotionToolPage(token, source, tool) {
   return payload;
 }
 
+async function updateNotionToolPage(token, source, pageId, tool) {
+  const response = await fetch(`https://api.notion.com/v1/pages/${pageId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "Notion-Version":
+        source.type === "data_source" ? dataSourceNotionVersion : databaseNotionVersion,
+    },
+    body: JSON.stringify({
+      properties: createNotionProperties(tool),
+    }),
+  });
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload.message || "Notion DBを更新できませんでした");
+  }
+  return payload;
+}
+
 function createNotionProperties(tool) {
   return {
     名前: {
@@ -208,6 +251,16 @@ function normalizeIncomingTool(body) {
     description: String(body.description || "").trim(),
     pinned: Boolean(body.pinned),
   };
+}
+
+function normalizeNotionPageId(value) {
+  const pageId = String(value || "")
+    .replace(/^notion-/, "")
+    .trim();
+  if (!/^[0-9a-f-]{32,36}$/i.test(pageId)) {
+    throw new Error("更新対象のNotionページが見つかりません");
+  }
+  return pageId;
 }
 
 async function queryNotionCollection(token, source) {

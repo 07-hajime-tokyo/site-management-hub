@@ -478,13 +478,18 @@ function createSheetGroupCards(tools) {
         .map((tool) => {
           const hostname = getHostname(tool.url);
           return `
-            <a class="sheet-group-item" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open" data-id="${tool.id}">
-              <span>
-                <strong>${escapeHtml(tool.title)}</strong>
-                <small>${escapeHtml(hostname)}</small>
-              </span>
-              <i data-lucide="external-link" aria-hidden="true"></i>
-            </a>
+            <div class="sheet-group-row" data-id="${tool.id}">
+              <a class="sheet-group-item" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
+                <span>
+                  <strong>${escapeHtml(tool.title)}</strong>
+                  <small>${escapeHtml(hostname)}</small>
+                </span>
+                <i data-lucide="external-link" aria-hidden="true"></i>
+              </a>
+              <button class="icon-only sheet-group-edit" type="button" data-action="edit" aria-label="編集">
+                <i data-lucide="pencil" aria-hidden="true"></i>
+              </button>
+            </div>
           `;
         })
         .join("");
@@ -525,9 +530,9 @@ function createToolCard(tool, index, compact = false) {
           <button class="icon-only" type="button" data-action="copy" aria-label="URLをコピー">
             <i data-lucide="copy" aria-hidden="true"></i>
           </button>
-          ${shared ? "" : `<button class="icon-only" type="button" data-action="edit" aria-label="編集">
+          <button class="icon-only" type="button" data-action="edit" aria-label="編集">
             <i data-lucide="pencil" aria-hidden="true"></i>
-          </button>`}
+          </button>
         </div>
       </div>
       <div class="kind-line">
@@ -570,9 +575,9 @@ function createTableRow(tool) {
           <button class="icon-only" type="button" data-action="copy" aria-label="URLをコピー">
             <i data-lucide="copy" aria-hidden="true"></i>
           </button>
-          ${shared ? "" : `<button class="icon-only" type="button" data-action="edit" aria-label="編集">
+          <button class="icon-only" type="button" data-action="edit" aria-label="編集">
             <i data-lucide="pencil" aria-hidden="true"></i>
-          </button>`}
+          </button>
           <a class="icon-only" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open" aria-label="開く">
             <i data-lucide="external-link" aria-hidden="true"></i>
           </a>
@@ -637,7 +642,7 @@ function getFilteredTools() {
 function openDialog(tool = null) {
   state.editingId = tool?.id || null;
   el.dialogTitle.textContent = tool ? "編集" : "登録";
-  el.deleteButton.hidden = !tool;
+  el.deleteButton.hidden = !tool || isSharedMode();
 
   formFields.id.value = tool?.id || "";
   formFields.title.value = tool?.title || "";
@@ -661,7 +666,7 @@ function closeDialog() {
 function saveFromForm() {
   if (isSharedMode()) {
     if (state.editingId) {
-      showToast("共有データの編集はNotion側で行います");
+      updateSharedToolFromForm();
       return;
     }
     createSharedToolFromForm();
@@ -706,6 +711,47 @@ function saveFromForm() {
   closeDialog();
   render();
   showToast("保存しました");
+}
+
+async function updateSharedToolFromForm() {
+  const payload = {
+    id: state.editingId,
+    title: formFields.title.value.trim(),
+    url: formFields.url.value.trim(),
+    category: formFields.category.value.trim() || "未分類",
+    type: formFields.type.value,
+    status: formFields.status.value,
+    description: formFields.description.value.trim(),
+  };
+
+  try {
+    const response = await fetch("/api/shared-tools", {
+      cache: "no-store",
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Notion DBを更新できませんでした");
+    }
+    if (!result.tool) {
+      throw new Error(result.message || "Notion DBを更新できませんでした");
+    }
+    state.sharedTools = state.sharedTools.map((tool) =>
+      tool.id === result.tool.id ? result.tool : tool,
+    );
+    state.sharedLoaded = true;
+    state.sharedError = "";
+    closeDialog();
+    render();
+    showToast("Notion DBを更新しました");
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Notion DBを更新できませんでした");
+  }
 }
 
 async function createSharedToolFromForm() {
