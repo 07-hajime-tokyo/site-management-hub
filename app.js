@@ -428,6 +428,8 @@ function renderLibrary() {
       emptyText.textContent = "Notionから読み込み中です";
     } else if (isSharedMode() && state.sharedError) {
       emptyText.textContent = state.sharedError;
+    } else if (!isSharedMode()) {
+      emptyText.textContent = "ブラウザ保存の登録はありません";
     } else {
       emptyText.textContent = "該当する登録はありません";
     }
@@ -460,12 +462,19 @@ function renderLibrary() {
 }
 
 function getLibraryTitle() {
+  const sourcePrefix = isSharedMode() ? "" : "ブラウザ保存のみ";
+  let title = "";
+
   if (state.type !== "all") {
-    return state.category === "all"
+    title = state.category === "all"
       ? typeLabels[state.type] || state.type
       : `${state.category} / ${typeLabels[state.type] || state.type}`;
+  } else {
+    title = state.category === "all" ? "種類別" : state.category;
   }
-  return state.category === "all" ? "種類別" : state.category;
+
+  if (!sourcePrefix) return title;
+  return title === "種類別" ? sourcePrefix : `${sourcePrefix} / ${title}`;
 }
 
 function createTypeSections(tools) {
@@ -931,11 +940,11 @@ function persist() {
 function loadTools() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return [...defaultTools];
+    if (!stored) return [];
     const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) && parsed.length ? parsed : [...defaultTools];
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return [...defaultTools];
+    return [];
   }
 }
 
