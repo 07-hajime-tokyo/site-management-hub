@@ -341,17 +341,16 @@ function renderMetrics() {
 function renderCategoryNav() {
   const tools = getTools();
   const counts = countBy(tools, "category");
-  const categories = ["all", ...getCategories()];
+  const categories = getCategories();
   el.categoryNav.innerHTML = categories
     .map((category, index) => {
       const active = state.category === category ? " is-active" : "";
-      const accent = category === "all" ? "accent-blue" : getAccentClass(category, index);
-      const count = category === "all" ? tools.length : counts[category] || 0;
-      const label = category === "all" ? "すべて" : escapeHtml(category);
+      const accent = getAccentClass(category, index);
+      const count = counts[category] || 0;
       return `
         <button class="nav-button ${accent}${active}" type="button" data-category="${escapeAttribute(category)}">
           <span class="nav-dot" aria-hidden="true"></span>
-          <span class="nav-name">${label}</span>
+          <span class="nav-name">${escapeHtml(category)}</span>
           <span class="nav-count">${count}</span>
         </button>
       `;
@@ -360,7 +359,7 @@ function renderCategoryNav() {
 
   el.categoryNav.querySelectorAll("[data-category]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.category = button.dataset.category;
+      state.category = state.category === button.dataset.category ? "all" : button.dataset.category;
       renderCategoryNav();
       renderLibrary();
       renderIcons();
@@ -409,17 +408,6 @@ function renderQuickAccess() {
   if (items.length === 0) {
     el.quickGrid.innerHTML = "";
     el.quickGrid.hidden = true;
-    renderIcons();
-    return;
-    el.quickGrid.innerHTML = `
-      <article class="tool-card is-compact accent-blue">
-        <div class="card-top">
-          <span class="card-index">PIN</span>
-        </div>
-        <h4>まだ固定された入口がありません</h4>
-        <p>よく使うサイトやスプシを星で固定できます。</p>
-      </article>
-    `;
     renderIcons();
     return;
   }
@@ -493,7 +481,12 @@ function createTypeSections(tools) {
       return `
         <section class="library-kind-section" data-type-section="${escapeAttribute(type)}">
           <div class="library-kind-heading">
-            <h4>${escapeHtml(typeLabels[type] || type)}</h4>
+            <div class="kind-heading-title">
+              <span class="kind-heading-icon" aria-hidden="true">
+                <i data-lucide="${getTypeIcon(type)}" aria-hidden="true"></i>
+              </span>
+              <h4>${escapeHtml(typeLabels[type] || type)}</h4>
+            </div>
             <span>${items.length}件</span>
           </div>
           <div class="tool-grid-section">
@@ -542,7 +535,12 @@ function createSheetGroupCards(tools) {
       return `
         <article class="tool-card sheet-group-card ${accent}" data-group="${escapeAttribute(category)}">
           <div class="sheet-group-head">
-            <h4>${escapeHtml(category)}</h4>
+            <div class="sheet-group-title">
+              <span class="card-icon" aria-hidden="true">
+                <i data-lucide="folder" aria-hidden="true"></i>
+              </span>
+              <h4>${escapeHtml(category)}</h4>
+            </div>
             <span class="pill">${items.length}件</span>
           </div>
           <details class="sheet-group-toggle">
@@ -565,27 +563,24 @@ function createToolCard(tool, compact = false) {
   const hostname = getHostname(tool.url);
   return `
     <article class="tool-card ${compact ? "is-compact" : ""} ${accent}" data-id="${tool.id}">
-      <div class="card-top">
-        <div class="card-actions">
-          <button class="icon-only ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
-            <i data-lucide="${tool.pinned ? "star" : "star"}" aria-hidden="true"></i>
-          </button>
-          <button class="icon-only" type="button" data-action="copy" aria-label="URLをコピー">
-            <i data-lucide="copy" aria-hidden="true"></i>
-          </button>
-          <button class="icon-only" type="button" data-action="edit" aria-label="編集">
-            <i data-lucide="pencil" aria-hidden="true"></i>
-          </button>
-        </div>
+      <div class="card-icon" aria-hidden="true">
+        <i data-lucide="${getTypeIcon(tool.type)}" aria-hidden="true"></i>
       </div>
       <a class="card-text-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
         <h4>${escapeHtml(tool.title)}</h4>
         <p class="card-url">${escapeHtml(hostname)}</p>
         <p>${escapeHtml(tool.description || hostname)}</p>
       </a>
-      <div class="card-meta">
-        <button class="pill category-pill" type="button" data-action="edit-category">${escapeHtml(tool.category)}</button>
-        <span class="pill">${statusLabels[tool.status] || tool.status}</span>
+      <div class="card-actions">
+        <button class="icon-only ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
+          <i data-lucide="${tool.pinned ? "star" : "star"}" aria-hidden="true"></i>
+        </button>
+        <button class="icon-only" type="button" data-action="copy" aria-label="URLをコピー">
+          <i data-lucide="copy" aria-hidden="true"></i>
+        </button>
+        <button class="icon-only" type="button" data-action="edit" aria-label="編集">
+          <i data-lucide="pencil" aria-hidden="true"></i>
+        </button>
       </div>
     </article>
   `;
@@ -598,7 +593,7 @@ function createTableRow(tool) {
         <span class="table-title">${escapeHtml(tool.title)}</span>
         <span class="table-url">${escapeHtml(tool.url)}</span>
       </td>
-      <td><button class="pill category-pill" type="button" data-action="edit-category">${escapeHtml(tool.category)}</button></td>
+      <td>${escapeHtml(tool.category)}</td>
       <td>${typeLabels[tool.type] || tool.type}</td>
       <td>${statusLabels[tool.status] || tool.status}</td>
       <td class="last-opened-cell">${tool.lastOpenedAt ? formatDate(tool.lastOpenedAt) : "未オープン"}</td>
