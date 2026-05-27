@@ -545,7 +545,7 @@ function createSheetGroupCards(tools) {
             <h4>${escapeHtml(category)}</h4>
             <span class="pill">${items.length}件</span>
           </div>
-          <details class="sheet-group-toggle" ${items.length === 1 ? "open" : ""}>
+          <details class="sheet-group-toggle">
             <summary>
               <span>${items.length === 1 ? "スプレッドシート" : "スプレッドシートを表示"}</span>
               <i data-lucide="chevron-down" aria-hidden="true"></i>
