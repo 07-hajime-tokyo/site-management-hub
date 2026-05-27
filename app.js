@@ -405,6 +405,10 @@ function renderQuickAccess() {
   const items = tools.filter((tool) => tool.pinned).slice(0, 4);
 
   if (items.length === 0) {
+    el.quickGrid.innerHTML = "";
+    el.quickGrid.hidden = true;
+    renderIcons();
+    return;
     el.quickGrid.innerHTML = `
       <article class="tool-card is-compact accent-blue">
         <div class="card-top">
@@ -418,6 +422,7 @@ function renderQuickAccess() {
     return;
   }
 
+  el.quickGrid.hidden = false;
   el.quickGrid.innerHTML = items
     .map((tool, index) => createToolCard(tool, index, true))
     .join("");
