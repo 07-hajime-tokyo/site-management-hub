@@ -544,7 +544,7 @@ function createToolCard(tool, index, compact = false) {
         <p>${escapeHtml(tool.description || hostname)}</p>
       </a>
       <div class="card-meta">
-        <span class="pill">${escapeHtml(tool.category)}</span>
+        <button class="pill category-pill" type="button" data-action="edit-category">${escapeHtml(tool.category)}</button>
         <span class="pill">${statusLabels[tool.status] || tool.status}</span>
       </div>
       <a class="open-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
@@ -563,7 +563,7 @@ function createTableRow(tool) {
         <span class="table-title">${escapeHtml(tool.title)}</span>
         <span class="table-url">${escapeHtml(tool.url)}</span>
       </td>
-      <td><span class="pill">${escapeHtml(tool.category)}</span></td>
+      <td><button class="pill category-pill" type="button" data-action="edit-category">${escapeHtml(tool.category)}</button></td>
       <td>${typeLabels[tool.type] || tool.type}</td>
       <td>${statusLabels[tool.status] || tool.status}</td>
       <td>${tool.lastOpenedAt ? formatDate(tool.lastOpenedAt) : "未オープン"}</td>
@@ -605,6 +605,7 @@ function bindCardActions(root) {
       if (action === "pin") togglePin(tool.id);
       if (action === "copy") copyUrl(tool);
       if (action === "edit") openDialog(tool);
+      if (action === "edit-category") openDialog(tool, "category");
     });
   });
 }
@@ -639,7 +640,7 @@ function getFilteredTools() {
     });
 }
 
-function openDialog(tool = null) {
+function openDialog(tool = null, focusField = "title") {
   state.editingId = tool?.id || null;
   el.dialogTitle.textContent = tool ? "編集" : "登録";
   el.deleteButton.hidden = !tool || isSharedMode();
@@ -653,7 +654,7 @@ function openDialog(tool = null) {
   formFields.description.value = tool?.description || "";
 
   el.toolDialog.showModal();
-  formFields.title.focus();
+  (formFields[focusField] || formFields.title).focus();
   renderIcons();
 }
 

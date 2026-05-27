@@ -678,6 +678,16 @@ select:disabled {
   color: var(--text);
 }
 
+.category-pill {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.category-pill:hover {
+  border-color: var(--accent-strong);
+  color: #54764b;
+}
+
 .tag {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.62);
