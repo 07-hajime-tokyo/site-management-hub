@@ -526,7 +526,7 @@ select:disabled {
 .quick-grid,
 .tool-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -785,6 +785,112 @@ select:disabled {
   color: var(--muted);
   font-family: Inter, system-ui, sans-serif;
   font-size: 0.74rem;
+}
+
+.tool-card {
+  min-height: 0;
+}
+
+.tool-card:not(.sheet-group-card) {
+  grid-template-columns: 42px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 86px;
+  padding: 14px 16px;
+}
+
+.tool-card:not(.sheet-group-card).is-compact {
+  min-height: 86px;
+}
+
+.tool-card:not(.sheet-group-card) .card-top {
+  display: contents;
+}
+
+.tool-card:not(.sheet-group-card) .tool-favicon {
+  grid-column: 1;
+}
+
+.tool-card:not(.sheet-group-card) .card-text-link {
+  grid-column: 2;
+  min-width: 0;
+}
+
+.tool-card:not(.sheet-group-card) .card-text-link p:not(.card-url),
+.tool-card:not(.sheet-group-card) .kind-line,
+.tool-card:not(.sheet-group-card) .open-link,
+.tool-card:not(.sheet-group-card) .card-meta .pill:not(.category-pill) {
+  display: none;
+}
+
+.tool-card:not(.sheet-group-card) h4 {
+  margin: 0 0 3px;
+}
+
+.tool-card:not(.sheet-group-card) .card-meta {
+  grid-column: 3;
+  margin-top: 0;
+}
+
+.tool-card:not(.sheet-group-card) .card-actions {
+  grid-column: 4;
+}
+
+.sheet-group-card {
+  min-height: 0;
+  padding: 14px 16px;
+}
+
+.sheet-group-card .kind-line,
+.sheet-group-card > p {
+  display: none;
+}
+
+.sheet-group-card > h4 {
+  margin: 0;
+}
+
+.sheet-group-toggle {
+  margin-top: 12px;
+}
+
+.sheet-group-toggle > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #54764b;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 800;
+  list-style: none;
+  padding: 4px 11px;
+}
+
+.sheet-group-toggle > summary::-webkit-details-marker {
+  display: none;
+}
+
+.sheet-group-toggle > summary i {
+  width: 16px;
+  height: 16px;
+  transition: transform 160ms ease;
+}
+
+.sheet-group-toggle[open] > summary i {
+  transform: rotate(180deg);
+}
+
+.sheet-group-toggle .sheet-group-list {
+  margin-top: 10px;
+}
+
+.table-wrap th:nth-child(5),
+.last-opened-cell {
+  display: none;
 }
 
 .empty-state {

@@ -505,9 +505,15 @@ function createSheetGroupCards(tools) {
           </div>
           <h4>${escapeHtml(category)}</h4>
           <p>${escapeHtml(category)}に該当するスプレッドシート</p>
-          <div class="sheet-group-list">
+          <details class="sheet-group-toggle" ${items.length === 1 ? "open" : ""}>
+            <summary>
+              <span>${items.length === 1 ? "スプレッドシート" : "スプレッドシートを表示"}</span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="sheet-group-list">
             ${links}
-          </div>
+            </div>
+          </details>
         </article>
       `;
     })
@@ -566,7 +572,7 @@ function createTableRow(tool) {
       <td><button class="pill category-pill" type="button" data-action="edit-category">${escapeHtml(tool.category)}</button></td>
       <td>${typeLabels[tool.type] || tool.type}</td>
       <td>${statusLabels[tool.status] || tool.status}</td>
-      <td>${tool.lastOpenedAt ? formatDate(tool.lastOpenedAt) : "未オープン"}</td>
+      <td class="last-opened-cell">${tool.lastOpenedAt ? formatDate(tool.lastOpenedAt) : "未オープン"}</td>
       <td>
         <div class="row-actions">
           <button class="icon-only ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
