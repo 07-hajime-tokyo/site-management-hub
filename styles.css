@@ -767,7 +767,7 @@ select:disabled {
 }
 
 .sheet-group-item strong {
-  color: var(--ink);
+  color: #54764b;
   font-size: 0.92rem;
 }
 
