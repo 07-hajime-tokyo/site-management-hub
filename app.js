@@ -11,6 +11,8 @@ const typeLabels = {
   report: "レポート",
 };
 
+const typeOrder = ["site", "sheet", "doc", "report"];
+
 const statusLabels = {
   active: "稼働中",
   review: "要確認",
@@ -367,13 +369,13 @@ function renderCategoryNav() {
 }
 
 function renderTypeNav() {
-  const types = ["all", "site", "sheet", "doc", "report"];
+  const types = typeOrder;
   const tools = getTools();
   const counts = countBy(tools, "type");
   el.typeNav.innerHTML = types
     .map((type) => {
       const active = state.type === type ? " is-active" : "";
-      const count = type === "all" ? tools.length : counts[type] || 0;
+      const count = counts[type] || 0;
       return `
         <button class="nav-button accent-teal${active}" type="button" data-type="${type}">
           <i data-lucide="${getTypeIcon(type)}" aria-hidden="true"></i>
@@ -386,7 +388,7 @@ function renderTypeNav() {
 
   el.typeNav.querySelectorAll("[data-type]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.type = button.dataset.type;
+      state.type = state.type === button.dataset.type ? "all" : button.dataset.type;
       renderTypeNav();
       renderLibrary();
       renderIcons();
@@ -424,7 +426,7 @@ function renderQuickAccess() {
 
   el.quickGrid.hidden = false;
   el.quickGrid.innerHTML = items
-    .map((tool, index) => createToolCard(tool, index, true))
+    .map((tool) => createToolCard(tool, true))
     .join("");
   bindCardActions(el.quickGrid);
   renderIcons();
@@ -432,8 +434,7 @@ function renderQuickAccess() {
 
 function renderLibrary() {
   const filtered = getFilteredTools();
-  const title = state.category === "all" ? typeLabels[state.type] : state.category;
-  el.libraryTitle.textContent = title;
+  el.libraryTitle.textContent = getLibraryTitle();
   el.resultNote.textContent = `${filtered.length}件`;
   const emptyText = el.emptyState.querySelector("p");
   if (emptyText) {
@@ -448,6 +449,7 @@ function renderLibrary() {
   el.emptyState.hidden = filtered.length > 0;
   el.toolGrid.hidden = state.view !== "grid" || filtered.length === 0;
   el.tableWrap.hidden = state.view !== "table" || filtered.length === 0;
+  el.toolGrid.classList.toggle("is-sectioned", state.type === "all");
 
   document.querySelectorAll("[data-view]").forEach((button) => {
     const active = button.dataset.view === state.view;
@@ -457,9 +459,11 @@ function renderLibrary() {
 
   if (state.view === "grid") {
     el.toolGrid.innerHTML =
-      state.type === "sheet"
+      state.type === "all"
+        ? createTypeSections(filtered)
+        : state.type === "sheet"
         ? createSheetGroupCards(filtered)
-        : filtered.map((tool, index) => createToolCard(tool, index)).join("");
+        : filtered.map((tool) => createToolCard(tool)).join("");
     bindCardActions(el.toolGrid);
   } else {
     el.toolTable.innerHTML = filtered.map(createTableRow).join("");
@@ -469,10 +473,51 @@ function renderLibrary() {
   renderIcons();
 }
 
+function getLibraryTitle() {
+  if (state.type !== "all") {
+    return state.category === "all"
+      ? typeLabels[state.type] || state.type
+      : `${state.category} / ${typeLabels[state.type] || state.type}`;
+  }
+  return state.category === "all" ? "種類別" : state.category;
+}
+
+function createTypeSections(tools) {
+  return getVisibleTypes(tools)
+    .map((type) => {
+      const items = tools.filter((tool) => tool.type === type);
+      const cards = type === "sheet"
+        ? createSheetGroupCards(items)
+        : items.map((tool) => createToolCard(tool)).join("");
+
+      return `
+        <section class="library-kind-section" data-type-section="${escapeAttribute(type)}">
+          <div class="library-kind-heading">
+            <h4>${escapeHtml(typeLabels[type] || type)}</h4>
+            <span>${items.length}件</span>
+          </div>
+          <div class="tool-grid-section">
+            ${cards}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
+}
+
+function getVisibleTypes(tools) {
+  const types = [...new Set(tools.map((tool) => tool.type || "site"))];
+  const ordered = typeOrder.filter((type) => types.includes(type));
+  const extras = types
+    .filter((type) => !typeOrder.includes(type))
+    .sort((a, b) => a.localeCompare(b, "ja"));
+  return [...ordered, ...extras];
+}
+
 function createSheetGroupCards(tools) {
   const groups = groupByCategory(tools);
   return groups
-    .map(([category, items], index) => {
+    .map(([category, items]) => {
       const accent = getAccentClass(category);
       const links = items
         .map((tool) => {
@@ -496,15 +541,10 @@ function createSheetGroupCards(tools) {
 
       return `
         <article class="tool-card sheet-group-card ${accent}" data-group="${escapeAttribute(category)}">
-          <div class="card-top">
-            <div class="tool-favicon" aria-hidden="true">${String(index + 1).padStart(2, "0")}</div>
+          <div class="sheet-group-head">
+            <h4>${escapeHtml(category)}</h4>
             <span class="pill">${items.length}件</span>
           </div>
-          <div class="kind-line">
-            <span class="kind-pill"><i data-lucide="table-2" aria-hidden="true"></i>スプレッドシート</span>
-          </div>
-          <h4>${escapeHtml(category)}</h4>
-          <p>${escapeHtml(category)}に該当するスプレッドシート</p>
           <details class="sheet-group-toggle" ${items.length === 1 ? "open" : ""}>
             <summary>
               <span>${items.length === 1 ? "スプレッドシート" : "スプレッドシートを表示"}</span>
@@ -520,15 +560,12 @@ function createSheetGroupCards(tools) {
     .join("");
 }
 
-function createToolCard(tool, index, compact = false) {
+function createToolCard(tool, compact = false) {
   const accent = getAccentClass(tool.category);
-  const lastOpened = tool.lastOpenedAt ? formatDate(tool.lastOpenedAt) : "未オープン";
   const hostname = getHostname(tool.url);
-  const shared = isSharedMode();
   return `
     <article class="tool-card ${compact ? "is-compact" : ""} ${accent}" data-id="${tool.id}">
       <div class="card-top">
-        <div class="tool-favicon" aria-hidden="true">${getTypeInitial(tool.type)}</div>
         <div class="card-actions">
           <button class="icon-only ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
             <i data-lucide="${tool.pinned ? "star" : "star"}" aria-hidden="true"></i>
@@ -541,9 +578,6 @@ function createToolCard(tool, index, compact = false) {
           </button>
         </div>
       </div>
-      <div class="kind-line">
-        <span class="kind-pill"><i data-lucide="${getTypeIcon(tool.type)}" aria-hidden="true"></i>${typeLabels[tool.type] || tool.type}</span>
-      </div>
       <a class="card-text-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
         <h4>${escapeHtml(tool.title)}</h4>
         <p class="card-url">${escapeHtml(hostname)}</p>
@@ -553,16 +587,11 @@ function createToolCard(tool, index, compact = false) {
         <button class="pill category-pill" type="button" data-action="edit-category">${escapeHtml(tool.category)}</button>
         <span class="pill">${statusLabels[tool.status] || tool.status}</span>
       </div>
-      <a class="open-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
-        <i data-lucide="clock-3" aria-hidden="true"></i>
-        開く · 最終アクセス ${lastOpened}
-      </a>
     </article>
   `;
 }
 
 function createTableRow(tool) {
-  const shared = isSharedMode();
   return `
     <tr data-id="${tool.id}">
       <td>
@@ -1021,16 +1050,6 @@ function getTypeIcon(type) {
     report: "bar-chart-3",
   };
   return icons[type] || "link";
-}
-
-function getTypeInitial(type) {
-  const initials = {
-    site: "W",
-    sheet: "S",
-    doc: "D",
-    report: "R",
-  };
-  return initials[type] || "M";
 }
 
 function countBy(items, key) {

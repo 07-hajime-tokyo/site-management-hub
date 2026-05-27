@@ -524,10 +524,40 @@ select:disabled {
 }
 
 .quick-grid,
-.tool-grid {
+.tool-grid,
+.tool-grid-section {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+}
+
+.tool-grid.is-sectioned {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 26px;
+}
+
+.library-kind-section {
+  display: grid;
+  gap: 12px;
+}
+
+.library-kind-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.library-kind-heading h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.03rem;
+}
+
+.library-kind-heading span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
 .tool-card {
@@ -792,7 +822,7 @@ select:disabled {
 }
 
 .tool-card:not(.sheet-group-card) {
-  grid-template-columns: 42px minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 14px;
   min-height: 86px;
@@ -807,12 +837,8 @@ select:disabled {
   display: contents;
 }
 
-.tool-card:not(.sheet-group-card) .tool-favicon {
-  grid-column: 1;
-}
-
 .tool-card:not(.sheet-group-card) .card-text-link {
-  grid-column: 2;
+  grid-column: 1;
   min-width: 0;
 }
 
@@ -828,12 +854,12 @@ select:disabled {
 }
 
 .tool-card:not(.sheet-group-card) .card-meta {
-  grid-column: 3;
+  grid-column: 2;
   margin-top: 0;
 }
 
 .tool-card:not(.sheet-group-card) .card-actions {
-  grid-column: 4;
+  grid-column: 3;
 }
 
 .sheet-group-card {
@@ -846,8 +872,18 @@ select:disabled {
   display: none;
 }
 
-.sheet-group-card > h4 {
+.sheet-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sheet-group-head h4 {
   margin: 0;
+  color: var(--ink);
+  font-size: 1.02rem;
+  line-height: 1.35;
 }
 
 .sheet-group-toggle {
@@ -1175,7 +1211,8 @@ svg {
   }
 
   .quick-grid,
-  .tool-grid {
+  .tool-grid,
+  .tool-grid-section {
     grid-template-columns: 1fr;
   }
 
