@@ -340,13 +340,19 @@ select {
 }
 
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 12;
   display: grid;
   grid-template-columns: minmax(260px, 1fr) auto;
   align-items: center;
   gap: 24px;
   min-height: 78px;
+  margin: -30px -30px 0;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 22px;
+  background: rgba(244, 237, 224, 0.92);
+  backdrop-filter: blur(14px);
+  padding: 30px 30px 22px;
 }
 
 .topbar-actions {
@@ -1473,6 +1479,11 @@ svg {
   .workspace {
     overflow: visible;
     padding: 22px 18px 40px;
+  }
+
+  .topbar {
+    margin: -22px -18px 0;
+    padding: 22px 18px 18px;
   }
 
   .page-title {
