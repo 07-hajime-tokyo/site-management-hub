@@ -851,7 +851,7 @@ select:disabled {
 
 .sheet-group-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 38px;
+  grid-template-columns: minmax(0, 1fr) 38px 38px;
   align-items: stretch;
   gap: 8px;
 }
@@ -870,11 +870,18 @@ select:disabled {
   text-decoration: none;
 }
 
+.sheet-group-pin,
 .sheet-group-edit {
   width: 38px;
   min-height: 52px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.78);
+}
+
+.sheet-group-pin.is-pinned {
+  border-color: var(--border);
+  background: var(--paper);
+  color: var(--honey);
 }
 
 .sheet-group-item:hover {

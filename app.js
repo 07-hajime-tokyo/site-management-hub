@@ -537,6 +537,9 @@ function createSheetGroupCards(tools) {
                 </span>
                 <i data-lucide="external-link" aria-hidden="true"></i>
               </a>
+              <button class="icon-only sheet-group-pin ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
+                <i data-lucide="star" aria-hidden="true"></i>
+              </button>
               <button class="icon-only sheet-group-edit" type="button" data-action="edit" aria-label="編集">
                 <i data-lucide="pencil" aria-hidden="true"></i>
               </button>
