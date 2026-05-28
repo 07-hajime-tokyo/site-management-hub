@@ -851,9 +851,33 @@ select:disabled {
 
 .sheet-group-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 38px 38px;
+  grid-template-columns: 28px minmax(0, 1fr) 38px 38px;
   align-items: stretch;
   gap: 8px;
+}
+
+.sheet-drag-handle {
+  display: grid;
+  min-height: 52px;
+  place-items: center;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.54);
+  color: var(--muted);
+  cursor: grab;
+}
+
+.sheet-drag-handle:active {
+  cursor: grabbing;
+}
+
+.sheet-group-row.is-dragging {
+  opacity: 0.48;
+}
+
+.sheet-group-row.is-drop-target .sheet-group-item {
+  border-color: var(--accent-strong);
+  background: #fffaf2;
 }
 
 .sheet-group-item {

@@ -459,6 +459,7 @@ function renderLibrary() {
         ? createSheetGroupCards(filtered)
         : filtered.map((tool) => createToolCard(tool)).join("");
     bindCardActions(el.toolGrid);
+    bindSheetDrag(el.toolGrid);
   } else {
     el.toolTable.innerHTML = filtered.map(createTableRow).join("");
     bindCardActions(el.toolTable);
@@ -523,13 +524,17 @@ function getVisibleTypes(tools) {
 function createSheetGroupCards(tools) {
   const groups = groupByCategory(tools);
   return groups
-    .map(([category, items]) => {
+    .map(([category, rawItems]) => {
+      const items = [...rawItems].sort(compareSheetOrder);
       const accent = getAccentClass(category);
       const links = items
         .map((tool) => {
           const hostname = getHostname(tool.url);
           return `
-            <div class="sheet-group-row" data-id="${tool.id}">
+            <div class="sheet-group-row" data-id="${tool.id}" data-category="${escapeAttribute(category)}">
+              <span class="sheet-drag-handle" draggable="true" aria-label="並び替え" role="button" tabindex="0">
+                <i data-lucide="grip-vertical" aria-hidden="true"></i>
+              </span>
               <a class="sheet-group-item" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
                 <span>
                   <strong>${escapeHtml(tool.title)}</strong>
@@ -629,6 +634,18 @@ function getRepositoryLabel(value) {
   }
 }
 
+function compareSheetOrder(a, b) {
+  const orderA = getDisplayOrder(a);
+  const orderB = getDisplayOrder(b);
+  if (orderA !== orderB) return orderA - orderB;
+  return a.title.localeCompare(b.title, "ja");
+}
+
+function getDisplayOrder(tool) {
+  const order = Number(tool.displayOrder);
+  return Number.isFinite(order) ? order : Number.MAX_SAFE_INTEGER;
+}
+
 function createTableRow(tool) {
   return `
     <tr data-id="${tool.id}">
@@ -679,6 +696,55 @@ function bindCardActions(root) {
       if (action === "copy") copyUrl(tool);
       if (action === "edit") openDialog(tool);
       if (action === "edit-category") openDialog(tool, "category");
+    });
+  });
+}
+
+function bindSheetDrag(root) {
+  const handles = root.querySelectorAll(".sheet-drag-handle");
+  const rows = root.querySelectorAll(".sheet-group-row");
+
+  handles.forEach((handle) => {
+    handle.addEventListener("dragstart", (event) => {
+      const row = handle.closest(".sheet-group-row");
+      if (!row) return;
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", row.dataset.id || "");
+      event.dataTransfer.setData("application/x-sheet-category", row.dataset.category || "");
+      row.classList.add("is-dragging");
+    });
+
+    handle.addEventListener("dragend", () => {
+      root.querySelectorAll(".sheet-group-row").forEach((row) => {
+        row.classList.remove("is-dragging", "is-drop-target");
+      });
+    });
+  });
+
+  rows.forEach((row) => {
+    row.addEventListener("dragover", (event) => {
+      const sourceCategory = event.dataTransfer.getData("application/x-sheet-category");
+      if (sourceCategory && sourceCategory !== row.dataset.category) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      row.classList.add("is-drop-target");
+    });
+
+    row.addEventListener("dragleave", () => {
+      row.classList.remove("is-drop-target");
+    });
+
+    row.addEventListener("drop", (event) => {
+      const sourceId = event.dataTransfer.getData("text/plain");
+      const sourceCategory = event.dataTransfer.getData("application/x-sheet-category");
+      const targetId = row.dataset.id || "";
+      const targetCategory = row.dataset.category || "";
+      const bounds = row.getBoundingClientRect();
+      const insertAfter = event.clientY > bounds.top + bounds.height / 2;
+      row.classList.remove("is-drop-target");
+      if (!sourceId || !targetId || sourceId === targetId || sourceCategory !== targetCategory) return;
+      event.preventDefault();
+      reorderSheets(sourceId, targetId, targetCategory, insertAfter);
     });
   });
 }
@@ -740,6 +806,9 @@ function closeDialog() {
 }
 
 function saveFromForm() {
+  const existingTool = state.editingId
+    ? getBaseTools().find((tool) => tool.id === state.editingId)
+    : null;
   if (isSharedMode()) {
     if (state.editingId) {
       updateSharedToolFromForm();
@@ -758,6 +827,7 @@ function saveFromForm() {
     type: formFields.type.value,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
+    displayOrder: existingTool?.displayOrder,
     tags: state.editingId
       ? getTools().find((tool) => tool.id === state.editingId)?.tags || []
       : [],
@@ -791,6 +861,7 @@ function saveFromForm() {
 }
 
 async function updateSharedToolFromForm() {
+  const existingTool = getBaseTools().find((tool) => tool.id === state.editingId);
   const payload = {
     id: state.editingId,
     title: formFields.title.value.trim(),
@@ -800,6 +871,7 @@ async function updateSharedToolFromForm() {
     type: formFields.type.value,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
+    displayOrder: existingTool?.displayOrder,
   };
 
   try {
@@ -869,6 +941,70 @@ async function createSharedToolFromForm() {
     showToast("Notion DBに保存しました");
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Notion DBに保存できませんでした");
+  }
+}
+
+function reorderSheets(sourceId, targetId, category, insertAfter = false) {
+  const tools = getBaseTools();
+  const sheetItems = tools
+    .filter((tool) => tool.type === "sheet" && tool.category === category)
+    .sort(compareSheetOrder);
+  const fromIndex = sheetItems.findIndex((tool) => tool.id === sourceId);
+  let toIndex = sheetItems.findIndex((tool) => tool.id === targetId);
+  if (fromIndex < 0 || toIndex < 0) return;
+
+  const [moved] = sheetItems.splice(fromIndex, 1);
+  if (fromIndex < toIndex) toIndex -= 1;
+  if (insertAfter) toIndex += 1;
+  sheetItems.splice(toIndex, 0, moved);
+  const orderedItems = sheetItems.map((tool, index) => ({
+    ...tool,
+    displayOrder: (index + 1) * 10,
+  }));
+  const orderedMap = new Map(orderedItems.map((tool) => [tool.id, tool]));
+
+  setTools(tools.map((tool) => orderedMap.get(tool.id) || tool));
+  if (isSharedMode()) {
+    persistSharedSheetOrder(orderedItems);
+  } else {
+    persist();
+    showToast("順番を保存しました");
+  }
+  render();
+}
+
+async function persistSharedSheetOrder(tools) {
+  try {
+    await Promise.all(tools.map((tool) => updateSharedToolOrder(tool)));
+    showToast("順番を保存しました");
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "順番を保存できませんでした");
+  }
+}
+
+async function updateSharedToolOrder(tool) {
+  const response = await fetch("/api/shared-tools", {
+    cache: "no-store",
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      id: tool.id,
+      title: tool.title,
+      url: tool.url,
+      repositoryUrl: tool.repositoryUrl,
+      category: tool.category,
+      type: tool.type,
+      status: tool.status,
+      description: tool.description,
+      displayOrder: tool.displayOrder,
+    }),
+  });
+  const result = await response.json();
+  if (!response.ok || !result.tool) {
+    throw new Error(result.error || result.message || "順番を保存できませんでした");
   }
 }
 
@@ -954,6 +1090,7 @@ function importData(event) {
         status: tool.status || "active",
         description: String(tool.description || ""),
         repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
+        displayOrder: normalizeDisplayOrder(tool.displayOrder),
         tags: Array.isArray(tool.tags) ? tool.tags.map(String) : parseTags(tool.tags || ""),
         pinned: Boolean(tool.pinned),
         createdAt: tool.createdAt || new Date().toISOString(),
@@ -1053,6 +1190,7 @@ function normalizeToolList(tools) {
     type: tool.type || "site",
     status: tool.status || "active",
     repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
+    displayOrder: normalizeDisplayOrder(tool.displayOrder),
     tags: Array.isArray(tool.tags) ? tool.tags : parseTags(tool.tags || ""),
   }));
 }
@@ -1064,6 +1202,12 @@ function normalizeCategory(value) {
   }
   if (category === "OEM・輸入") return "中国輸入";
   return category;
+}
+
+function normalizeDisplayOrder(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const order = Number(value);
+  return Number.isFinite(order) ? order : null;
 }
 
 function getCategories() {

@@ -201,7 +201,7 @@ async function updateNotionToolPage(token, source, pageId, tool) {
 }
 
 function createNotionProperties(tool) {
-  return {
+  const properties = {
     名前: {
       title: [{ text: { content: tool.title } }],
     },
@@ -225,13 +225,24 @@ function createNotionProperties(tool) {
         ? [{ text: { content: tool.description.slice(0, 2000) } }]
         : [],
     },
-    固定: {
-      checkbox: Boolean(tool.pinned),
-    },
     公開範囲: {
       select: { name: "共有" },
     },
   };
+
+  if (Object.hasOwn(tool, "pinned")) {
+    properties.固定 = {
+      checkbox: Boolean(tool.pinned),
+    };
+  }
+
+  if (Object.hasOwn(tool, "displayOrder")) {
+    properties.表示順 = {
+      number: Number.isFinite(tool.displayOrder) ? tool.displayOrder : null,
+    };
+  }
+
+  return properties;
 }
 
 function normalizeIncomingTool(body) {
@@ -253,7 +264,7 @@ function normalizeIncomingTool(body) {
     }
   }
 
-  return {
+  const tool = {
     title,
     url,
     repositoryUrl,
@@ -261,8 +272,17 @@ function normalizeIncomingTool(body) {
     type: normalizeType(body.type || "site"),
     status: normalizeStatus(body.status || "active"),
     description: String(body.description || "").trim(),
-    pinned: Boolean(body.pinned),
   };
+
+  if (Object.hasOwn(body, "pinned")) {
+    tool.pinned = Boolean(body.pinned);
+  }
+
+  if (Object.hasOwn(body, "displayOrder")) {
+    tool.displayOrder = normalizeDisplayOrder(body.displayOrder);
+  }
+
+  return tool;
 }
 
 function normalizeCategory(value) {
@@ -272,6 +292,12 @@ function normalizeCategory(value) {
   }
   if (category === "OEM・輸入") return "中国輸入";
   return category;
+}
+
+function normalizeDisplayOrder(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
 }
 
 function normalizeNotionPageId(value) {
@@ -346,6 +372,7 @@ function mapNotionPageToTool(page) {
     type: normalizeType(readProperty(props, ["種類", "Type"]) || "site"),
     status: normalizeStatus(readProperty(props, ["状態", "Status"]) || "active"),
     description: readProperty(props, ["説明", "Description", "メモ", "Memo"]) || "",
+    displayOrder: normalizeDisplayOrder(readProperty(props, ["表示順", "Order", "Sort"])),
     tags: [],
     pinned: Boolean(readProperty(props, ["固定", "Pinned", "Pin"])),
     createdAt: page.created_time || new Date().toISOString(),
@@ -364,6 +391,7 @@ function readProperty(props, names) {
   if (prop.type === "select") return prop.select?.name || "";
   if (prop.type === "status") return prop.status?.name || "";
   if (prop.type === "checkbox") return prop.checkbox;
+  if (prop.type === "number") return prop.number;
   if (prop.type === "multi_select") return prop.multi_select?.map((item) => item.name).join(", ") || "";
   if (prop.type === "formula") return readFormula(prop.formula);
   return "";
