@@ -290,10 +290,13 @@ function bindEvents() {
     const value = formFields.url.value;
     if (value.includes("docs.google.com/spreadsheets")) {
       formFields.type.value = "sheet";
+      applyDefaultCategoryForType();
     } else if (value.includes("docs.google.com/document")) {
       formFields.type.value = "doc";
     }
   });
+
+  formFields.type.addEventListener("change", applyDefaultCategoryForType);
 }
 
 function render() {
@@ -823,10 +826,18 @@ function openDialog(tool = null, focusField = "title") {
   formFields.type.value = tool?.type || "site";
   formFields.status.value = tool?.status || "active";
   formFields.description.value = tool?.description || "";
+  applyDefaultCategoryForType();
 
   el.toolDialog.showModal();
   (formFields[focusField] || formFields.title).focus();
   renderIcons();
+}
+
+function applyDefaultCategoryForType() {
+  const category = formFields.category.value.trim();
+  if (formFields.type.value === "sheet" && (!category || category === "未分類" || category === "その他")) {
+    formFields.category.value = "税理士";
+  }
 }
 
 function closeDialog() {
@@ -848,13 +859,14 @@ function saveFromForm() {
     return;
   }
   const now = new Date().toISOString();
+  const toolType = formFields.type.value;
   const payload = {
     id: state.editingId || createId(formFields.title.value),
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
     repositoryUrl: formFields.repositoryUrl.value.trim(),
-    category: normalizeCategory(formFields.category.value),
-    type: formFields.type.value,
+    category: normalizeCategory(formFields.category.value, toolType),
+    type: toolType,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
     displayOrder: existingTool?.displayOrder,
@@ -892,13 +904,14 @@ function saveFromForm() {
 
 async function updateSharedToolFromForm() {
   const existingTool = getBaseTools().find((tool) => tool.id === state.editingId);
+  const toolType = formFields.type.value;
   const payload = {
     id: state.editingId,
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
     repositoryUrl: formFields.repositoryUrl.value.trim(),
-    category: normalizeCategory(formFields.category.value),
-    type: formFields.type.value,
+    category: normalizeCategory(formFields.category.value, toolType),
+    type: toolType,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
     displayOrder: existingTool?.displayOrder,
@@ -935,12 +948,13 @@ async function updateSharedToolFromForm() {
 }
 
 async function createSharedToolFromForm() {
+  const toolType = formFields.type.value;
   const payload = {
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
     repositoryUrl: formFields.repositoryUrl.value.trim(),
-    category: normalizeCategory(formFields.category.value),
-    type: formFields.type.value,
+    category: normalizeCategory(formFields.category.value, toolType),
+    type: toolType,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
     pinned: false,
@@ -1112,22 +1126,25 @@ function importData(event) {
       const parsed = JSON.parse(String(reader.result));
       const importedTools = Array.isArray(parsed) ? parsed : parsed.tools;
       if (!Array.isArray(importedTools)) throw new Error("Invalid format");
-      state.personalTools = importedTools.map((tool) => ({
-        id: tool.id || createId(tool.title || tool.url || "entry"),
-        title: String(tool.title || "無題"),
-        url: String(tool.url || ""),
-        category: normalizeCategory(tool.category),
-        type: tool.type || "site",
-        status: tool.status || "active",
-        description: String(tool.description || ""),
-        repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
-        displayOrder: normalizeDisplayOrder(tool.displayOrder),
-        tags: Array.isArray(tool.tags) ? tool.tags.map(String) : parseTags(tool.tags || ""),
-        pinned: Boolean(tool.pinned),
-        createdAt: tool.createdAt || new Date().toISOString(),
-        lastOpenedAt: tool.lastOpenedAt || "",
-        openCount: Number(tool.openCount || 0),
-      }));
+      state.personalTools = importedTools.map((tool) => {
+        const type = tool.type || "site";
+        return {
+          id: tool.id || createId(tool.title || tool.url || "entry"),
+          title: String(tool.title || "無題"),
+          url: String(tool.url || ""),
+          category: normalizeCategory(tool.category, type),
+          type,
+          status: tool.status || "active",
+          description: String(tool.description || ""),
+          repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
+          displayOrder: normalizeDisplayOrder(tool.displayOrder),
+          tags: Array.isArray(tool.tags) ? tool.tags.map(String) : parseTags(tool.tags || ""),
+          pinned: Boolean(tool.pinned),
+          createdAt: tool.createdAt || new Date().toISOString(),
+          lastOpenedAt: tool.lastOpenedAt || "",
+          openCount: Number(tool.openCount || 0),
+        };
+      });
       state.category = "all";
       state.type = "all";
       persist();
@@ -1215,19 +1232,24 @@ function normalizeTools() {
 }
 
 function normalizeToolList(tools) {
-  return tools.map((tool) => ({
-    ...tool,
-    category: normalizeCategory(tool.category),
-    type: tool.type || "site",
-    status: tool.status || "active",
-    repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
-    displayOrder: normalizeDisplayOrder(tool.displayOrder),
-    tags: Array.isArray(tool.tags) ? tool.tags : parseTags(tool.tags || ""),
-  }));
+  return tools.map((tool) => {
+    const type = tool.type || "site";
+    return {
+      ...tool,
+      category: normalizeCategory(tool.category, type),
+      type,
+      status: tool.status || "active",
+      repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
+      displayOrder: normalizeDisplayOrder(tool.displayOrder),
+      tags: Array.isArray(tool.tags) ? tool.tags : parseTags(tool.tags || ""),
+    };
+  });
 }
 
-function normalizeCategory(value) {
-  const category = String(value || "未分類").trim() || "未分類";
+function normalizeCategory(value, type = "") {
+  const fallback = type === "sheet" ? "税理士" : "未分類";
+  const category = String(value || fallback).trim() || fallback;
+  if (type === "sheet" && category === "未分類") return "税理士";
   if (["コミュニケーション", "市場調査", "取引管理", "申請・見積もり", "申請見積もり"].includes(category)) {
     return "共有";
   }

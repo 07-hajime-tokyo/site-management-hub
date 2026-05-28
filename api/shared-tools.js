@@ -206,12 +206,13 @@ function normalizeIncomingTool(body) {
     }
   }
 
+  const type = normalizeType(body.type || "site");
   const tool = {
     title,
     url,
     repositoryUrl,
-    category: normalizeCategory(body.category),
-    type: normalizeType(body.type || "site"),
+    category: normalizeCategory(body.category, type),
+    type,
     status: normalizeStatus(body.status || "active"),
     description: String(body.description || "").trim(),
   };
@@ -227,8 +228,10 @@ function normalizeIncomingTool(body) {
   return tool;
 }
 
-function normalizeCategory(value) {
-  const category = String(value || "その他").trim() || "その他";
+function normalizeCategory(value, type = "") {
+  const fallback = type === "sheet" ? "税理士" : "その他";
+  const category = String(value || fallback).trim() || fallback;
+  if (type === "sheet" && category === "未分類") return "税理士";
   if (["コミュニケーション", "市場調査", "取引管理", "申請・見積もり", "申請見積もり"].includes(category)) {
     return "共有";
   }
@@ -300,6 +303,11 @@ function mapNotionPageToTool(page) {
   const title = readProperty(props, ["名前", "Name", "タイトル", "Title"]) || "無題";
   const url = readProperty(props, ["URL", "Url", "リンク", "Link"]);
   if (!url) return null;
+  const type = normalizeType(readProperty(props, ["種類", "Type"]) || "site");
+  const category = normalizeCategory(
+    readProperty(props, ["カテゴリ", "カテゴリー", "Category"]) || (type === "sheet" ? "税理士" : "未分類"),
+    type,
+  );
 
   return {
     id: `notion-${page.id}`,
@@ -314,8 +322,8 @@ function mapNotionPageToTool(page) {
         "Github",
         "Repository",
       ]) || "",
-    category: readProperty(props, ["カテゴリ", "カテゴリー", "Category"]) || "未分類",
-    type: normalizeType(readProperty(props, ["種類", "Type"]) || "site"),
+    category,
+    type,
     status: normalizeStatus(readProperty(props, ["状態", "Status"]) || "active"),
     description: readProperty(props, ["説明", "Description", "メモ", "Memo"]) || "",
     displayOrder: normalizeDisplayOrder(readProperty(props, ["表示順", "Order", "Sort"])),
