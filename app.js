@@ -124,9 +124,10 @@ const state = {
   type: "all",
   query: "",
   view: "grid",
-  sort: "recent",
+  sort: "manual",
   editingId: null,
   draggingSheet: null,
+  draggingCard: null,
   openSheetGroups: new Set(),
 };
 
@@ -449,6 +450,7 @@ function renderLibrary() {
   el.toolGrid.hidden = state.view !== "grid" || filtered.length === 0;
   el.tableWrap.hidden = state.view !== "table" || filtered.length === 0;
   el.toolGrid.classList.toggle("is-sectioned", state.type === "all");
+  el.sortSelect.value = state.sort;
 
   document.querySelectorAll("[data-view]").forEach((button) => {
     const active = button.dataset.view === state.view;
@@ -464,6 +466,7 @@ function renderLibrary() {
         ? createSheetGroupCards(filtered)
         : filtered.map((tool) => createToolCard(tool)).join("");
     bindCardActions(el.toolGrid);
+    bindCardDrag(el.toolGrid);
     bindSheetDrag(el.toolGrid);
     bindSheetGroupToggles(el.toolGrid);
   } else {
@@ -560,7 +563,7 @@ function createSheetGroupCards(tools) {
         .join("");
 
       return `
-        <article class="tool-card sheet-group-card ${accent}" data-group="${escapeAttribute(category)}">
+        <article class="tool-card sheet-group-card ${accent}" data-card-key="sheet:${escapeAttribute(category)}" data-card-kind="sheet-group" data-card-type="sheet" data-card-category="${escapeAttribute(category)}" data-group="${escapeAttribute(category)}">
           <div class="sheet-group-head">
             <div class="sheet-group-title">
               <span class="card-icon" aria-hidden="true">
@@ -568,7 +571,12 @@ function createSheetGroupCards(tools) {
               </span>
               <h4>${escapeHtml(category)}</h4>
             </div>
-            <span class="pill">${items.length}件</span>
+            <div class="sheet-group-controls">
+              <span class="card-drag-handle" draggable="true" aria-label="カードを並び替え" role="button" tabindex="0">
+                <i data-lucide="grip-vertical" aria-hidden="true"></i>
+              </span>
+              <span class="pill">${items.length}件</span>
+            </div>
           </div>
           <details class="sheet-group-toggle" data-sheet-group="${escapeAttribute(category)}" ${isSheetGroupOpen(category) ? "open" : ""}>
             <summary>
@@ -590,7 +598,7 @@ function createToolCard(tool, compact = false) {
   const hostname = getHostname(tool.url);
   const repositoryLink = createRepositoryLink(tool);
   return `
-    <article class="tool-card ${compact ? "is-compact" : ""} ${accent}" data-id="${tool.id}">
+    <article class="tool-card ${compact ? "is-compact" : ""} ${accent}" data-id="${tool.id}" data-card-key="${escapeAttribute(tool.id)}" data-card-kind="tool" data-card-type="${escapeAttribute(tool.type)}">
       <div class="card-icon" aria-hidden="true">
         <i data-lucide="${getTypeIcon(tool.type)}" aria-hidden="true"></i>
       </div>
@@ -603,6 +611,11 @@ function createToolCard(tool, compact = false) {
         ${repositoryLink}
       </div>
       <div class="card-actions">
+        ${compact ? "" : `
+          <span class="card-drag-handle" draggable="true" aria-label="カードを並び替え" role="button" tabindex="0">
+            <i data-lucide="grip-vertical" aria-hidden="true"></i>
+          </span>
+        `}
         <button class="icon-only ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
           <i data-lucide="${tool.pinned ? "star" : "star"}" aria-hidden="true"></i>
         </button>
@@ -651,9 +664,25 @@ function compareSheetOrder(a, b) {
   return a.title.localeCompare(b.title, "ja");
 }
 
+function compareCardOrder(a, b) {
+  const orderA = getCardOrder(a);
+  const orderB = getCardOrder(b);
+  const hasOrderA = Number.isFinite(orderA);
+  const hasOrderB = Number.isFinite(orderB);
+  if (hasOrderA && hasOrderB && orderA !== orderB) return orderA - orderB;
+  if (hasOrderA && !hasOrderB) return -1;
+  if (!hasOrderA && hasOrderB) return 1;
+  return 0;
+}
+
 function getDisplayOrder(tool) {
   const order = Number(tool.displayOrder);
   return Number.isFinite(order) ? order : Number.MAX_SAFE_INTEGER;
+}
+
+function getCardOrder(tool) {
+  const order = Number(tool.cardOrder);
+  return Number.isFinite(order) ? order : Number.NaN;
 }
 
 function isSheetGroupOpen(category) {
@@ -712,6 +741,84 @@ function bindCardActions(root) {
       if (action === "edit-category") openDialog(tool, "category");
     });
   });
+}
+
+function bindCardDrag(root) {
+  const handles = root.querySelectorAll(".card-drag-handle");
+  const cards = root.querySelectorAll("[data-card-key]");
+
+  handles.forEach((handle) => {
+    handle.addEventListener("dragstart", (event) => {
+      const card = handle.closest("[data-card-key]");
+      const container = card?.closest(".tool-grid-section, .tool-grid");
+      if (!card || !container) return;
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", card.dataset.cardKey || "");
+      state.draggingCard = {
+        key: card.dataset.cardKey || "",
+        kind: card.dataset.cardKind || "tool",
+        type: card.dataset.cardType || "",
+        category: card.dataset.cardCategory || "",
+        containerKey: getCardContainerKey(container),
+      };
+      card.classList.add("is-card-dragging");
+    });
+
+    handle.addEventListener("dragend", () => {
+      cleanupCardDrag(root);
+      state.draggingCard = null;
+    });
+  });
+
+  cards.forEach((card) => {
+    card.addEventListener("dragover", (event) => {
+      const container = card.closest(".tool-grid-section, .tool-grid");
+      if (!state.draggingCard || !container) return;
+      if (state.draggingCard.containerKey !== getCardContainerKey(container)) return;
+      if (state.draggingCard.key === card.dataset.cardKey) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      const insertAfter = shouldInsertCardAfter(card, event);
+      card.classList.add("is-card-drop-target");
+      card.classList.toggle("is-card-drop-after", insertAfter);
+    });
+
+    card.addEventListener("dragleave", () => {
+      card.classList.remove("is-card-drop-target", "is-card-drop-after");
+    });
+
+    card.addEventListener("drop", (event) => {
+      const container = card.closest(".tool-grid-section, .tool-grid");
+      if (!state.draggingCard || !container) return;
+      if (state.draggingCard.containerKey !== getCardContainerKey(container)) return;
+      const sourceKey = state.draggingCard.key || event.dataTransfer.getData("text/plain");
+      const targetKey = card.dataset.cardKey || "";
+      if (!sourceKey || !targetKey || sourceKey === targetKey) return;
+      event.preventDefault();
+      const insertAfter = shouldInsertCardAfter(card, event);
+      card.classList.remove("is-card-drop-target", "is-card-drop-after");
+      reorderCards(sourceKey, targetKey, insertAfter);
+    });
+  });
+}
+
+function cleanupCardDrag(root) {
+  root.querySelectorAll("[data-card-key]").forEach((card) => {
+    card.classList.remove("is-card-dragging", "is-card-drop-target", "is-card-drop-after");
+  });
+}
+
+function getCardContainerKey(container) {
+  const section = container.closest("[data-type-section]");
+  if (section?.dataset.typeSection) return `section:${section.dataset.typeSection}`;
+  return `root:${state.type}:${state.category}:${state.query}`;
+}
+
+function shouldInsertCardAfter(card, event) {
+  const bounds = card.getBoundingClientRect();
+  const midY = bounds.top + bounds.height / 2;
+  const midX = bounds.left + bounds.width / 2;
+  return event.clientY > midY || (event.clientY >= bounds.top && event.clientY <= bounds.bottom && event.clientX > midX);
 }
 
 function bindSheetDrag(root) {
@@ -804,7 +911,10 @@ function getFilteredTools() {
       return haystack.includes(state.query);
     })
     .sort((a, b) => {
-      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+      if (state.sort !== "manual" && a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+      if (state.sort === "manual") {
+        return compareCardOrder(a, b);
+      }
       if (state.sort === "recent") {
         return getTime(b.lastOpenedAt) - getTime(a.lastOpenedAt);
       }
@@ -872,6 +982,7 @@ function saveFromForm() {
     status: formFields.status.value,
     description: formFields.description.value.trim(),
     displayOrder: existingTool?.displayOrder,
+    cardOrder: existingTool?.cardOrder,
     tags: state.editingId
       ? getTools().find((tool) => tool.id === state.editingId)?.tags || []
       : [],
@@ -917,6 +1028,7 @@ async function updateSharedToolFromForm() {
     status: formFields.status.value,
     description: formFields.description.value.trim(),
     displayOrder: existingTool?.displayOrder,
+    cardOrder: existingTool?.cardOrder,
   };
 
   try {
@@ -959,6 +1071,7 @@ async function createSharedToolFromForm() {
     type: toolType,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
+    cardOrder: null,
     pinned: false,
   };
 
@@ -990,6 +1103,78 @@ async function createSharedToolFromForm() {
   }
 }
 
+function reorderCards(sourceKey, targetKey, insertAfter = false) {
+  const dragging = state.draggingCard;
+  if (!dragging) return;
+  const changedTools =
+    dragging.kind === "sheet-group"
+      ? reorderSheetGroupCards(sourceKey.replace(/^sheet:/, ""), targetKey.replace(/^sheet:/, ""), insertAfter)
+      : reorderToolCards(sourceKey, targetKey, dragging.type, insertAfter);
+
+  if (!changedTools.length) return;
+  state.sort = "manual";
+  el.sortSelect.value = "manual";
+  persistCardOrder(changedTools);
+  render();
+}
+
+function reorderToolCards(sourceId, targetId, type, insertAfter = false) {
+  const tools = getBaseTools();
+  const visibleItems = getFilteredTools().filter((tool) => tool.type === type);
+  const orderedItems = reorderItemList(visibleItems, sourceId, targetId, insertAfter, (tool) => tool.id);
+  if (!orderedItems.length) return [];
+
+  const updatedItems = orderedItems.map((tool, index) => ({
+    ...tool,
+    cardOrder: (index + 1) * 10,
+  }));
+  const orderedMap = new Map(updatedItems.map((tool) => [tool.id, tool]));
+  setTools(tools.map((tool) => orderedMap.get(tool.id) || tool));
+  return updatedItems;
+}
+
+function reorderSheetGroupCards(sourceCategory, targetCategory, insertAfter = false) {
+  const tools = getBaseTools();
+  const visibleSheets = getFilteredTools().filter((tool) => tool.type === "sheet");
+  const groups = groupByCategory(visibleSheets);
+  const orderedGroups = reorderItemList(groups, sourceCategory, targetCategory, insertAfter, ([category]) => category);
+  if (!orderedGroups.length) return [];
+
+  const groupOrders = new Map(
+    orderedGroups.map(([category], index) => [category, (index + 1) * 10]),
+  );
+  const updatedItems = tools
+    .filter((tool) => tool.type === "sheet" && groupOrders.has(tool.category))
+    .map((tool) => ({
+      ...tool,
+      cardOrder: groupOrders.get(tool.category),
+    }));
+  const orderedMap = new Map(updatedItems.map((tool) => [tool.id, tool]));
+  setTools(tools.map((tool) => orderedMap.get(tool.id) || tool));
+  return updatedItems;
+}
+
+function reorderItemList(items, sourceKey, targetKey, insertAfter, getKey) {
+  const nextItems = [...items];
+  const fromIndex = nextItems.findIndex((item) => getKey(item) === sourceKey);
+  let toIndex = nextItems.findIndex((item) => getKey(item) === targetKey);
+  if (fromIndex < 0 || toIndex < 0) return [];
+  const [moved] = nextItems.splice(fromIndex, 1);
+  if (fromIndex < toIndex) toIndex -= 1;
+  if (insertAfter) toIndex += 1;
+  nextItems.splice(toIndex, 0, moved);
+  return nextItems;
+}
+
+function persistCardOrder(tools) {
+  if (isSharedMode()) {
+    persistSharedToolOrder(tools);
+    return;
+  }
+  persist();
+  showToast("順番を保存しました");
+}
+
 function reorderSheets(sourceId, targetId, category, insertAfter = false) {
   state.openSheetGroups.add(category);
   const tools = getBaseTools();
@@ -1012,7 +1197,7 @@ function reorderSheets(sourceId, targetId, category, insertAfter = false) {
 
   setTools(tools.map((tool) => orderedMap.get(tool.id) || tool));
   if (isSharedMode()) {
-    persistSharedSheetOrder(orderedItems);
+    persistSharedToolOrder(orderedItems);
   } else {
     persist();
     showToast("順番を保存しました");
@@ -1020,7 +1205,7 @@ function reorderSheets(sourceId, targetId, category, insertAfter = false) {
   render();
 }
 
-async function persistSharedSheetOrder(tools) {
+async function persistSharedToolOrder(tools) {
   try {
     await Promise.all(tools.map((tool) => updateSharedToolOrder(tool)));
     showToast("順番を保存しました");
@@ -1047,6 +1232,7 @@ async function updateSharedToolOrder(tool) {
       status: tool.status,
       description: tool.description,
       displayOrder: tool.displayOrder,
+      cardOrder: tool.cardOrder,
     }),
   });
   const result = await response.json();
@@ -1140,6 +1326,7 @@ function importData(event) {
           description: String(tool.description || ""),
           repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
           displayOrder: normalizeDisplayOrder(tool.displayOrder),
+          cardOrder: normalizeCardOrder(tool.cardOrder),
           tags: Array.isArray(tool.tags) ? tool.tags.map(String) : parseTags(tool.tags || ""),
           pinned: Boolean(tool.pinned),
           createdAt: tool.createdAt || new Date().toISOString(),
@@ -1243,6 +1430,7 @@ function normalizeToolList(tools) {
       status: tool.status || "active",
       repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
       displayOrder: normalizeDisplayOrder(tool.displayOrder),
+      cardOrder: normalizeCardOrder(tool.cardOrder),
       tags: Array.isArray(tool.tags) ? tool.tags : parseTags(tool.tags || ""),
     };
   });
@@ -1260,6 +1448,12 @@ function normalizeCategory(value, type = "") {
 }
 
 function normalizeDisplayOrder(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const order = Number(value);
+  return Number.isFinite(order) ? order : null;
+}
+
+function normalizeCardOrder(value) {
   if (value === "" || value === null || value === undefined) return null;
   const order = Number(value);
   return Number.isFinite(order) ? order : null;
@@ -1284,7 +1478,23 @@ function groupByCategory(tools) {
     if (!groups.has(category)) groups.set(category, []);
     groups.get(category).push(tool);
   });
-  return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b, "ja"));
+  return [...groups.entries()].sort(([categoryA, itemsA], [categoryB, itemsB]) => {
+    const orderA = getGroupCardOrder(itemsA);
+    const orderB = getGroupCardOrder(itemsB);
+    const hasOrderA = Number.isFinite(orderA);
+    const hasOrderB = Number.isFinite(orderB);
+    if (hasOrderA && hasOrderB && orderA !== orderB) return orderA - orderB;
+    if (hasOrderA && !hasOrderB) return -1;
+    if (!hasOrderA && hasOrderB) return 1;
+    return categoryA.localeCompare(categoryB, "ja");
+  });
+}
+
+function getGroupCardOrder(items) {
+  const orders = items
+    .map((tool) => getCardOrder(tool))
+    .filter((order) => Number.isFinite(order));
+  return orders.length ? Math.min(...orders) : Number.NaN;
 }
 
 function getAccentClass(category, index = null) {

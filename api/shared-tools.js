@@ -184,6 +184,12 @@ function createNotionProperties(tool) {
     };
   }
 
+  if (Object.hasOwn(tool, "cardOrder")) {
+    properties.カード表示順 = {
+      number: Number.isFinite(tool.cardOrder) ? tool.cardOrder : null,
+    };
+  }
+
   return properties;
 }
 
@@ -225,6 +231,10 @@ function normalizeIncomingTool(body) {
     tool.displayOrder = normalizeDisplayOrder(body.displayOrder);
   }
 
+  if (Object.hasOwn(body, "cardOrder")) {
+    tool.cardOrder = normalizeCardOrder(body.cardOrder);
+  }
+
   return tool;
 }
 
@@ -240,6 +250,12 @@ function normalizeCategory(value, type = "") {
 }
 
 function normalizeDisplayOrder(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function normalizeCardOrder(value) {
   if (value === "" || value === null || value === undefined) return null;
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
@@ -327,6 +343,7 @@ function mapNotionPageToTool(page) {
     status: normalizeStatus(readProperty(props, ["状態", "Status"]) || "active"),
     description: readProperty(props, ["説明", "Description", "メモ", "Memo"]) || "",
     displayOrder: normalizeDisplayOrder(readProperty(props, ["表示順", "Order", "Sort"])),
+    cardOrder: normalizeCardOrder(readProperty(props, ["カード表示順", "Card Order", "Card Sort"])),
     tags: [],
     pinned: Boolean(readProperty(props, ["固定", "Pinned", "Pin"])),
     createdAt: page.created_time || new Date().toISOString(),

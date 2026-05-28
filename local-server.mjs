@@ -242,6 +242,12 @@ function createNotionProperties(tool) {
     };
   }
 
+  if (Object.hasOwn(tool, "cardOrder")) {
+    properties.カード表示順 = {
+      number: Number.isFinite(tool.cardOrder) ? tool.cardOrder : null,
+    };
+  }
+
   return properties;
 }
 
@@ -264,12 +270,13 @@ function normalizeIncomingTool(body) {
     }
   }
 
+  const type = normalizeType(body.type || "site");
   const tool = {
     title,
     url,
     repositoryUrl,
-    category: normalizeCategory(body.category),
-    type: normalizeType(body.type || "site"),
+    category: normalizeCategory(body.category, type),
+    type,
     status: normalizeStatus(body.status || "active"),
     description: String(body.description || "").trim(),
   };
@@ -282,11 +289,17 @@ function normalizeIncomingTool(body) {
     tool.displayOrder = normalizeDisplayOrder(body.displayOrder);
   }
 
+  if (Object.hasOwn(body, "cardOrder")) {
+    tool.cardOrder = normalizeCardOrder(body.cardOrder);
+  }
+
   return tool;
 }
 
-function normalizeCategory(value) {
-  const category = String(value || "その他").trim() || "その他";
+function normalizeCategory(value, type = "") {
+  const fallback = type === "sheet" ? "税理士" : "その他";
+  const category = String(value || fallback).trim() || fallback;
+  if (type === "sheet" && category === "未分類") return "税理士";
   if (["コミュニケーション", "市場調査", "取引管理", "申請・見積もり", "申請見積もり"].includes(category)) {
     return "共有";
   }
@@ -295,6 +308,12 @@ function normalizeCategory(value) {
 }
 
 function normalizeDisplayOrder(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function normalizeCardOrder(value) {
   if (value === "" || value === null || value === undefined) return null;
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
@@ -354,6 +373,11 @@ function mapNotionPageToTool(page) {
   const title = readProperty(props, ["名前", "Name", "タイトル", "Title"]) || "無題";
   const url = readProperty(props, ["URL", "Url", "リンク", "Link"]);
   if (!url) return null;
+  const type = normalizeType(readProperty(props, ["種類", "Type"]) || "site");
+  const category = normalizeCategory(
+    readProperty(props, ["カテゴリ", "カテゴリー", "Category"]) || (type === "sheet" ? "税理士" : "未分類"),
+    type,
+  );
 
   return {
     id: `notion-${page.id}`,
@@ -368,11 +392,12 @@ function mapNotionPageToTool(page) {
         "Github",
         "Repository",
       ]) || "",
-    category: readProperty(props, ["カテゴリ", "カテゴリー", "Category"]) || "未分類",
-    type: normalizeType(readProperty(props, ["種類", "Type"]) || "site"),
+    category,
+    type,
     status: normalizeStatus(readProperty(props, ["状態", "Status"]) || "active"),
     description: readProperty(props, ["説明", "Description", "メモ", "Memo"]) || "",
     displayOrder: normalizeDisplayOrder(readProperty(props, ["表示順", "Order", "Sort"])),
+    cardOrder: normalizeCardOrder(readProperty(props, ["カード表示順", "Card Order", "Card Sort"])),
     tags: [],
     pinned: Boolean(readProperty(props, ["固定", "Pinned", "Pin"])),
     createdAt: page.created_time || new Date().toISOString(),
