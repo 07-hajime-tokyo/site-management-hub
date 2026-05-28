@@ -768,22 +768,16 @@ select:disabled {
 .repo-mark {
   display: inline-grid;
   flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   place-items: center;
-  border: 1px solid rgba(84, 118, 75, 0.18);
-  border-radius: 999px;
-  background: #eef4e7;
-  color: #3f5f39;
-  transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
+  color: #24292f;
+  transition: color 0.18s ease;
 }
 
 .repo-mark svg {
-  width: 13px;
-  height: 13px;
+  width: 18px;
+  height: 18px;
 }
 
 .repo-link:hover {
@@ -791,9 +785,7 @@ select:disabled {
 }
 
 .repo-link:hover .repo-mark {
-  border-color: var(--accent-strong);
-  background: var(--accent-strong);
-  color: var(--paper);
+  color: var(--accent-strong);
 }
 
 .card-meta {
