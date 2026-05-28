@@ -554,7 +554,7 @@ function createSheetGroupCards(tools) {
                 <i data-lucide="external-link" aria-hidden="true"></i>
               </a>
               <button class="icon-only sheet-group-pin ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
-                <i data-lucide="star" aria-hidden="true"></i>
+                <i data-lucide="pin" aria-hidden="true"></i>
               </button>
               <button class="icon-only sheet-group-edit" type="button" data-action="edit" aria-label="編集">
                 <i data-lucide="pencil" aria-hidden="true"></i>
@@ -619,7 +619,7 @@ function createToolCard(tool, compact = false) {
           </span>
         `}
         <button class="icon-only ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
-          <i data-lucide="${tool.pinned ? "star" : "star"}" aria-hidden="true"></i>
+          <i data-lucide="pin" aria-hidden="true"></i>
         </button>
         <button class="icon-only" type="button" data-action="copy" aria-label="URLをコピー">
           <i data-lucide="copy" aria-hidden="true"></i>
@@ -737,7 +737,7 @@ function createTableRow(tool) {
       <td>
         <div class="row-actions">
           <button class="icon-only ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
-            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="pin" aria-hidden="true"></i>
           </button>
           <button class="icon-only" type="button" data-action="copy" aria-label="URLをコピー">
             <i data-lucide="copy" aria-hidden="true"></i>
