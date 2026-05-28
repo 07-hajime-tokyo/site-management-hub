@@ -618,7 +618,9 @@ function createRepositoryLink(tool) {
   if (!tool.repositoryUrl) return "";
   return `
     <a class="repo-link" href="${escapeAttribute(tool.repositoryUrl)}" target="_blank" rel="noreferrer" aria-label="リポジトリを開く">
-      <i data-lucide="github" aria-hidden="true"></i>
+      <span class="repo-mark" aria-hidden="true">
+        <i data-lucide="github" aria-hidden="true"></i>
+      </span>
       <span>${escapeHtml(getRepositoryLabel(tool.repositoryUrl))}</span>
     </a>
   `;
