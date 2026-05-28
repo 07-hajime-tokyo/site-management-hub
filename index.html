@@ -10,9 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260528-8" />
+    <link rel="stylesheet" href="./styles.css?v=20260528-9" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
-    <script src="./app.js?v=20260528-8" defer></script>
+    <script src="./app.js?v=20260528-9" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -164,6 +164,36 @@
           </div>
         </section>
       </main>
+
+      <aside class="shortcut-rail" aria-label="外部サイトショートカット">
+        <div class="shortcut-rail-inner">
+          <p class="sidebar-label">SHORTCUTS</p>
+          <a class="shortcut-card" href="https://www.ebay.com/sh/ord/?filter=status:ALL_ORDERS" target="_blank" rel="noreferrer">
+            <span class="shortcut-icon shortcut-icon-ebay" aria-hidden="true"><span></span></span>
+            <span class="shortcut-text">
+              <strong>eBay</strong>
+              <small>orders</small>
+            </span>
+            <i data-lucide="external-link" aria-hidden="true"></i>
+          </a>
+          <a class="shortcut-card" href="https://sellsta.jp/" target="_blank" rel="noreferrer">
+            <span class="shortcut-icon shortcut-icon-sellsta" aria-hidden="true"><span></span></span>
+            <span class="shortcut-text">
+              <strong>セルスタ</strong>
+              <small>sellsta.jp</small>
+            </span>
+            <i data-lucide="external-link" aria-hidden="true"></i>
+          </a>
+          <a class="shortcut-card" href="https://sellerhacks.work/login/" target="_blank" rel="noreferrer">
+            <span class="shortcut-icon shortcut-icon-sellerhacks" aria-hidden="true"><span></span></span>
+            <span class="shortcut-text">
+              <strong>Sellerhacks</strong>
+              <small>login</small>
+            </span>
+            <i data-lucide="external-link" aria-hidden="true"></i>
+          </a>
+        </div>
+      </aside>
     </div>
 
     <dialog class="tool-dialog" id="toolDialog">
@@ -191,6 +221,10 @@
           <label>
             リポジトリURL
             <input id="toolRepositoryUrl" name="repositoryUrl" type="url" placeholder="https://github.com/..." />
+          </label>
+          <label>
+            Vercel URL
+            <input id="toolVercelUrl" name="vercelUrl" type="url" placeholder="https://...vercel.app" />
           </label>
           <label>
             カテゴリ

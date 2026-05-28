@@ -153,6 +153,9 @@ function createNotionProperties(tool) {
     リポジトリURL: {
       url: tool.repositoryUrl || null,
     },
+    "Vercel URL": {
+      url: tool.vercelUrl || null,
+    },
     種類: {
       select: { name: toNotionType(tool.type) },
     },
@@ -197,6 +200,7 @@ function normalizeIncomingTool(body) {
   const title = String(body.title || "").trim();
   const url = String(body.url || "").trim();
   const repositoryUrl = String(body.repositoryUrl || body.repoUrl || "").trim();
+  const vercelUrl = String(body.vercelUrl || "").trim();
   if (!title) throw new Error("名前を入力してください");
   if (!url) throw new Error("URLを入力してください");
   try {
@@ -211,12 +215,20 @@ function normalizeIncomingTool(body) {
       throw new Error("リポジトリURLの形式が正しくありません");
     }
   }
+  if (vercelUrl) {
+    try {
+      new URL(vercelUrl);
+    } catch {
+      throw new Error("Vercel URLの形式が正しくありません");
+    }
+  }
 
   const type = normalizeType(body.type || "site");
   const tool = {
     title,
     url,
     repositoryUrl,
+    vercelUrl,
     category: normalizeCategory(body.category, type),
     type,
     status: normalizeStatus(body.status || "active"),
@@ -338,6 +350,7 @@ function mapNotionPageToTool(page) {
         "Github",
         "Repository",
       ]) || "",
+    vercelUrl: readProperty(props, ["Vercel URL", "Vercel", "Deployment URL"]) || "",
     category,
     type,
     status: normalizeStatus(readProperty(props, ["状態", "Status"]) || "active"),
