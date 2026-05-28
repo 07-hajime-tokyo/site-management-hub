@@ -246,34 +246,6 @@ select {
   color: var(--accent-strong);
 }
 
-.sidebar-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  margin-top: auto;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(244, 224, 210, 0.9), rgba(255, 250, 242, 0.76));
-  padding: 14px;
-  color: var(--text);
-}
-
-.sidebar-note > span {
-  color: var(--accent);
-  font-size: 0.8rem;
-}
-
-.sidebar-note strong {
-  display: block;
-  color: var(--ink);
-  font-size: 0.86rem;
-}
-
-.sidebar-note p {
-  margin: 2px 0 0;
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
 .shortcut-rail {
   min-height: 0;
   overflow-y: auto;

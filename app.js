@@ -145,8 +145,6 @@ const el = {
   siteCount: document.querySelector("#siteCount"),
   sheetCount: document.querySelector("#sheetCount"),
   reviewCount: document.querySelector("#reviewCount"),
-  sidebarTotal: document.querySelector("#sidebarTotal"),
-  sidebarPinned: document.querySelector("#sidebarPinned"),
   searchInput: document.querySelector("#searchInput"),
   sortSelect: document.querySelector("#sortSelect"),
   toolGrid: document.querySelector("#toolGrid"),
@@ -350,8 +348,6 @@ function renderMetrics() {
   el.siteCount.textContent = tools.filter((tool) => tool.type === "site").length;
   el.sheetCount.textContent = tools.filter((tool) => tool.type === "sheet").length;
   el.reviewCount.textContent = tools.filter((tool) => tool.status === "review").length;
-  el.sidebarTotal.textContent = tools.length;
-  el.sidebarPinned.textContent = tools.filter((tool) => tool.pinned).length;
 }
 
 function renderCategoryNav() {
