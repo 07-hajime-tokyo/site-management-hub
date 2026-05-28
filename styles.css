@@ -716,8 +716,13 @@ select:disabled {
   line-height: 1.35;
 }
 
+.card-info,
 .card-text-link {
   display: block;
+  min-width: 0;
+}
+
+.card-text-link {
   color: inherit;
   text-decoration: none;
 }
@@ -739,6 +744,34 @@ select:disabled {
   font-size: 0.78rem;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.repo-link {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  gap: 5px;
+  margin-top: 4px;
+  color: #54764b;
+  text-decoration: none;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.repo-link span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-link svg {
+  width: 15px;
+  height: 15px;
+}
+
+.repo-link:hover {
+  color: var(--accent-strong);
 }
 
 .card-meta {
@@ -892,8 +925,12 @@ select:disabled {
   display: contents;
 }
 
-.tool-card:not(.sheet-group-card) .card-text-link {
+.tool-card:not(.sheet-group-card) .card-info {
   grid-column: 2;
+  min-width: 0;
+}
+
+.tool-card:not(.sheet-group-card) .card-text-link {
   min-width: 0;
 }
 

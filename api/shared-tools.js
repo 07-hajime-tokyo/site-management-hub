@@ -150,6 +150,9 @@ function createNotionProperties(tool) {
     URL: {
       url: tool.url,
     },
+    リポジトリURL: {
+      url: tool.repositoryUrl || null,
+    },
     種類: {
       select: { name: toNotionType(tool.type) },
     },
@@ -176,6 +179,7 @@ function createNotionProperties(tool) {
 function normalizeIncomingTool(body) {
   const title = String(body.title || "").trim();
   const url = String(body.url || "").trim();
+  const repositoryUrl = String(body.repositoryUrl || body.repoUrl || "").trim();
   if (!title) throw new Error("名前を入力してください");
   if (!url) throw new Error("URLを入力してください");
   try {
@@ -183,16 +187,33 @@ function normalizeIncomingTool(body) {
   } catch {
     throw new Error("URLの形式が正しくありません");
   }
+  if (repositoryUrl) {
+    try {
+      new URL(repositoryUrl);
+    } catch {
+      throw new Error("リポジトリURLの形式が正しくありません");
+    }
+  }
 
   return {
     title,
     url,
-    category: String(body.category || "その他").trim() || "その他",
+    repositoryUrl,
+    category: normalizeCategory(body.category),
     type: normalizeType(body.type || "site"),
     status: normalizeStatus(body.status || "active"),
     description: String(body.description || "").trim(),
     pinned: Boolean(body.pinned),
   };
+}
+
+function normalizeCategory(value) {
+  const category = String(value || "その他").trim() || "その他";
+  if (["コミュニケーション", "市場調査", "取引管理", "申請・見積もり", "申請見積もり"].includes(category)) {
+    return "共有";
+  }
+  if (category === "OEM・輸入") return "中国輸入";
+  return category;
 }
 
 function normalizeNotionPageId(value) {
@@ -258,6 +279,15 @@ function mapNotionPageToTool(page) {
     id: `notion-${page.id}`,
     title,
     url,
+    repositoryUrl:
+      readProperty(props, [
+        "リポジトリURL",
+        "Repository URL",
+        "Repo URL",
+        "GitHub",
+        "Github",
+        "Repository",
+      ]) || "",
     category: readProperty(props, ["カテゴリ", "カテゴリー", "Category"]) || "未分類",
     type: normalizeType(readProperty(props, ["種類", "Type"]) || "site"),
     status: normalizeStatus(readProperty(props, ["状態", "Status"]) || "active"),

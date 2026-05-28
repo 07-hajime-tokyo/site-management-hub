@@ -33,7 +33,8 @@ const defaultTools = [
     id: "invoice-stock",
     title: "インボイス管理・入出庫管理",
     url: "https://invoice-site-bycodex.vercel.app",
-    category: "取引管理",
+    repositoryUrl: "https://github.com/07-hajime-tokyo/invoice-site_byCodex",
+    category: "共有",
     type: "site",
     status: "active",
     pinned: true,
@@ -48,7 +49,8 @@ const defaultTools = [
     id: "retrogame-quote",
     title: "ゲーム機申請・見積もり",
     url: "https://retro-game-quote-by-codex.vercel.app",
-    category: "申請・見積もり",
+    repositoryUrl: "https://github.com/07-hajime-tokyo/retro-game-quote_byCodex",
+    category: "共有",
     type: "site",
     status: "active",
     pinned: true,
@@ -63,7 +65,8 @@ const defaultTools = [
     id: "market-research",
     title: "相場リサーチ",
     url: "https://gameresearch-e5yjsxcr.manus.space/?code=AJfBB54tjiqgg63Tu4BVqW",
-    category: "市場調査",
+    repositoryUrl: "",
+    category: "共有",
     type: "site",
     status: "active",
     pinned: false,
@@ -78,7 +81,8 @@ const defaultTools = [
     id: "chatwork-archive",
     title: "チャットワーク履歴",
     url: "https://chatworkdb-qcpunow9.manus.space",
-    category: "コミュニケーション",
+    repositoryUrl: "https://github.com/07-hajime-tokyo/chatwork-history",
+    category: "共有",
     type: "site",
     status: "active",
     pinned: false,
@@ -93,7 +97,8 @@ const defaultTools = [
     id: "oem-import-report",
     title: "中国輸入",
     url: "https://oemreport-mj8kgbwb.manus.space",
-    category: "OEM・輸入",
+    repositoryUrl: "",
+    category: "中国輸入",
     type: "report",
     status: "active",
     pinned: false,
@@ -162,6 +167,7 @@ const formFields = {
   id: document.querySelector("#toolId"),
   title: document.querySelector("#toolTitle"),
   url: document.querySelector("#toolUrl"),
+  repositoryUrl: document.querySelector("#toolRepositoryUrl"),
   category: document.querySelector("#toolCategory"),
   type: document.querySelector("#toolType"),
   status: document.querySelector("#toolStatus"),
@@ -568,16 +574,20 @@ function createSheetGroupCards(tools) {
 function createToolCard(tool, compact = false) {
   const accent = getAccentClass(tool.category);
   const hostname = getHostname(tool.url);
+  const repositoryLink = createRepositoryLink(tool);
   return `
     <article class="tool-card ${compact ? "is-compact" : ""} ${accent}" data-id="${tool.id}">
       <div class="card-icon" aria-hidden="true">
         <i data-lucide="${getTypeIcon(tool.type)}" aria-hidden="true"></i>
       </div>
-      <a class="card-text-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
-        <h4>${escapeHtml(tool.title)}</h4>
-        <p class="card-url">${escapeHtml(hostname)}</p>
-        <p>${escapeHtml(tool.description || hostname)}</p>
-      </a>
+      <div class="card-info">
+        <a class="card-text-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
+          <h4>${escapeHtml(tool.title)}</h4>
+          <p class="card-url">${escapeHtml(hostname)}</p>
+          <p>${escapeHtml(tool.description || hostname)}</p>
+        </a>
+        ${repositoryLink}
+      </div>
       <div class="card-actions">
         <button class="icon-only ${tool.pinned ? "is-pinned" : ""}" type="button" data-action="pin" aria-label="${tool.pinned ? "固定を外す" : "固定する"}">
           <i data-lucide="${tool.pinned ? "star" : "star"}" aria-hidden="true"></i>
@@ -591,6 +601,29 @@ function createToolCard(tool, compact = false) {
       </div>
     </article>
   `;
+}
+
+function createRepositoryLink(tool) {
+  if (!tool.repositoryUrl) return "";
+  return `
+    <a class="repo-link" href="${escapeAttribute(tool.repositoryUrl)}" target="_blank" rel="noreferrer" aria-label="リポジトリを開く">
+      <i data-lucide="github" aria-hidden="true"></i>
+      <span>${escapeHtml(getRepositoryLabel(tool.repositoryUrl))}</span>
+    </a>
+  `;
+}
+
+function getRepositoryLabel(value) {
+  try {
+    const url = new URL(value);
+    if (url.hostname.includes("github.com")) {
+      const parts = url.pathname.split("/").filter(Boolean).slice(0, 2);
+      return parts.length === 2 ? parts.join("/") : "GitHub";
+    }
+    return getHostname(value);
+  } catch {
+    return "リポジトリ";
+  }
 }
 
 function createTableRow(tool) {
@@ -659,6 +692,7 @@ function getFilteredTools() {
         typeLabels[tool.type],
         statusLabels[tool.status],
         tool.description,
+        tool.repositoryUrl,
         tool.url,
       ]
         .join(" ")
@@ -685,6 +719,7 @@ function openDialog(tool = null, focusField = "title") {
   formFields.id.value = tool?.id || "";
   formFields.title.value = tool?.title || "";
   formFields.url.value = tool?.url || "";
+  formFields.repositoryUrl.value = tool?.repositoryUrl || "";
   formFields.category.value = tool?.category || "";
   formFields.type.value = tool?.type || "site";
   formFields.status.value = tool?.status || "active";
@@ -715,7 +750,8 @@ function saveFromForm() {
     id: state.editingId || createId(formFields.title.value),
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
-    category: formFields.category.value.trim(),
+    repositoryUrl: formFields.repositoryUrl.value.trim(),
+    category: normalizeCategory(formFields.category.value),
     type: formFields.type.value,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
@@ -756,7 +792,8 @@ async function updateSharedToolFromForm() {
     id: state.editingId,
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
-    category: formFields.category.value.trim() || "未分類",
+    repositoryUrl: formFields.repositoryUrl.value.trim(),
+    category: normalizeCategory(formFields.category.value),
     type: formFields.type.value,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
@@ -796,7 +833,8 @@ async function createSharedToolFromForm() {
   const payload = {
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
-    category: formFields.category.value.trim() || "未分類",
+    repositoryUrl: formFields.repositoryUrl.value.trim(),
+    category: normalizeCategory(formFields.category.value),
     type: formFields.type.value,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
@@ -908,10 +946,11 @@ function importData(event) {
         id: tool.id || createId(tool.title || tool.url || "entry"),
         title: String(tool.title || "無題"),
         url: String(tool.url || ""),
-        category: String(tool.category || "未分類"),
+        category: normalizeCategory(tool.category),
         type: tool.type || "site",
         status: tool.status || "active",
         description: String(tool.description || ""),
+        repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
         tags: Array.isArray(tool.tags) ? tool.tags.map(String) : parseTags(tool.tags || ""),
         pinned: Boolean(tool.pinned),
         createdAt: tool.createdAt || new Date().toISOString(),
@@ -1007,11 +1046,21 @@ function normalizeTools() {
 function normalizeToolList(tools) {
   return tools.map((tool) => ({
     ...tool,
-    category: tool.category || "未分類",
+    category: normalizeCategory(tool.category),
     type: tool.type || "site",
     status: tool.status || "active",
+    repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
     tags: Array.isArray(tool.tags) ? tool.tags : parseTags(tool.tags || ""),
   }));
+}
+
+function normalizeCategory(value) {
+  const category = String(value || "未分類").trim() || "未分類";
+  if (["コミュニケーション", "市場調査", "取引管理", "申請・見積もり", "申請見積もり"].includes(category)) {
+    return "共有";
+  }
+  if (category === "OEM・輸入") return "中国輸入";
+  return category;
 }
 
 function getCategories() {
