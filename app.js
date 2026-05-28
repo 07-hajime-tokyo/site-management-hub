@@ -126,6 +126,8 @@ const state = {
   view: "grid",
   sort: "recent",
   editingId: null,
+  draggingSheet: null,
+  openSheetGroups: new Set(),
 };
 
 const el = {
@@ -460,6 +462,7 @@ function renderLibrary() {
         : filtered.map((tool) => createToolCard(tool)).join("");
     bindCardActions(el.toolGrid);
     bindSheetDrag(el.toolGrid);
+    bindSheetGroupToggles(el.toolGrid);
   } else {
     el.toolTable.innerHTML = filtered.map(createTableRow).join("");
     bindCardActions(el.toolTable);
@@ -564,7 +567,7 @@ function createSheetGroupCards(tools) {
             </div>
             <span class="pill">${items.length}件</span>
           </div>
-          <details class="sheet-group-toggle">
+          <details class="sheet-group-toggle" data-sheet-group="${escapeAttribute(category)}" ${isSheetGroupOpen(category) ? "open" : ""}>
             <summary>
               <span>${items.length === 1 ? "スプレッドシート" : "スプレッドシートを表示"}</span>
               <i data-lucide="chevron-down" aria-hidden="true"></i>
@@ -646,6 +649,10 @@ function getDisplayOrder(tool) {
   return Number.isFinite(order) ? order : Number.MAX_SAFE_INTEGER;
 }
 
+function isSheetGroupOpen(category) {
+  return state.openSheetGroups.has(category);
+}
+
 function createTableRow(tool) {
   return `
     <tr data-id="${tool.id}">
@@ -710,41 +717,62 @@ function bindSheetDrag(root) {
       if (!row) return;
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("text/plain", row.dataset.id || "");
-      event.dataTransfer.setData("application/x-sheet-category", row.dataset.category || "");
+      state.draggingSheet = {
+        id: row.dataset.id || "",
+        category: row.dataset.category || "",
+      };
       row.classList.add("is-dragging");
     });
 
     handle.addEventListener("dragend", () => {
       root.querySelectorAll(".sheet-group-row").forEach((row) => {
-        row.classList.remove("is-dragging", "is-drop-target");
+        row.classList.remove("is-dragging", "is-drop-target", "is-drop-after");
       });
+      state.draggingSheet = null;
     });
   });
 
   rows.forEach((row) => {
     row.addEventListener("dragover", (event) => {
-      const sourceCategory = event.dataTransfer.getData("application/x-sheet-category");
+      const sourceCategory = state.draggingSheet?.category || "";
       if (sourceCategory && sourceCategory !== row.dataset.category) return;
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
+      const bounds = row.getBoundingClientRect();
+      const insertAfter = event.clientY > bounds.top + bounds.height / 2;
       row.classList.add("is-drop-target");
+      row.classList.toggle("is-drop-after", insertAfter);
     });
 
     row.addEventListener("dragleave", () => {
-      row.classList.remove("is-drop-target");
+      row.classList.remove("is-drop-target", "is-drop-after");
     });
 
     row.addEventListener("drop", (event) => {
-      const sourceId = event.dataTransfer.getData("text/plain");
-      const sourceCategory = event.dataTransfer.getData("application/x-sheet-category");
+      const sourceId = state.draggingSheet?.id || event.dataTransfer.getData("text/plain");
+      const sourceCategory = state.draggingSheet?.category || "";
       const targetId = row.dataset.id || "";
       const targetCategory = row.dataset.category || "";
       const bounds = row.getBoundingClientRect();
       const insertAfter = event.clientY > bounds.top + bounds.height / 2;
-      row.classList.remove("is-drop-target");
+      row.classList.remove("is-drop-target", "is-drop-after");
       if (!sourceId || !targetId || sourceId === targetId || sourceCategory !== targetCategory) return;
       event.preventDefault();
       reorderSheets(sourceId, targetId, targetCategory, insertAfter);
+    });
+  });
+}
+
+function bindSheetGroupToggles(root) {
+  root.querySelectorAll(".sheet-group-toggle").forEach((details) => {
+    details.addEventListener("toggle", () => {
+      const category = details.dataset.sheetGroup;
+      if (!category) return;
+      if (details.open) {
+        state.openSheetGroups.add(category);
+      } else {
+        state.openSheetGroups.delete(category);
+      }
     });
   });
 }
@@ -945,6 +973,7 @@ async function createSharedToolFromForm() {
 }
 
 function reorderSheets(sourceId, targetId, category, insertAfter = false) {
+  state.openSheetGroups.add(category);
   const tools = getBaseTools();
   const sheetItems = tools
     .filter((tool) => tool.type === "sheet" && tool.category === category)
