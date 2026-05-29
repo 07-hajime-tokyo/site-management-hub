@@ -246,6 +246,88 @@ select {
   color: var(--accent-strong);
 }
 
+.site-links {
+  display: grid;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.site-link-card {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text);
+  padding: 8px 10px;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.site-link-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--soft-shadow);
+  transform: translateY(-1px);
+}
+
+.site-link-card > svg {
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+}
+
+.site-link-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #fff;
+  color: #24292f;
+}
+
+.site-link-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.vercel-site-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.site-link-text {
+  display: grid;
+  min-width: 0;
+  line-height: 1.12;
+}
+
+.site-link-text strong,
+.site-link-text small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-link-text strong {
+  color: var(--ink);
+  font-size: 0.84rem;
+}
+
+.site-link-text small {
+  color: var(--muted);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.7rem;
+}
+
 .shortcut-rail {
   min-height: 0;
   overflow-y: auto;
@@ -1474,6 +1556,15 @@ svg {
 
   .nav-list {
     grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  }
+
+  .site-links {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    margin-top: 0;
+  }
+
+  .site-links .sidebar-label {
+    grid-column: 1 / -1;
   }
 
   .workspace {
