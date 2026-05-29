@@ -1,6 +1,7 @@
 const STORAGE_KEY = "manus-portal-tools-v1";
 const RECENT_KEY = "manus-portal-recent-v1";
 const PIN_OVERRIDES_KEY = "manus-portal-pin-overrides-v1";
+const platformLabelOptions = ["01mur", "07haj", "talk"];
 
 const typeLabels = {
   all: "すべて",
@@ -173,8 +174,10 @@ const formFields = {
   id: document.querySelector("#toolId"),
   title: document.querySelector("#toolTitle"),
   url: document.querySelector("#toolUrl"),
+  platformLabel: document.querySelector("#toolPlatformLabel"),
   repositoryUrl: document.querySelector("#toolRepositoryUrl"),
   vercelUrl: document.querySelector("#toolVercelUrl"),
+  notionUrl: document.querySelector("#toolNotionUrl"),
   category: document.querySelector("#toolCategory"),
   type: document.querySelector("#toolType"),
   status: document.querySelector("#toolStatus"),
@@ -633,9 +636,14 @@ function createToolCard(tool, compact = false) {
 }
 
 function createPlatformLinks(tool) {
-  const links = [createRepositoryLink(tool), createVercelLink(tool)].filter(Boolean);
+  const links = [createRepositoryLink(tool), createVercelLink(tool), createNotionLink(tool)].filter(Boolean);
   if (!links.length) return "";
-  return `<div class="platform-links">${links.join("")}</div>`;
+  return `
+    <div class="platform-links">
+      <span class="platform-label">${escapeHtml(normalizePlatformLabel(tool.platformLabel, tool))}</span>
+      ${links.join("")}
+    </div>
+  `;
 }
 
 function createRepositoryLink(tool) {
@@ -647,7 +655,6 @@ function createRepositoryLink(tool) {
           <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.63 7.63 0 0 1 8 3.87c.68 0 1.36.09 2 .26 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path>
         </svg>
       </span>
-      <span>${escapeHtml(getRepositoryLabel(tool.repositoryUrl))}</span>
     </a>
   `;
 }
@@ -662,7 +669,20 @@ function createVercelLink(tool) {
           <path fill="currentColor" d="M8 1.5 16 14.5H0L8 1.5Z"></path>
         </svg>
       </span>
-      <span>${escapeHtml(getVercelLabel(vercelUrl))}</span>
+    </a>
+  `;
+}
+
+function createNotionLink(tool) {
+  if (!tool.notionUrl) return "";
+  return `
+    <a class="platform-link notion-link" href="${escapeAttribute(tool.notionUrl)}" target="_blank" rel="noreferrer" aria-label="Notionを開く">
+      <span class="platform-mark notion-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <rect x="4" y="3" width="16" height="18" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+          <path fill="currentColor" d="M8.2 7.8h2.1l4.6 6.8V7.8h1.7v8.4h-2.1L9.9 9.4v6.8H8.2V7.8Z"></path>
+        </svg>
+      </span>
     </a>
   `;
 }
@@ -673,22 +693,25 @@ function getVercelLinkUrl(tool) {
   return isVercelUrl(tool.url) ? tool.url : "";
 }
 
-function getRepositoryLabel(value) {
-  try {
-    const url = new URL(value);
-    if (url.hostname.includes("github.com")) {
-      const parts = url.pathname.split("/").filter(Boolean).slice(0, 2);
-      return parts.length === 2 ? parts.join("/") : "GitHub";
-    }
-    return getHostname(value);
-  } catch {
-    return "リポジトリ";
-  }
+function normalizePlatformLabel(value, tool = {}) {
+  const label = String(value || "").trim();
+  if (platformLabelOptions.includes(label)) return label;
+  return inferPlatformLabel(tool);
 }
 
-function getVercelLabel(value) {
-  const hostname = getHostname(value);
-  return hostname === value ? "Vercel" : hostname.replace(/\.vercel\.app$/, "");
+function inferPlatformLabel(tool = {}) {
+  const repositoryUrl = String(tool.repositoryUrl || "").trim();
+  try {
+    const url = new URL(repositoryUrl);
+    const owner = url.pathname.split("/").filter(Boolean)[0] || "";
+    if (owner.toLowerCase() === "hajime-tokyo-1213") return "01mur";
+    if (owner.toLowerCase() === "07-hajime-tokyo") return "07haj";
+  } catch {
+    // Ignore invalid optional URLs and fall back to the title rule.
+  }
+  const title = String(tool.title || "");
+  if (title.includes("チームワークスペース") || title.includes("チームワーク")) return "01mur";
+  return "07haj";
 }
 
 function compareSheetOrder(a, b) {
@@ -937,8 +960,10 @@ function getFilteredTools() {
         typeLabels[tool.type],
         statusLabels[tool.status],
         tool.description,
+        tool.platformLabel,
         tool.repositoryUrl,
         tool.vercelUrl,
+        tool.notionUrl,
         tool.url,
       ]
         .join(" ")
@@ -968,8 +993,10 @@ function openDialog(tool = null, focusField = "title") {
   formFields.id.value = tool?.id || "";
   formFields.title.value = tool?.title || "";
   formFields.url.value = tool?.url || "";
+  formFields.platformLabel.value = normalizePlatformLabel(tool?.platformLabel, tool || {});
   formFields.repositoryUrl.value = tool?.repositoryUrl || "";
   formFields.vercelUrl.value = tool?.vercelUrl || (tool && isVercelUrl(tool.url) ? tool.url : "");
+  formFields.notionUrl.value = tool?.notionUrl || "";
   formFields.category.value = tool?.category || "";
   formFields.type.value = tool?.type || "site";
   formFields.status.value = tool?.status || "active";
@@ -1012,8 +1039,10 @@ function saveFromForm() {
     id: state.editingId || createId(formFields.title.value),
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
+    platformLabel: formFields.platformLabel.value,
     repositoryUrl: formFields.repositoryUrl.value.trim(),
     vercelUrl: formFields.vercelUrl.value.trim(),
+    notionUrl: formFields.notionUrl.value.trim(),
     category: normalizeCategory(formFields.category.value, toolType),
     type: toolType,
     status: formFields.status.value,
@@ -1059,8 +1088,10 @@ async function updateSharedToolFromForm() {
     id: state.editingId,
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
+    platformLabel: formFields.platformLabel.value,
     repositoryUrl: formFields.repositoryUrl.value.trim(),
     vercelUrl: formFields.vercelUrl.value.trim(),
+    notionUrl: formFields.notionUrl.value.trim(),
     category: normalizeCategory(formFields.category.value, toolType),
     type: toolType,
     status: formFields.status.value,
@@ -1104,8 +1135,10 @@ async function createSharedToolFromForm() {
   const payload = {
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
+    platformLabel: formFields.platformLabel.value,
     repositoryUrl: formFields.repositoryUrl.value.trim(),
     vercelUrl: formFields.vercelUrl.value.trim(),
+    notionUrl: formFields.notionUrl.value.trim(),
     category: normalizeCategory(formFields.category.value, toolType),
     type: toolType,
     status: formFields.status.value,
@@ -1265,8 +1298,10 @@ async function updateSharedToolOrder(tool) {
       id: tool.id,
       title: tool.title,
       url: tool.url,
+      platformLabel: tool.platformLabel,
       repositoryUrl: tool.repositoryUrl,
       vercelUrl: tool.vercelUrl,
+      notionUrl: tool.notionUrl,
       category: tool.category,
       type: tool.type,
       status: tool.status,
@@ -1364,8 +1399,10 @@ function importData(event) {
           type,
           status: tool.status || "active",
           description: String(tool.description || ""),
+          platformLabel: normalizePlatformLabel(tool.platformLabel || tool.displayName, tool),
           repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
           vercelUrl: String(tool.vercelUrl || ""),
+          notionUrl: String(tool.notionUrl || tool.notionPageUrl || ""),
           displayOrder: normalizeDisplayOrder(tool.displayOrder),
           cardOrder: normalizeCardOrder(tool.cardOrder),
           tags: Array.isArray(tool.tags) ? tool.tags.map(String) : parseTags(tool.tags || ""),
@@ -1469,8 +1506,10 @@ function normalizeToolList(tools) {
       category: normalizeCategory(tool.category, type),
       type,
       status: tool.status || "active",
+      platformLabel: normalizePlatformLabel(tool.platformLabel || tool.displayName, tool),
       repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
       vercelUrl: String(tool.vercelUrl || ""),
+      notionUrl: String(tool.notionUrl || tool.notionPageUrl || ""),
       displayOrder: normalizeDisplayOrder(tool.displayOrder),
       cardOrder: normalizeCardOrder(tool.cardOrder),
       tags: Array.isArray(tool.tags) ? tool.tags : parseTags(tool.tags || ""),

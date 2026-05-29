@@ -19,6 +19,12 @@ const mimeTypes = {
 
 const dataSourceNotionVersion = "2025-09-03";
 const databaseNotionVersion = "2022-06-28";
+const platformLabelOptions = ["01mur", "07haj", "talk"];
+const platformLabelSchemaOptions = [
+  { name: "01mur", color: "blue" },
+  { name: "07haj", color: "green" },
+  { name: "talk", color: "purple" },
+];
 
 createServer(async (req, res) => {
   try {
@@ -87,6 +93,7 @@ async function handleSharedTools(req, res) {
   if (req.method === "POST") {
     try {
       const tool = normalizeIncomingTool(await readJsonBody(req));
+      await ensureNotionSchema(token, source);
       const page = await createNotionToolPage(token, source, tool);
       sendJson(res, 201, {
         configured: true,
@@ -110,6 +117,7 @@ async function handleSharedTools(req, res) {
       const body = await readJsonBody(req);
       const pageId = normalizeNotionPageId(body.id || body.pageId);
       const tool = normalizeIncomingTool(body);
+      await ensureNotionSchema(token, source);
       const page = await updateNotionToolPage(token, source, pageId, tool);
       sendJson(res, 200, {
         configured: true,
@@ -200,6 +208,69 @@ async function updateNotionToolPage(token, source, pageId, tool) {
   return payload;
 }
 
+async function ensureNotionSchema(token, source) {
+  const endpoint =
+    source.type === "data_source"
+      ? `https://api.notion.com/v1/data_sources/${source.id}`
+      : `https://api.notion.com/v1/databases/${source.id}`;
+  const notionVersion =
+    source.type === "data_source" ? dataSourceNotionVersion : databaseNotionVersion;
+  const currentResponse = await fetch(endpoint, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Notion-Version": notionVersion,
+    },
+  });
+  const current = await currentResponse.json();
+  if (!currentResponse.ok) {
+    throw new Error(current.message || "Notion DBの設定を確認できませんでした");
+  }
+
+  const updates = {};
+  const properties = current.properties || {};
+  if (!properties["Notion URL"]) {
+    updates["Notion URL"] = { url: {} };
+  }
+
+  const displayNameProperty = properties.表示名;
+  if (!displayNameProperty) {
+    updates.表示名 = { select: { options: platformLabelSchemaOptions } };
+  } else if (displayNameProperty.type === "select") {
+    const existingOptions = displayNameProperty.select?.options || [];
+    const existingNames = new Set(existingOptions.map((option) => option.name));
+    const missingOptions = platformLabelSchemaOptions.filter((option) => !existingNames.has(option.name));
+    if (missingOptions.length) {
+      updates.表示名 = {
+        select: {
+          options: [
+            ...existingOptions.map((option) => ({
+              name: option.name,
+              color: option.color || "default",
+            })),
+            ...missingOptions,
+          ],
+        },
+      };
+    }
+  }
+
+  if (!Object.keys(updates).length) return;
+
+  const response = await fetch(endpoint, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "Notion-Version": notionVersion,
+    },
+    body: JSON.stringify({ properties: updates }),
+  });
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload.message || "Notion DBの列を追加できませんでした");
+  }
+}
+
 function createNotionProperties(tool) {
   const properties = {
     名前: {
@@ -208,11 +279,17 @@ function createNotionProperties(tool) {
     URL: {
       url: tool.url,
     },
+    表示名: {
+      select: { name: normalizePlatformLabel(tool.platformLabel, tool) },
+    },
     リポジトリURL: {
       url: tool.repositoryUrl || null,
     },
     "Vercel URL": {
       url: tool.vercelUrl || null,
+    },
+    "Notion URL": {
+      url: tool.notionUrl || null,
     },
     種類: {
       select: { name: toNotionType(tool.type) },
@@ -257,8 +334,10 @@ function createNotionProperties(tool) {
 function normalizeIncomingTool(body) {
   const title = String(body.title || "").trim();
   const url = String(body.url || "").trim();
+  const platformLabel = String(body.platformLabel || body.displayName || "").trim();
   const repositoryUrl = String(body.repositoryUrl || body.repoUrl || "").trim();
   const vercelUrl = String(body.vercelUrl || "").trim();
+  const notionUrl = String(body.notionUrl || body.notionPageUrl || "").trim();
   if (!title) throw new Error("名前を入力してください");
   if (!url) throw new Error("URLを入力してください");
   try {
@@ -280,13 +359,22 @@ function normalizeIncomingTool(body) {
       throw new Error("Vercel URLの形式が正しくありません");
     }
   }
+  if (notionUrl) {
+    try {
+      new URL(notionUrl);
+    } catch {
+      throw new Error("Notion URLの形式が正しくありません");
+    }
+  }
 
   const type = normalizeType(body.type || "site");
   const tool = {
     title,
     url,
+    platformLabel: normalizePlatformLabel(platformLabel, { title, url, repositoryUrl, vercelUrl }),
     repositoryUrl,
     vercelUrl,
+    notionUrl,
     category: normalizeCategory(body.category, type),
     type,
     status: normalizeStatus(body.status || "active"),
@@ -317,6 +405,27 @@ function normalizeCategory(value, type = "") {
   }
   if (category === "OEM・輸入") return "中国輸入";
   return category;
+}
+
+function normalizePlatformLabel(value, tool = {}) {
+  const label = String(value || "").trim();
+  if (platformLabelOptions.includes(label)) return label;
+  return inferPlatformLabel(tool);
+}
+
+function inferPlatformLabel(tool = {}) {
+  const repositoryUrl = String(tool.repositoryUrl || "").trim();
+  try {
+    const url = new URL(repositoryUrl);
+    const owner = url.pathname.split("/").filter(Boolean)[0] || "";
+    if (owner.toLowerCase() === "hajime-tokyo-1213") return "01mur";
+    if (owner.toLowerCase() === "07-hajime-tokyo") return "07haj";
+  } catch {
+    // Optional URL. Fall through to the title rule.
+  }
+  const title = String(tool.title || "");
+  if (title.includes("チームワークスペース") || title.includes("チームワーク")) return "01mur";
+  return "07haj";
 }
 
 function normalizeDisplayOrder(value) {
@@ -390,21 +499,31 @@ function mapNotionPageToTool(page) {
     readProperty(props, ["カテゴリ", "カテゴリー", "Category"]) || (type === "sheet" ? "税理士" : "未分類"),
     type,
   );
+  const repositoryUrl =
+    readProperty(props, [
+      "リポジトリURL",
+      "Repository URL",
+      "Repo URL",
+      "GitHub",
+      "Github",
+      "Repository",
+    ]) || "";
+  const vercelUrl = readProperty(props, ["Vercel URL", "Vercel", "Deployment URL"]) || "";
+  const notionUrl = readProperty(props, ["Notion URL", "Notion", "Notion Page URL"]) || page.url || "";
 
   return {
     id: `notion-${page.id}`,
     title,
     url,
-    repositoryUrl:
-      readProperty(props, [
-        "リポジトリURL",
-        "Repository URL",
-        "Repo URL",
-        "GitHub",
-        "Github",
-        "Repository",
-      ]) || "",
-    vercelUrl: readProperty(props, ["Vercel URL", "Vercel", "Deployment URL"]) || "",
+    platformLabel: normalizePlatformLabel(readProperty(props, ["表示名", "Display Name", "Account Label"]), {
+      title,
+      url,
+      repositoryUrl,
+      vercelUrl,
+    }),
+    repositoryUrl,
+    vercelUrl,
+    notionUrl,
     category,
     type,
     status: normalizeStatus(readProperty(props, ["状態", "Status"]) || "active"),

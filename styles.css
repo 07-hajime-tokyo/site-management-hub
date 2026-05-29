@@ -304,6 +304,11 @@ select {
   height: 16px;
 }
 
+.notion-site-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
 .site-link-text {
   display: grid;
   min-width: 0;
@@ -926,37 +931,36 @@ select:disabled {
 }
 
 .platform-links {
-  display: grid;
-  gap: 3px;
-  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 8px;
 }
 
 .platform-link {
-  display: inline-flex;
-  align-items: center;
-  max-width: 100%;
-  gap: 7px;
+  display: inline-grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border: 1px solid rgba(212, 200, 176, 0.78);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
   color: #54764b;
   text-decoration: none;
-  font-size: 0.76rem;
-  font-weight: 800;
-}
-
-.platform-link > span:last-child {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .platform-mark {
   display: inline-grid;
-  flex: 0 0 auto;
   width: 18px;
   height: 18px;
   place-items: center;
   color: #24292f;
-  transition: color 0.18s ease;
 }
 
 .platform-mark svg {
@@ -965,16 +969,31 @@ select:disabled {
 }
 
 .platform-link:hover {
+  border-color: var(--border-strong);
+  background: #fff;
   color: var(--accent-strong);
+  transform: translateY(-1px);
 }
 
 .platform-link:hover .platform-mark {
   color: var(--accent-strong);
 }
 
+.platform-label {
+  color: var(--leaf);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
 .vercel-mark svg {
   width: 16px;
   height: 16px;
+}
+
+.notion-mark svg {
+  width: 18px;
+  height: 18px;
 }
 
 .card-meta {
