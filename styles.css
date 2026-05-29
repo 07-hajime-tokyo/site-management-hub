@@ -70,28 +70,28 @@ select {
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 13px;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   border-right: 1px solid var(--border);
   background: rgba(251, 246, 236, 0.9);
-  padding: 24px 16px;
+  padding: 18px 16px;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 50px;
+  min-height: 40px;
 }
 
 .brand-mark {
   display: grid;
   flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   place-items: center;
-  border-radius: 13px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #d88e5d, #c97f5a);
   color: #fffaf2;
   font-family: Inter, system-ui, sans-serif;
@@ -109,7 +109,7 @@ select {
 }
 
 .brand h1 {
-  font-size: 1.12rem;
+  font-size: 1.02rem;
   line-height: 1.15;
 }
 
@@ -125,7 +125,7 @@ select {
 
 .sidebar-block {
   display: grid;
-  gap: 9px;
+  gap: 7px;
 }
 
 .source-switch {
@@ -135,11 +135,11 @@ select {
   border: 1px solid var(--border);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.62);
-  padding: 4px;
+  padding: 3px;
 }
 
 .source-button {
-  min-height: 34px;
+  min-height: 29px;
   border-color: transparent;
   border-radius: 999px;
   background: transparent;
@@ -155,7 +155,7 @@ select {
 .source-note {
   margin: 0;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   line-height: 1.45;
 }
 
@@ -169,12 +169,12 @@ select {
   grid-template-columns: 24px minmax(0, 1fr) auto;
   align-items: center;
   width: 100%;
-  min-height: 42px;
+  min-height: 34px;
   border: 1px solid transparent;
   border-radius: 10px;
   background: transparent;
   color: var(--text);
-  padding: 8px 9px;
+  padding: 5px 8px;
   text-align: left;
   transition:
     background 160ms ease,
@@ -206,16 +206,16 @@ select {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.93rem;
+  font-size: 0.88rem;
   font-weight: 700;
 }
 
 .nav-count {
-  min-width: 27px;
+  min-width: 24px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.7);
   color: var(--muted);
-  padding: 2px 7px;
+  padding: 1px 6px;
   text-align: center;
   font-size: 0.78rem;
   font-family: Inter, system-ui, sans-serif;
@@ -248,22 +248,22 @@ select {
 
 .site-links {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   margin-top: auto;
-  padding-top: 12px;
+  padding-top: 2px;
 }
 
 .site-link-card {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) 18px;
+  grid-template-columns: 26px minmax(0, 1fr) 16px;
   align-items: center;
-  gap: 9px;
-  min-height: 48px;
+  gap: 7px;
+  min-height: 38px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.72);
   color: var(--text);
-  padding: 8px 10px;
+  padding: 5px 8px;
   text-decoration: none;
   transition:
     border-color 160ms ease,
@@ -278,15 +278,15 @@ select {
 }
 
 .site-link-card > svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   color: var(--muted);
 }
 
 .site-link-icon {
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   place-items: center;
   border: 1px solid var(--border);
   border-radius: 9px;
@@ -304,9 +304,12 @@ select {
   height: 16px;
 }
 
-.notion-site-icon svg {
-  width: 18px;
-  height: 18px;
+.site-link-icon img,
+.platform-mark img {
+  display: block;
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
 }
 
 .site-link-text {
@@ -324,13 +327,13 @@ select {
 
 .site-link-text strong {
   color: var(--ink);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
 }
 
 .site-link-text small {
   color: var(--muted);
   font-family: Inter, system-ui, sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
 }
 
 .shortcut-rail {
@@ -989,11 +992,6 @@ select:disabled {
 .vercel-mark svg {
   width: 16px;
   height: 16px;
-}
-
-.notion-mark svg {
-  width: 18px;
-  height: 18px;
 }
 
 .card-meta {

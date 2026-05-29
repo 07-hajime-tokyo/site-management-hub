@@ -678,10 +678,7 @@ function createNotionLink(tool) {
   return `
     <a class="platform-link notion-link" href="${escapeAttribute(tool.notionUrl)}" target="_blank" rel="noreferrer" aria-label="Notionを開く">
       <span class="platform-mark notion-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-          <rect x="4" y="3" width="16" height="18" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"></rect>
-          <path fill="currentColor" d="M8.2 7.8h2.1l4.6 6.8V7.8h1.7v8.4h-2.1L9.9 9.4v6.8H8.2V7.8Z"></path>
-        </svg>
+        <img src="https://www.notion.so/images/favicon.ico" alt="" loading="lazy" referrerpolicy="no-referrer" />
       </span>
     </a>
   `;

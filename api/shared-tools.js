@@ -455,7 +455,7 @@ function mapNotionPageToTool(page) {
       "Repository",
     ]) || "";
   const vercelUrl = readProperty(props, ["Vercel URL", "Vercel", "Deployment URL"]) || "";
-  const notionUrl = readProperty(props, ["Notion URL", "Notion", "Notion Page URL"]) || page.url || "";
+  const notionUrl = readProperty(props, ["Notion URL", "Notion", "Notion Page URL"]) || "";
 
   return {
     id: `notion-${page.id}`,
