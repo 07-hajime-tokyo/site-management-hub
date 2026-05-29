@@ -231,6 +231,9 @@ async function ensureNotionSchema(token, source) {
   if (!properties["Notion URL"]) {
     updates["Notion URL"] = { url: {} };
   }
+  if (!properties["TiDB URL"]) {
+    updates["TiDB URL"] = { url: {} };
+  }
 
   const displayNameProperty = properties.表示名;
   if (!displayNameProperty) {
@@ -288,6 +291,9 @@ function createNotionProperties(tool) {
     "Vercel URL": {
       url: tool.vercelUrl || null,
     },
+    "TiDB URL": {
+      url: tool.tidbUrl || null,
+    },
     "Notion URL": {
       url: tool.notionUrl || null,
     },
@@ -337,6 +343,7 @@ function normalizeIncomingTool(body) {
   const platformLabel = String(body.platformLabel || body.displayName || "").trim();
   const repositoryUrl = String(body.repositoryUrl || body.repoUrl || "").trim();
   const vercelUrl = String(body.vercelUrl || "").trim();
+  const tidbUrl = String(body.tidbUrl || body.tidbCloudUrl || "").trim();
   const notionUrl = String(body.notionUrl || body.notionPageUrl || "").trim();
   if (!title) throw new Error("名前を入力してください");
   if (!url) throw new Error("URLを入力してください");
@@ -359,6 +366,13 @@ function normalizeIncomingTool(body) {
       throw new Error("Vercel URLの形式が正しくありません");
     }
   }
+  if (tidbUrl) {
+    try {
+      new URL(tidbUrl);
+    } catch {
+      throw new Error("TiDB URLの形式が正しくありません");
+    }
+  }
   if (notionUrl) {
     try {
       new URL(notionUrl);
@@ -374,6 +388,7 @@ function normalizeIncomingTool(body) {
     platformLabel: normalizePlatformLabel(platformLabel, { title, url, repositoryUrl, vercelUrl }),
     repositoryUrl,
     vercelUrl,
+    tidbUrl,
     notionUrl,
     category: normalizeCategory(body.category, type),
     type,
@@ -509,6 +524,7 @@ function mapNotionPageToTool(page) {
       "Repository",
     ]) || "";
   const vercelUrl = readProperty(props, ["Vercel URL", "Vercel", "Deployment URL"]) || "";
+  const tidbUrl = readProperty(props, ["TiDB URL", "TiDB", "TiDB Cloud URL"]) || "";
   const notionUrl = readProperty(props, ["Notion URL", "Notion", "Notion Page URL"]) || "";
 
   return {
@@ -523,6 +539,7 @@ function mapNotionPageToTool(page) {
     }),
     repositoryUrl,
     vercelUrl,
+    tidbUrl,
     notionUrl,
     category,
     type,

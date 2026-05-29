@@ -177,6 +177,7 @@ const formFields = {
   platformLabel: document.querySelector("#toolPlatformLabel"),
   repositoryUrl: document.querySelector("#toolRepositoryUrl"),
   vercelUrl: document.querySelector("#toolVercelUrl"),
+  tidbUrl: document.querySelector("#toolTidbUrl"),
   notionUrl: document.querySelector("#toolNotionUrl"),
   category: document.querySelector("#toolCategory"),
   type: document.querySelector("#toolType"),
@@ -631,7 +632,12 @@ function createToolCard(tool, compact = false) {
 }
 
 function createPlatformLinks(tool) {
-  const links = [createRepositoryLink(tool), createVercelLink(tool), createNotionLink(tool)].filter(Boolean);
+  const links = [
+    createRepositoryLink(tool),
+    createVercelLink(tool),
+    createTidbLink(tool),
+    createNotionLink(tool),
+  ].filter(Boolean);
   if (!links.length) return "";
   return `
     <div class="platform-links">
@@ -674,6 +680,21 @@ function createNotionLink(tool) {
     <a class="platform-link notion-link" href="${escapeAttribute(tool.notionUrl)}" target="_blank" rel="noreferrer" aria-label="Notionを開く">
       <span class="platform-mark notion-mark" aria-hidden="true">
         <img src="https://www.notion.so/images/favicon.ico" alt="" loading="lazy" referrerpolicy="no-referrer" />
+      </span>
+    </a>
+  `;
+}
+
+function createTidbLink(tool) {
+  if (!tool.tidbUrl) return "";
+  return `
+    <a class="platform-link tidb-link" href="${escapeAttribute(tool.tidbUrl)}" target="_blank" rel="noreferrer" aria-label="TiDB Cloudを開く">
+      <span class="platform-mark tidb-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path fill="#e21d1d" d="M12 2.4 21 7.2v9.6l-9 4.8-9-4.8V7.2l9-4.8Z"></path>
+          <path fill="#fff" d="M7.1 7.4h9.8v2.5h-3.3v7.1h-3.2V9.9H7.1V7.4Z"></path>
+          <path fill="#fff" d="M16.1 11.1h2.3v5.9h-2.3v-5.9Z"></path>
+        </svg>
       </span>
     </a>
   `;
@@ -955,6 +976,7 @@ function getFilteredTools() {
         tool.platformLabel,
         tool.repositoryUrl,
         tool.vercelUrl,
+        tool.tidbUrl,
         tool.notionUrl,
         tool.url,
       ]
@@ -988,6 +1010,7 @@ function openDialog(tool = null, focusField = "title") {
   formFields.platformLabel.value = normalizePlatformLabel(tool?.platformLabel, tool || {});
   formFields.repositoryUrl.value = tool?.repositoryUrl || "";
   formFields.vercelUrl.value = tool?.vercelUrl || (tool && isVercelUrl(tool.url) ? tool.url : "");
+  formFields.tidbUrl.value = tool?.tidbUrl || "";
   formFields.notionUrl.value = tool?.notionUrl || "";
   formFields.category.value = tool?.category || "";
   formFields.type.value = tool?.type || "site";
@@ -1034,6 +1057,7 @@ function saveFromForm() {
     platformLabel: formFields.platformLabel.value,
     repositoryUrl: formFields.repositoryUrl.value.trim(),
     vercelUrl: formFields.vercelUrl.value.trim(),
+    tidbUrl: formFields.tidbUrl.value.trim(),
     notionUrl: formFields.notionUrl.value.trim(),
     category: normalizeCategory(formFields.category.value, toolType),
     type: toolType,
@@ -1083,6 +1107,7 @@ async function updateSharedToolFromForm() {
     platformLabel: formFields.platformLabel.value,
     repositoryUrl: formFields.repositoryUrl.value.trim(),
     vercelUrl: formFields.vercelUrl.value.trim(),
+    tidbUrl: formFields.tidbUrl.value.trim(),
     notionUrl: formFields.notionUrl.value.trim(),
     category: normalizeCategory(formFields.category.value, toolType),
     type: toolType,
@@ -1130,6 +1155,7 @@ async function createSharedToolFromForm() {
     platformLabel: formFields.platformLabel.value,
     repositoryUrl: formFields.repositoryUrl.value.trim(),
     vercelUrl: formFields.vercelUrl.value.trim(),
+    tidbUrl: formFields.tidbUrl.value.trim(),
     notionUrl: formFields.notionUrl.value.trim(),
     category: normalizeCategory(formFields.category.value, toolType),
     type: toolType,
@@ -1293,6 +1319,7 @@ async function updateSharedToolOrder(tool) {
       platformLabel: tool.platformLabel,
       repositoryUrl: tool.repositoryUrl,
       vercelUrl: tool.vercelUrl,
+      tidbUrl: tool.tidbUrl,
       notionUrl: tool.notionUrl,
       category: tool.category,
       type: tool.type,
@@ -1394,6 +1421,7 @@ function importData(event) {
           platformLabel: normalizePlatformLabel(tool.platformLabel || tool.displayName, tool),
           repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
           vercelUrl: String(tool.vercelUrl || ""),
+          tidbUrl: String(tool.tidbUrl || tool.tidbCloudUrl || ""),
           notionUrl: String(tool.notionUrl || tool.notionPageUrl || ""),
           displayOrder: normalizeDisplayOrder(tool.displayOrder),
           cardOrder: normalizeCardOrder(tool.cardOrder),
@@ -1501,6 +1529,7 @@ function normalizeToolList(tools) {
       platformLabel: normalizePlatformLabel(tool.platformLabel || tool.displayName, tool),
       repositoryUrl: String(tool.repositoryUrl || tool.repoUrl || ""),
       vercelUrl: String(tool.vercelUrl || ""),
+      tidbUrl: String(tool.tidbUrl || tool.tidbCloudUrl || ""),
       notionUrl: String(tool.notionUrl || tool.notionPageUrl || ""),
       displayOrder: normalizeDisplayOrder(tool.displayOrder),
       cardOrder: normalizeCardOrder(tool.cardOrder),
