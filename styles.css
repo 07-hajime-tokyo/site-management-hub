@@ -393,13 +393,13 @@ select {
 }
 
 .shortcut-text {
-  display: grid;
+  display: flex;
+  align-items: center;
   min-width: 0;
   line-height: 1.1;
 }
 
-.shortcut-text strong,
-.shortcut-text small {
+.shortcut-text strong {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -408,12 +408,6 @@ select {
 .shortcut-text strong {
   color: var(--ink);
   font-size: 0.84rem;
-}
-
-.shortcut-text small {
-  color: var(--muted);
-  font-family: Inter, system-ui, sans-serif;
-  font-size: 0.7rem;
 }
 
 .workspace {
