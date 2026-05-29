@@ -543,7 +543,6 @@ function createSheetGroupCards(tools) {
       const accent = getAccentClass(category);
       const links = items
         .map((tool) => {
-          const hostname = getHostname(tool.url);
           return `
             <div class="sheet-group-row" data-id="${tool.id}" data-category="${escapeAttribute(category)}">
               <span class="sheet-drag-handle" draggable="true" aria-label="並び替え" role="button" tabindex="0">
@@ -552,7 +551,6 @@ function createSheetGroupCards(tools) {
               <a class="sheet-group-item" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
                 <span>
                   <strong>${escapeHtml(tool.title)}</strong>
-                  <small>${escapeHtml(hostname)}</small>
                 </span>
                 <i data-lucide="external-link" aria-hidden="true"></i>
               </a>
@@ -600,7 +598,6 @@ function createSheetGroupCards(tools) {
 
 function createToolCard(tool, compact = false) {
   const accent = getAccentClass(tool.category);
-  const hostname = getHostname(tool.url);
   const platformLinks = createPlatformLinks(tool);
   return `
     <article class="tool-card ${compact ? "is-compact" : ""} ${accent}" data-id="${tool.id}" data-card-key="${escapeAttribute(tool.id)}" data-card-kind="tool" data-card-type="${escapeAttribute(tool.type)}">
@@ -610,8 +607,6 @@ function createToolCard(tool, compact = false) {
       <div class="card-info">
         <a class="card-text-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
           <h4>${escapeHtml(tool.title)}</h4>
-          <p class="card-url">${escapeHtml(hostname)}</p>
-          <p>${escapeHtml(tool.description || hostname)}</p>
         </a>
         ${platformLinks}
       </div>

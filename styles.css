@@ -313,13 +313,13 @@ select {
 }
 
 .site-link-text {
-  display: grid;
+  display: flex;
+  align-items: center;
   min-width: 0;
   line-height: 1.12;
 }
 
-.site-link-text strong,
-.site-link-text small {
+.site-link-text strong {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -328,12 +328,6 @@ select {
 .site-link-text strong {
   color: var(--ink);
   font-size: 0.8rem;
-}
-
-.site-link-text small {
-  color: var(--muted);
-  font-family: Inter, system-ui, sans-serif;
-  font-size: 0.66rem;
 }
 
 .shortcut-rail {
@@ -924,15 +918,6 @@ select:disabled {
   font-size: 0.9rem;
 }
 
-.tool-card .card-url {
-  overflow: hidden;
-  color: var(--faint);
-  font-family: Inter, system-ui, sans-serif;
-  font-size: 0.78rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .platform-links {
   display: flex;
   align-items: center;
@@ -1190,7 +1175,7 @@ select:disabled {
   min-width: 0;
 }
 
-.tool-card:not(.sheet-group-card) .card-text-link p:not(.card-url),
+.tool-card:not(.sheet-group-card) .card-text-link p,
 .tool-card:not(.sheet-group-card) .kind-line,
 .tool-card:not(.sheet-group-card) .open-link,
 .tool-card:not(.sheet-group-card) .card-meta .pill:not(.category-pill) {
