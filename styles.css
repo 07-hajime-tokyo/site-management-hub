@@ -1429,6 +1429,10 @@ tr:last-child td {
   font-weight: 800;
 }
 
+.form-grid [hidden] {
+  display: none !important;
+}
+
 .form-grid input,
 .form-grid select,
 .form-grid textarea {

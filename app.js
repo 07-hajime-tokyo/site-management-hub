@@ -2,6 +2,7 @@ const STORAGE_KEY = "manus-portal-tools-v1";
 const RECENT_KEY = "manus-portal-recent-v1";
 const PIN_OVERRIDES_KEY = "manus-portal-pin-overrides-v1";
 const FX_CACHE_KEY = "manus-portal-fx-jpy-v2";
+const ADD_CATEGORY_VALUE = "__add_category__";
 const platformLabelOptions = ["01mur", "07haj", "talk"];
 
 const typeLabels = {
@@ -170,7 +171,7 @@ const el = {
   closeDialogButton: document.querySelector("#closeDialogButton"),
   cancelButton: document.querySelector("#cancelButton"),
   deleteButton: document.querySelector("#deleteButton"),
-  categoryOptions: document.querySelector("#categoryOptions"),
+  customCategoryField: document.querySelector("#customCategoryField"),
   toast: document.querySelector("#toast"),
 };
 
@@ -184,6 +185,7 @@ const formFields = {
   tidbUrl: document.querySelector("#toolTidbUrl"),
   notionUrl: document.querySelector("#toolNotionUrl"),
   category: document.querySelector("#toolCategory"),
+  customCategory: document.querySelector("#toolCustomCategory"),
   type: document.querySelector("#toolType"),
   status: document.querySelector("#toolStatus"),
   description: document.querySelector("#toolDescription"),
@@ -310,6 +312,7 @@ function bindEvents() {
     }
   });
 
+  formFields.category.addEventListener("change", () => updateCustomCategoryField(true));
   formFields.type.addEventListener("change", applyDefaultCategoryForType);
 }
 
@@ -417,9 +420,28 @@ function renderTypeNav() {
 }
 
 function renderCategoryOptions() {
-  el.categoryOptions.innerHTML = getCategories()
-    .map((category) => `<option value="${escapeAttribute(category)}"></option>`)
-    .join("");
+  const wasAddingCategory = formFields.category.value === ADD_CATEGORY_VALUE;
+  const currentCategory = getCategoryFromForm();
+  const categories = getCategories();
+  if (currentCategory && !categories.includes(currentCategory)) {
+    categories.push(currentCategory);
+    categories.sort((a, b) => a.localeCompare(b, "ja"));
+  }
+
+  formFields.category.innerHTML = [
+    `<option value="">カテゴリを選択</option>`,
+    ...categories.map((category) => `<option value="${escapeAttribute(category)}">${escapeHtml(category)}</option>`),
+    `<option value="${ADD_CATEGORY_VALUE}">カテゴリを追加</option>`,
+  ].join("");
+
+  if (wasAddingCategory) {
+    formFields.category.value = ADD_CATEGORY_VALUE;
+    formFields.customCategory.value = currentCategory;
+  } else {
+    formFields.category.value = currentCategory;
+    formFields.customCategory.value = "";
+  }
+  updateCustomCategoryField(false);
 }
 
 function renderQuickAccess() {
@@ -1017,10 +1039,11 @@ function openDialog(tool = null, focusField = "title") {
   formFields.vercelUrl.value = tool?.vercelUrl || (tool && isVercelUrl(tool.url) ? tool.url : "");
   formFields.tidbUrl.value = tool?.tidbUrl || "";
   formFields.notionUrl.value = tool?.notionUrl || "";
-  formFields.category.value = tool?.category || "";
   formFields.type.value = tool?.type || "site";
   formFields.status.value = tool?.status || "active";
   formFields.description.value = tool?.description || "";
+  renderCategoryOptions();
+  setFormCategory(tool?.category || "");
   applyDefaultCategoryForType();
 
   el.toolDialog.showModal();
@@ -1028,16 +1051,51 @@ function openDialog(tool = null, focusField = "title") {
   renderIcons();
 }
 
+function getCategoryFromForm() {
+  if (formFields.category.value === ADD_CATEGORY_VALUE) {
+    return formFields.customCategory.value.trim();
+  }
+  return formFields.category.value.trim();
+}
+
+function setFormCategory(category) {
+  const value = String(category || "").trim();
+  if (value && ![...formFields.category.options].some((option) => option.value === value)) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    const addOption = [...formFields.category.options].find((optionItem) => optionItem.value === ADD_CATEGORY_VALUE);
+    formFields.category.insertBefore(option, addOption || null);
+  }
+  formFields.category.value = value;
+  formFields.customCategory.value = "";
+  updateCustomCategoryField(false);
+}
+
+function updateCustomCategoryField(shouldFocus = false) {
+  const addingCategory = formFields.category.value === ADD_CATEGORY_VALUE;
+  el.customCategoryField.hidden = !addingCategory;
+  formFields.customCategory.required = addingCategory;
+  if (!addingCategory) {
+    formFields.customCategory.value = "";
+    return;
+  }
+  if (shouldFocus) {
+    formFields.customCategory.focus();
+  }
+}
+
 function applyDefaultCategoryForType() {
-  const category = formFields.category.value.trim();
+  const category = getCategoryFromForm();
   if (formFields.type.value === "sheet" && (!category || category === "未分類" || category === "その他")) {
-    formFields.category.value = "税理士";
+    setFormCategory("税理士");
   }
 }
 
 function closeDialog() {
   el.toolDialog.close();
   el.toolForm.reset();
+  updateCustomCategoryField(false);
   state.editingId = null;
 }
 
@@ -1055,6 +1113,7 @@ function saveFromForm() {
   }
   const now = new Date().toISOString();
   const toolType = formFields.type.value;
+  const category = getCategoryFromForm();
   const payload = {
     id: state.editingId || createId(formFields.title.value),
     title: formFields.title.value.trim(),
@@ -1064,7 +1123,7 @@ function saveFromForm() {
     vercelUrl: formFields.vercelUrl.value.trim(),
     tidbUrl: formFields.tidbUrl.value.trim(),
     notionUrl: formFields.notionUrl.value.trim(),
-    category: normalizeCategory(formFields.category.value, toolType),
+    category: normalizeCategory(category, toolType),
     type: toolType,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
@@ -1105,6 +1164,7 @@ function saveFromForm() {
 async function updateSharedToolFromForm() {
   const existingTool = getBaseTools().find((tool) => tool.id === state.editingId);
   const toolType = formFields.type.value;
+  const category = getCategoryFromForm();
   const payload = {
     id: state.editingId,
     title: formFields.title.value.trim(),
@@ -1114,7 +1174,7 @@ async function updateSharedToolFromForm() {
     vercelUrl: formFields.vercelUrl.value.trim(),
     tidbUrl: formFields.tidbUrl.value.trim(),
     notionUrl: formFields.notionUrl.value.trim(),
-    category: normalizeCategory(formFields.category.value, toolType),
+    category: normalizeCategory(category, toolType),
     type: toolType,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
@@ -1154,6 +1214,7 @@ async function updateSharedToolFromForm() {
 
 async function createSharedToolFromForm() {
   const toolType = formFields.type.value;
+  const category = getCategoryFromForm();
   const payload = {
     title: formFields.title.value.trim(),
     url: formFields.url.value.trim(),
@@ -1162,7 +1223,7 @@ async function createSharedToolFromForm() {
     vercelUrl: formFields.vercelUrl.value.trim(),
     tidbUrl: formFields.tidbUrl.value.trim(),
     notionUrl: formFields.notionUrl.value.trim(),
-    category: normalizeCategory(formFields.category.value, toolType),
+    category: normalizeCategory(category, toolType),
     type: toolType,
     status: formFields.status.value,
     description: formFields.description.value.trim(),
