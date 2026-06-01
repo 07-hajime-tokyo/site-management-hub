@@ -444,8 +444,8 @@ select {
 .exchange-rate {
   display: inline-grid;
   align-items: center;
-  justify-content: flex-end;
-  justify-items: end;
+  justify-content: end;
+  justify-items: start;
   order: -1;
   flex: 1 0 100%;
   min-height: 42px;
