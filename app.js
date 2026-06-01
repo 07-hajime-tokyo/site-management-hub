@@ -1,6 +1,7 @@
 const STORAGE_KEY = "manus-portal-tools-v1";
 const RECENT_KEY = "manus-portal-recent-v1";
 const PIN_OVERRIDES_KEY = "manus-portal-pin-overrides-v1";
+const FX_CACHE_KEY = "manus-portal-fx-usdjpy-v1";
 const platformLabelOptions = ["01mur", "07haj", "talk"];
 
 const typeLabels = {
@@ -147,6 +148,8 @@ const el = {
   sheetCount: document.querySelector("#sheetCount"),
   reviewCount: document.querySelector("#reviewCount"),
   searchInput: document.querySelector("#searchInput"),
+  exchangeRate: document.querySelector("#exchangeRate"),
+  exchangeRateValue: document.querySelector("#exchangeRateValue"),
   sortSelect: document.querySelector("#sortSelect"),
   toolGrid: document.querySelector("#toolGrid"),
   toolTable: document.querySelector("#toolTable"),
@@ -190,6 +193,7 @@ bindEvents();
 if (state.source === "shared") {
   loadSharedTools();
 }
+loadExchangeRate();
 
 function getBaseTools() {
   return state.source === "shared" ? state.sharedTools : state.personalTools;
@@ -1511,6 +1515,82 @@ async function loadSharedTools() {
     state.sharedLoading = false;
     render();
   }
+}
+
+async function loadExchangeRate() {
+  const cached = readExchangeRateCache();
+  if (cached) {
+    renderExchangeRate(cached, cached.dateKey !== getJapanDateKey());
+  }
+
+  try {
+    const response = await fetch("https://open.er-api.com/v6/latest/USD", {
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+    });
+    const payload = await response.json();
+    const rate = Number(payload?.rates?.JPY);
+    if (!response.ok || !Number.isFinite(rate)) {
+      throw new Error("exchange rate unavailable");
+    }
+    const next = {
+      base: "USD",
+      quote: "JPY",
+      rate,
+      dateKey: getJapanDateKey(),
+      fetchedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(FX_CACHE_KEY, JSON.stringify(next));
+    renderExchangeRate(next, false);
+  } catch {
+    if (!cached) {
+      renderExchangeRate(null, false);
+    }
+  }
+}
+
+function readExchangeRateCache() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(FX_CACHE_KEY) || "null");
+    if (!cached || !Number.isFinite(Number(cached.rate))) return null;
+    return {
+      ...cached,
+      rate: Number(cached.rate),
+      dateKey: cached.dateKey || "",
+      fetchedAt: cached.fetchedAt || "",
+    };
+  } catch {
+    return null;
+  }
+}
+
+function renderExchangeRate(data, stale) {
+  if (!el.exchangeRate || !el.exchangeRateValue) return;
+  el.exchangeRate.classList.toggle("is-stale", Boolean(data && stale));
+  el.exchangeRate.classList.toggle("is-error", !data);
+  if (!data) {
+    el.exchangeRateValue.textContent = "--";
+    el.exchangeRate.title = "USD/JPY 為替レートを取得できませんでした";
+    return;
+  }
+
+  const value = data.rate.toLocaleString("ja-JP", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  el.exchangeRateValue.textContent = value;
+  el.exchangeRate.title = `USD/JPY ${value}${stale ? "（前回取得）" : "（本日取得）"}`;
+}
+
+function getJapanDateKey(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("ja-JP-u-ca-gregory", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
 }
 
 function normalizeTools() {

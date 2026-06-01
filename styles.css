@@ -440,6 +440,38 @@ select {
   gap: 10px;
 }
 
+.exchange-rate {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--soft-shadow);
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.exchange-rate span {
+  color: var(--muted);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.exchange-rate strong {
+  color: var(--leaf);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.94rem;
+  font-weight: 800;
+}
+
+.exchange-rate.is-stale strong,
+.exchange-rate.is-error strong {
+  color: var(--muted);
+}
+
 .search-box {
   display: flex;
   align-items: center;
