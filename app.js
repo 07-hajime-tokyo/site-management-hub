@@ -1,7 +1,7 @@
 const STORAGE_KEY = "manus-portal-tools-v1";
 const RECENT_KEY = "manus-portal-recent-v1";
 const PIN_OVERRIDES_KEY = "manus-portal-pin-overrides-v1";
-const FX_CACHE_KEY = "manus-portal-fx-usdjpy-v1";
+const FX_CACHE_KEY = "manus-portal-fx-jpy-v2";
 const platformLabelOptions = ["01mur", "07haj", "talk"];
 
 const typeLabels = {
@@ -1524,19 +1524,33 @@ async function loadExchangeRate() {
   }
 
   try {
-    const response = await fetch("https://open.er-api.com/v6/latest/USD", {
-      cache: "no-store",
-      headers: { Accept: "application/json" },
-    });
-    const payload = await response.json();
-    const rate = Number(payload?.rates?.JPY);
-    if (!response.ok || !Number.isFinite(rate)) {
+    const [usdResponse, eurResponse] = await Promise.all([
+      fetch("https://open.er-api.com/v6/latest/USD", {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      }),
+      fetch("https://open.er-api.com/v6/latest/EUR", {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      }),
+    ]);
+    const [usdPayload, eurPayload] = await Promise.all([
+      usdResponse.json(),
+      eurResponse.json(),
+    ]);
+    const usdJpy = Number(usdPayload?.rates?.JPY);
+    const eurJpy = Number(eurPayload?.rates?.JPY);
+    if (
+      !usdResponse.ok ||
+      !eurResponse.ok ||
+      !Number.isFinite(usdJpy) ||
+      !Number.isFinite(eurJpy)
+    ) {
       throw new Error("exchange rate unavailable");
     }
     const next = {
-      base: "USD",
-      quote: "JPY",
-      rate,
+      usdJpy,
+      eurJpy,
       dateKey: getJapanDateKey(),
       fetchedAt: new Date().toISOString(),
     };
@@ -1552,10 +1566,15 @@ async function loadExchangeRate() {
 function readExchangeRateCache() {
   try {
     const cached = JSON.parse(localStorage.getItem(FX_CACHE_KEY) || "null");
-    if (!cached || !Number.isFinite(Number(cached.rate))) return null;
+    if (
+      !cached ||
+      !Number.isFinite(Number(cached.usdJpy)) ||
+      !Number.isFinite(Number(cached.eurJpy))
+    ) return null;
     return {
       ...cached,
-      rate: Number(cached.rate),
+      usdJpy: Number(cached.usdJpy),
+      eurJpy: Number(cached.eurJpy),
       dateKey: cached.dateKey || "",
       fetchedAt: cached.fetchedAt || "",
     };
@@ -1569,17 +1588,22 @@ function renderExchangeRate(data, stale) {
   el.exchangeRate.classList.toggle("is-stale", Boolean(data && stale));
   el.exchangeRate.classList.toggle("is-error", !data);
   if (!data) {
-    el.exchangeRateValue.textContent = "--";
-    el.exchangeRate.title = "USD/JPY 為替レートを取得できませんでした";
+    el.exchangeRateValue.textContent = "為替レート / USD --・EURO --";
+    el.exchangeRate.title = "為替レートを取得できませんでした";
     return;
   }
 
-  const value = data.rate.toLocaleString("ja-JP", {
+  const usdValue = formatExchangeRate(data.usdJpy);
+  const eurValue = formatExchangeRate(data.eurJpy);
+  el.exchangeRateValue.textContent = `為替レート / USD ${usdValue}・EURO ${eurValue}`;
+  el.exchangeRate.title = `USD/JPY ${usdValue}・EUR/JPY ${eurValue}${stale ? "（前回取得）" : "（本日取得）"}`;
+}
+
+function formatExchangeRate(value) {
+  return Number(value).toLocaleString("ja-JP", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  el.exchangeRateValue.textContent = value;
-  el.exchangeRate.title = `USD/JPY ${value}${stale ? "（前回取得）" : "（本日取得）"}`;
 }
 
 function getJapanDateKey(date = new Date()) {
