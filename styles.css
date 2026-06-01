@@ -442,21 +442,40 @@ select {
 }
 
 .exchange-rate {
-  display: inline-flex;
+  display: inline-grid;
   align-items: center;
   justify-content: flex-end;
+  justify-items: end;
   order: -1;
   flex: 1 0 100%;
-  min-height: 22px;
+  min-height: 42px;
   padding: 0 2px;
   white-space: nowrap;
 }
 
+.exchange-rate > span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
 .exchange-rate strong {
   color: var(--ink);
-  font-size: 1.03rem;
+  font-size: 1.22rem;
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.15;
+}
+
+.exchange-amount {
+  color: var(--accent-strong);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 1.28rem;
+}
+
+.exchange-currency + .exchange-separator,
+.exchange-separator + .exchange-currency {
+  margin-left: 4px;
 }
 
 .exchange-rate.is-stale strong,

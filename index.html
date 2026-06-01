@@ -10,9 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260601-2" />
+    <link rel="stylesheet" href="./styles.css?v=20260601-3" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
-    <script src="./app.js?v=20260601-2" defer></script>
+    <script src="./app.js?v=20260601-3" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -94,7 +94,8 @@
           </label>
           <div class="topbar-actions">
             <div class="exchange-rate" id="exchangeRate" title="為替レート" aria-live="polite">
-              <strong id="exchangeRateValue">為替レート / USD --・EURO --</strong>
+              <span id="exchangeRateDate">為替レート</span>
+              <strong id="exchangeRateValue">USD --・EURO --</strong>
             </div>
             <select id="sortSelect" class="sort-select" aria-label="並び順">
               <option value="manual">手動順</option>

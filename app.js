@@ -149,6 +149,7 @@ const el = {
   reviewCount: document.querySelector("#reviewCount"),
   searchInput: document.querySelector("#searchInput"),
   exchangeRate: document.querySelector("#exchangeRate"),
+  exchangeRateDate: document.querySelector("#exchangeRateDate"),
   exchangeRateValue: document.querySelector("#exchangeRateValue"),
   sortSelect: document.querySelector("#sortSelect"),
   toolGrid: document.querySelector("#toolGrid"),
@@ -1587,15 +1588,22 @@ function renderExchangeRate(data, stale) {
   if (!el.exchangeRate || !el.exchangeRateValue) return;
   el.exchangeRate.classList.toggle("is-stale", Boolean(data && stale));
   el.exchangeRate.classList.toggle("is-error", !data);
+  if (el.exchangeRateDate) {
+    el.exchangeRateDate.textContent = `${formatJapanDateLabel()} 為替レート`;
+  }
   if (!data) {
-    el.exchangeRateValue.textContent = "為替レート / USD --・EURO --";
+    el.exchangeRateValue.textContent = "USD --・EURO --";
     el.exchangeRate.title = "為替レートを取得できませんでした";
     return;
   }
 
   const usdValue = formatExchangeRate(data.usdJpy);
   const eurValue = formatExchangeRate(data.eurJpy);
-  el.exchangeRateValue.textContent = `為替レート / USD ${usdValue}・EURO ${eurValue}`;
+  el.exchangeRateValue.innerHTML = `
+    <span class="exchange-currency">USD <span class="exchange-amount">${usdValue}</span></span>
+    <span class="exchange-separator">・</span>
+    <span class="exchange-currency">EURO <span class="exchange-amount">${eurValue}</span></span>
+  `;
   el.exchangeRate.title = `USD/JPY ${usdValue}・EUR/JPY ${eurValue}${stale ? "（前回取得）" : "（本日取得）"}`;
 }
 
@@ -1615,6 +1623,17 @@ function getJapanDateKey(date = new Date()) {
   }).formatToParts(date);
   const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
   return `${values.year}-${values.month}-${values.day}`;
+}
+
+function formatJapanDateLabel(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("ja-JP-u-ca-gregory", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}/${values.month}/${values.day}`;
 }
 
 function normalizeTools() {
