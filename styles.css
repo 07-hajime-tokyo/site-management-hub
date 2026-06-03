@@ -483,12 +483,12 @@ select {
 
 .exchange-refresh {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 1;
   display: inline-grid;
   width: 26px;
   height: 26px;
   place-items: center;
-  align-self: center;
+  align-self: start;
   border: 0;
   border-radius: 6px;
   background: transparent;
