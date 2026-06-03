@@ -10,9 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260601-6" />
+    <link rel="stylesheet" href="./styles.css?v=20260603-1" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
-    <script src="./app.js?v=20260601-4" defer></script>
+    <script src="./app.js?v=20260603-1" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -96,6 +96,9 @@
             <div class="exchange-rate" id="exchangeRate" title="為替レート" aria-live="polite">
               <span id="exchangeRateDate">為替レート</span>
               <strong id="exchangeRateValue">USD --・EURO --</strong>
+              <button class="exchange-refresh" type="button" id="refreshExchangeRateButton" aria-label="為替レートを更新" title="為替レートを更新">
+                <i data-lucide="refresh-cw" aria-hidden="true"></i>
+              </button>
             </div>
             <select id="sortSelect" class="sort-select" aria-label="並び順">
               <option value="manual">手動順</option>
@@ -224,6 +227,15 @@
             </span>
             <span class="shortcut-text">
               <strong>Sellerhacks</strong>
+            </span>
+            <i data-lucide="external-link" aria-hidden="true"></i>
+          </a>
+          <a class="shortcut-card" href="https://www.chatwork.com" target="_blank" rel="noreferrer">
+            <span class="shortcut-icon shortcut-icon-logo" aria-hidden="true">
+              <img src="https://www.chatwork.com/favicon.ico" alt="" loading="lazy" referrerpolicy="no-referrer" />
+            </span>
+            <span class="shortcut-text">
+              <strong>Chatwork</strong>
             </span>
             <i data-lucide="external-link" aria-hidden="true"></i>
           </a>

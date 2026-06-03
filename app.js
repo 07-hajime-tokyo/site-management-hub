@@ -152,6 +152,7 @@ const el = {
   exchangeRate: document.querySelector("#exchangeRate"),
   exchangeRateDate: document.querySelector("#exchangeRateDate"),
   exchangeRateValue: document.querySelector("#exchangeRateValue"),
+  refreshExchangeRateButton: document.querySelector("#refreshExchangeRateButton"),
   sortSelect: document.querySelector("#sortSelect"),
   toolGrid: document.querySelector("#toolGrid"),
   toolTable: document.querySelector("#toolTable"),
@@ -247,6 +248,8 @@ function bindEvents() {
     state.sort = event.target.value;
     renderLibrary();
   });
+
+  el.refreshExchangeRateButton?.addEventListener("click", () => loadExchangeRate({ force: true }));
 
   window.addEventListener("keydown", (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
@@ -1579,12 +1582,14 @@ async function loadSharedTools() {
   }
 }
 
-async function loadExchangeRate() {
+async function loadExchangeRate(options = {}) {
+  const force = Boolean(options.force);
   const cached = readExchangeRateCache();
-  if (cached) {
+  if (cached && !force) {
     renderExchangeRate(cached, cached.dateKey !== getJapanDateKey());
   }
 
+  setExchangeRateLoading(true);
   try {
     const [usdResponse, eurResponse] = await Promise.all([
       fetch("https://open.er-api.com/v6/latest/USD", {
@@ -1618,10 +1623,24 @@ async function loadExchangeRate() {
     };
     localStorage.setItem(FX_CACHE_KEY, JSON.stringify(next));
     renderExchangeRate(next, false);
+    if (force) showToast("為替レートを更新しました");
   } catch {
-    if (!cached) {
+    if (cached) {
+      renderExchangeRate(cached, true);
+    } else {
       renderExchangeRate(null, false);
     }
+    if (force) showToast("為替レートを更新できませんでした");
+  } finally {
+    setExchangeRateLoading(false);
+  }
+}
+
+function setExchangeRateLoading(loading) {
+  if (!el.exchangeRate) return;
+  el.exchangeRate.classList.toggle("is-loading", loading);
+  if (el.refreshExchangeRateButton) {
+    el.refreshExchangeRateButton.disabled = loading;
   }
 }
 

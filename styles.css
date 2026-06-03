@@ -443,9 +443,11 @@ select {
 
 .exchange-rate {
   display: inline-grid;
+  grid-template-columns: minmax(0, auto) 26px;
   align-items: center;
   justify-content: end;
   justify-items: start;
+  column-gap: 8px;
   order: -1;
   flex: 1 0 100%;
   min-height: 42px;
@@ -454,6 +456,7 @@ select {
 }
 
 .exchange-rate > span {
+  grid-column: 1;
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 800;
@@ -461,10 +464,48 @@ select {
 }
 
 .exchange-rate strong {
+  grid-column: 1;
   color: var(--ink);
   font-size: 1.22rem;
   font-weight: 800;
   line-height: 1.15;
+}
+
+.exchange-refresh {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: inline-grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  align-self: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  padding: 0;
+  box-shadow: none;
+}
+
+.exchange-refresh:hover {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--accent-strong);
+  transform: none;
+}
+
+.exchange-refresh svg {
+  width: 15px;
+  height: 15px;
+}
+
+.exchange-rate.is-loading .exchange-refresh svg {
+  animation: exchange-spin 800ms linear infinite;
+}
+
+@keyframes exchange-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .exchange-amount {
