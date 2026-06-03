@@ -392,6 +392,12 @@ select {
   object-fit: contain;
 }
 
+.shortcut-icon-wide img {
+  width: 25px;
+  height: auto;
+  max-height: 20px;
+}
+
 .shortcut-text {
   display: flex;
   align-items: center;
