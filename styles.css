@@ -392,10 +392,14 @@ select {
   object-fit: contain;
 }
 
-.shortcut-icon-wide img {
-  width: 25px;
-  height: auto;
-  max-height: 20px;
+.shortcut-icon-screenshot {
+  border-radius: 7px;
+}
+
+.shortcut-icon-screenshot img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .shortcut-text {
