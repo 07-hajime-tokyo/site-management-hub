@@ -146,6 +146,31 @@
       "sourceIds": [
         "codex-session-2026-06-06"
       ]
+    },
+    {
+      "id": "ebay-profitability-workflow",
+      "title": "eBay収益判定とNinja運用",
+      "area": "Finance",
+      "status": "building",
+      "goal": "eBay手数料、関税、US国内送料、Ninja Express国際送料/倉庫手数料を商品別に分解し、純利益見込で仕入れ可否を判定する。",
+      "startedAt": "2026-06-06",
+      "updatedAt": "2026-06-06",
+      "nextActions": [
+        "既存リサーチシートへ利益計算列を追加する",
+        "Ninja Express請求を商品コード別に按分する台帳を作る",
+        "HTS/原産国/申告額の確認フローを仕入れ前チェックに入れる"
+      ],
+      "commitScopes": [
+        "ebay-profitability",
+        "ninja-express",
+        "seller-research"
+      ],
+      "sourceIds": [
+        "github-ebay-research-handbook",
+        "ninja-express-section2-summary",
+        "ebay-profit-model-2026-06-06",
+        "codex-session-2026-06-06-ebay-profitability"
+      ]
     }
   ],
   "events": [
@@ -195,6 +220,29 @@
       ],
       "summary": "eBay輸出、送料、倉庫、Sellsta、YouTube、定型プロンプト、ロードマップを進捗表示の初期素材にする。",
       "sourceRef": "codex-session-2026-06-06"
+    },
+    {
+      "id": "event-ebay-profitability-model",
+      "date": "2026-06-06",
+      "type": "decision",
+      "title": "eBay収益判定を純利益モデルへ拡張",
+      "featureIds": [
+        "ebay-profitability-workflow",
+        "back-office-knowledge"
+      ],
+      "summary": "従来の価格乖離中心の判定から、eBay手数料、関税、Ninja Express物流費、US国内送料を分けて純利益見込で判断する方針にした。",
+      "sourceRef": "codex-session-2026-06-06-ebay-profitability"
+    },
+    {
+      "id": "event-ninja-workflow-captured",
+      "date": "2026-06-06",
+      "type": "source",
+      "title": "Ninja Expressセクション2要約を運用モデルへ反映",
+      "featureIds": [
+        "ebay-profitability-workflow"
+      ],
+      "summary": "商品カタログのコード番号、Export Form、国際輸送、オレゴン入荷、eBay出荷、返品、請求突合を収益判定に紐づけた。",
+      "sourceRef": "ninja-express-section2-summary"
     }
   ],
   "sources": [
@@ -279,6 +327,87 @@
         "progress-dashboard",
         "back-office-knowledge"
       ]
+    },
+    {
+      "id": "github-ebay-research-handbook",
+      "sourceType": "github",
+      "title": "07-hajime-tokyo/ebay-research-handbook",
+      "url": "https://github.com/07-hajime-tokyo/ebay-research-handbook",
+      "capturedAt": "2026-06-06T12:00:00.000+09:00",
+      "summary": "eBayセラーリサーチのチーム共有手順書。今回、商品別の収益判定とNinja Express連携を追加した。",
+      "keyPoints": [
+        "セラー候補作成から商品別純利益判定まで拡張",
+        "利益計算設定とNinja物流台帳を運用タブとして追加",
+        "Vercel公開サイトで別PCから確認できる"
+      ],
+      "actionCandidates": [
+        "実際のGoogle Sheetsへ利益計算列を反映する",
+        "Notionサイト管理DBの説明文を更新する"
+      ],
+      "relatedFeatureIds": [
+        "ebay-profitability-workflow"
+      ]
+    },
+    {
+      "id": "ninja-express-section2-summary",
+      "sourceType": "document",
+      "title": "Ninja Express セクション2 実務要約",
+      "url": "https://ninja-express-section2-manual.vercel.app/web/",
+      "capturedAt": "2026-06-06T12:05:00.000+09:00",
+      "summary": "Ninja Expressのマスターファイル、商品カタログ、国際輸送、Export Form、eBay出荷、返品、請求の運用要点。",
+      "keyPoints": [
+        "商品カタログのコード番号を国際輸送/在庫/出荷/請求のキーにする",
+        "Export FormではHTSコード、原産国、申告額、TTSレートを確認する",
+        "国際送料請求とその他手数料は別枠で、実績を後から突合する"
+      ],
+      "actionCandidates": [
+        "請求データを商品コード別に按分するシートを作る",
+        "eBay/Sellsta SKUとNinjaコードを揃える"
+      ],
+      "relatedFeatureIds": [
+        "ebay-profitability-workflow"
+      ]
+    },
+    {
+      "id": "ebay-profit-model-2026-06-06",
+      "sourceType": "source",
+      "title": "eBay/USITC/CBP fee and customs source snapshot",
+      "url": "https://www.ebay.com/help/selling/fees/selling-fees?id=4822",
+      "capturedAt": "2026-06-06T12:10:00.000+09:00",
+      "summary": "eBay selling fees、International fee、USITC HTS、CBP輸入/低額貨物情報を確認し、商品別の収益判定モデルに反映した。",
+      "keyPoints": [
+        "eBay落札手数料は販売総額に対する率と注文固定額で計算する",
+        "日本登録セラーのInternational fee初期値は1.35%",
+        "関税はHTS、原産国、申告額を確認して入力する"
+      ],
+      "actionCandidates": [
+        "カテゴリ別FVF率テーブルを実運用カテゴリに合わせて作る",
+        "HTS確認履歴を商品リサーチ表に残す"
+      ],
+      "relatedFeatureIds": [
+        "ebay-profitability-workflow"
+      ]
+    },
+    {
+      "id": "codex-session-2026-06-06-ebay-profitability",
+      "sourceType": "codex",
+      "title": "Codex作業セッション eBay収益判定",
+      "url": "",
+      "capturedAt": "2026-06-06T12:15:00.000+09:00",
+      "summary": "既存スキル、Drive上のリサーチシート、Ninja Express要約、公式手数料/関税情報を確認し、収益判定モデルと運用手順を追加した。",
+      "keyPoints": [
+        "既存シートは送料予測までで、手数料/関税/実費按分が不足",
+        "共有手順書とCodexスキルを同じ列設計に更新",
+        "次は既存Google Sheetsへの列追加と実データ検証"
+      ],
+      "actionCandidates": [
+        "bulldog-store/kenken226の既存シートを新モデルで再生成する",
+        "Ninja請求書を1件取り込み、按分ルールを実地検証する"
+      ],
+      "relatedFeatureIds": [
+        "ebay-profitability-workflow",
+        "back-office-knowledge"
+      ]
     }
   ],
   "sessions": [
@@ -301,6 +430,26 @@
         "進捗ページを追加",
         "GitHubへpush",
         "Vercel本番URLで確認"
+      ]
+    },
+    {
+      "id": "session-2026-06-06-ebay-profitability",
+      "date": "2026-06-06",
+      "title": "eBay収益判定とNinja Express運用整理",
+      "summary": "eBayリサーチ自動化を、正しい送料、関税、手数料、Ninja Express実費を入れた純利益判定へ進める。業務ポータル、GitHub手順書、Driveシート、共有スキルを確認した。",
+      "featureIds": [
+        "ebay-profitability-workflow",
+        "back-office-knowledge"
+      ],
+      "decisions": [
+        "価格乖離は一次スクリーニングに残し、最終判断は純利益見込を使う",
+        "関税率は商品名推定ではなくHTS/原産国/申告額を入力する",
+        "Ninja Expressはコード番号を軸に在庫/出荷/請求を突合する"
+      ],
+      "nextActions": [
+        "既存リサーチシートへ利益計算列を追加",
+        "カテゴリ別FVF率とHTS確認履歴を台帳化",
+        "Ninja請求の実データで按分を検証"
       ]
     }
   ],
