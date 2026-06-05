@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>eBayセラーリサーチ手順書 — ビジュアル版</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://unpkg.com/alpinejs@3.13.7/dist/cdn.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf8f3;
+    --bg-card:#ffffff;
+    --bg-soft:#f3eee3;
+    --border:#ece5d3;
+    --border-strong:#dfd6bf;
+    --fg:#1c1a17;
+    --fg-mid:#4a463e;
+    --fg-soft:#766f62;
+    --fg-faint:#a8a194;
+
+    --human:#e8624a;     /* coral, calmer */
+    --human-bg:#fdeee8;
+    --codex:#4f46e5;     /* indigo */
+    --codex-bg:#eceaff;
+    --sheet:#0d9488;     /* teal, deeper */
+    --sheet-bg:#dff1ed;
+
+    --green:#15803d; --green-bg:#dff5e6;
+    --blue:#1d4ed8; --blue-bg:#e3ecff;
+    --amber:#a16207; --amber-bg:#fcefb8;
+    --gray:#52525b; --gray-bg:#ece9e3;
+    --red:#b91c1c; --red-bg:#fde0db;
+  }
+  html,body{background:var(--bg);color:var(--fg);}
+  body{font-family:'Zen Kaku Gothic New','Inter','Hiragino Kaku Gothic ProN',system-ui,sans-serif;font-feature-settings:"palt";-webkit-font-smoothing:antialiased;line-height:1.6;}
+  .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .display{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;letter-spacing:-0.02em;line-height:1.05;}
+  .hairline{border-color:var(--border);}
+  .scroll-shadow{transition:.2s;}
+  .scroll-shadow.scrolled{box-shadow:0 1px 0 var(--border),0 10px 24px -18px rgba(28,26,23,.15);}
+  .container-wide{max-width:1120px;margin-inline:auto;padding-inline:24px;}
+  .container-narrow{max-width:880px;margin-inline:auto;padding-inline:24px;}
+
+  /* Cards */
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;}
+  .card-lift{transition:border-color .15s ease;}
+  .card-lift:hover{border-color:var(--border-strong);}
+
+  /* Pills */
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:700;}
+  .pill .dot{width:7px;height:7px;border-radius:999px;background:currentColor;}
+  .pill-green{background:var(--green-bg);color:var(--green);}
+  .pill-blue{background:var(--blue-bg);color:var(--blue);}
+  .pill-amber{background:var(--amber-bg);color:var(--amber);}
+  .pill-gray{background:var(--gray-bg);color:var(--gray);}
+
+  /* Numbered step bubble */
+  .step-bubble{
+    width:56px;height:56px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:26px;color:#fff;
+    letter-spacing:-.02em;
+  }
+  .step-bubble small{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;display:block;opacity:.9;letter-spacing:0;margin-top:-3px;}
+
+  /* Roles */
+  .role-card{position:relative;overflow:hidden;border-radius:14px;padding:16px;border:1px solid var(--border);}
+  .role-human{background:var(--human-bg);}
+  .role-codex{background:var(--codex-bg);}
+  .role-sheet{background:var(--sheet-bg);}
+
+  /* Hero */
+  .hero{
+    position:relative;
+    background:linear-gradient(180deg,#fdf6e8 0%,#faf8f3 100%);
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+  }
+
+  /* Sticky header */
+  header.site{position:fixed;top:0;inset-inline:0;z-index:40;background:rgba(251,249,244,.88);backdrop-filter:blur(10px);border-bottom:1px solid transparent;}
+  header.site.scrolled{border-bottom-color:var(--border);box-shadow:0 8px 24px -22px rgba(28,26,23,.22);}
+
+  /* Accordion (used as "詳しく見る") */
+  details > summary{list-style:none;cursor:pointer;}
+  details > summary::-webkit-details-marker{display:none;}
+  details[open] .chev{transform:rotate(180deg);}
+  .chev{transition:.18s;}
+  details[open] .acc-body{animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:none}}
+
+  /* Decision cards — flat with accent left border */
+  .rule-card{border-radius:14px;padding:18px 18px 16px;border:1px solid var(--border);background:#fff;border-left-width:3px;}
+  .rule-priority{background:#f4faf6;border-left-color:#15803d;}
+  .rule-candidate{background:#f3f6fd;border-left-color:#1d4ed8;}
+  .rule-hold{background:#fbf7e9;border-left-color:#a16207;}
+  .rule-excl{background:#f4f4f3;border-left-color:#52525b;}
+  .rule-num{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:56px;line-height:.85;letter-spacing:-.04em;color:rgba(0,0,0,.08);}
+
+  /* Section bg tints — softer */
+  .tint-warm{background:#fbf4ea;}
+  .tint-cool{background:#f1f3fb;}
+  .tint-mint{background:#eaf2ee;}
+  .tint-bone{background:#f7f1e0;}
+
+  /* Section eyebrow */
+  .h-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--fg-soft);}
+  .section-title{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:32px;letter-spacing:-.02em;line-height:1.1;}
+
+  /* Comparison list */
+  .check-item, .x-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid var(--border);}
+  .check-icon{width:24px;height:24px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .ok{background:#dcfce7;color:#15803d;}
+  .ng{background:#fee2e2;color:#b91c1c;}
+
+  /* Avatar circles for sellers */
+  .avatar{width:40px;height:40px;border-radius:999px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;letter-spacing:-.02em;color:#fff;flex-shrink:0;}
+
+  /* Copy button */
+  .copy-btn{opacity:.5;transition:.12s;}
+  .copy-btn:hover{opacity:1;color:var(--codex);}
+  .copied{color:var(--green) !important;opacity:1 !important;}
+
+  /* Flow arrows */
+  .arrow{
+    width:46px;height:46px;border-radius:999px;background:#fff;
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--fg-soft);flex-shrink:0;
+  }
+
+  /* Sheet tab card */
+  .sheet-tile{display:flex;flex-direction:column;gap:8px;}
+  .sheet-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;}
+
+  /* Big visual workflow node */
+  .wf-card{display:block;padding:18px;border-radius:20px;background:#fff;border:1px solid var(--border);}
+
+  /* Batch table — visual */
+  .batch-row{display:grid;grid-template-columns:1fr auto;gap:16px;padding:14px 16px;border-radius:14px;background:#fff;border:1px solid var(--border);align-items:center;}
+  .batch-amt{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--codex);background:var(--codex-bg);padding:5px 12px;border-radius:999px;font-size:13px;}
+
+  /* Subtle background dots */
+  .dots{
+    background-image:radial-gradient(circle,rgba(28,26,23,.07) 1.2px,transparent 1.2px);
+    background-size:24px 24px;
+  }
+
+  @media print {
+    @page { size:A4; margin:14mm; }
+    header.site, .no-print, .hero .blob { display:none !important; }
+    main.docs { padding-top:0 !important; }
+    body { background:#fff; }
+    details:not([open]) > .acc-body { display:block !important; }
+    section.print-break { break-before:page; page-break-before:always; }
+    .card-lift:hover { transform:none; box-shadow:none; }
+    a { color:inherit; text-decoration:none; }
+  }
+</style>
+</head>
+<body x-data="app()" x-init="init()">
+
+<!-- HEADER -->
+<header class="site scroll-shadow" :class="scrolled ? 'scrolled' : ''">
+  <div class="container-wide flex items-center justify-between h-16">
+    <a href="#top" class="flex items-center gap-3 min-w-0">
+      <div class="flex items-baseline gap-3 min-w-0">
+        <h1 class="text-[15.5px] font-bold tracking-tight truncate">eBayセラーリサーチ手順書</h1>
+        <span class="mono text-[11px] text-[color:var(--fg-faint)] hidden sm:inline">2026-06-06</span>
+      </div>
+    </a>
+    <nav class="hidden md:flex items-center gap-1 text-[13.5px]">
+      <a href="./index.html" class="px-3 py-2 rounded-lg text-[color:var(--fg-mid)] hover:bg-white">業務ハブ</a>
+      <a href="#workflow" class="px-3 py-2 rounded-lg text-[color:var(--fg-mid)] hover:bg-white">ワークフロー</a>
+      <a href="#sheet" class="px-3 py-2 rounded-lg text-[color:var(--fg-mid)] hover:bg-white">シート</a>
+      <a href="#profitability" class="px-3 py-2 rounded-lg text-[color:var(--fg-mid)] hover:bg-white">収益判定</a>
+      <a href="#ninja" class="px-3 py-2 rounded-lg text-[color:var(--fg-mid)] hover:bg-white">忍者</a>
+      <a href="#rules" class="px-3 py-2 rounded-lg text-[color:var(--fg-mid)] hover:bg-white">判定ルール</a>
+      <a href="#safety" class="px-3 py-2 rounded-lg text-[color:var(--fg-mid)] hover:bg-white">安全運用</a>
+    </nav>
+    <button class="md:hidden p-2 rounded-lg bg-white border hairline" @click="mobileNav=!mobileNav" aria-label="menu">
+      <i data-lucide="menu" class="w-4 h-4"></i>
+    </button>
+  </div>
+  <div x-show="mobileNav" x-cloak class="md:hidden border-t hairline bg-white">
+    <div class="container-wide py-2 grid grid-cols-2 gap-1 text-[13px]">
+      <a href="./index.html" @click="mobileNav=false" class="px-2 py-2 rounded text-[color:var(--fg-mid)]">業務ハブ</a>
+      <a href="#workflow" @click="mobileNav=false" class="px-2 py-2 rounded text-[color:var(--fg-mid)]">ワークフロー</a>
+      <a href="#sheet" @click="mobileNav=false" class="px-2 py-2 rounded text-[color:var(--fg-mid)]">シート</a>
+      <a href="#profitability" @click="mobileNav=false" class="px-2 py-2 rounded text-[color:var(--fg-mid)]">収益判定</a>
+      <a href="#ninja" @click="mobileNav=false" class="px-2 py-2 rounded text-[color:var(--fg-mid)]">忍者</a>
+      <a href="#rules" @click="mobileNav=false" class="px-2 py-2 rounded text-[color:var(--fg-mid)]">判定ルール</a>
+      <a href="#safety" @click="mobileNav=false" class="px-2 py-2 rounded text-[color:var(--fg-mid)]">安全運用</a>
+    </div>
+  </div>
+</header>
+
+<div id="top"></div>
+<main class="docs pt-16">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container-narrow relative pt-12 pb-12">
+    <h2 class="display text-[36px] sm:text-[44px]">
+      <span style="color:var(--human);">人</span><span>が集めて、</span>
+      <span style="color:var(--codex);">Codex</span><span>が整理。</span><br>
+      <span style="color:var(--sheet);">スプシ</span><span>に貯めて、リサーチに使う。</span>
+    </h2>
+    <p class="mt-3 text-[15px] text-[color:var(--fg-mid)] leading-relaxed max-w-[600px]">
+      eBayで有望な日本発送セラーを見つけ、手数料・関税・Ninja Express物流費まで入れて収益化を判定するチーム共通ワークフロー。
+    </p>
+
+    <!-- 3 Roles -->
+    <div class="mt-7 flex flex-wrap items-center gap-3 sm:gap-2">
+      <div class="role-card role-human flex items-center gap-3 flex-1 min-w-[180px]">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:#fff;color:var(--human);"><i data-lucide="user" class="w-5 h-5"></i></div>
+        <div class="min-w-0">
+          <div class="font-bold text-[15px]" style="color:var(--human);">人間</div>
+          <div class="text-[12.5px] text-[color:var(--fg-mid)] leading-tight">データを集める</div>
+        </div>
+      </div>
+      <div class="arrow"><i data-lucide="arrow-right" class="w-5 h-5"></i></div>
+      <div class="role-card role-codex flex items-center gap-3 flex-1 min-w-[180px]">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:#fff;color:var(--codex);"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+        <div class="min-w-0">
+          <div class="font-bold text-[15px]" style="color:var(--codex);">Codex</div>
+          <div class="text-[12.5px] text-[color:var(--fg-mid)] leading-tight">整理 / 分析 / 判定</div>
+        </div>
+      </div>
+      <div class="arrow"><i data-lucide="arrow-right" class="w-5 h-5"></i></div>
+      <div class="role-card role-sheet flex items-center gap-3 flex-1 min-w-[180px]">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:#fff;color:var(--sheet);"><i data-lucide="table" class="w-5 h-5"></i></div>
+        <div class="min-w-0">
+          <div class="font-bold text-[15px]" style="color:var(--sheet);">スプシ</div>
+          <div class="text-[12.5px] text-[color:var(--fg-mid)] leading-tight">記録 / 再利用</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section id="workflow" class="py-14 print-break" style="scroll-margin-top:80px;">
+  <div class="container-narrow">
+    <div class="flex items-end justify-between gap-4 flex-wrap mb-7">
+      <div>
+        <div class="h-eyebrow">Section 01</div>
+        <h3 class="section-title mt-1">ワークフロー</h3>
+        <p class="text-[14px] text-[color:var(--fg-soft)] mt-1">9つのステップで、上から順に進める。</p>
+      </div>
+      <div class="flex items-center gap-1.5 no-print">
+        <button class="text-[13px] font-medium px-3 py-2 rounded-lg bg-white border hairline hover:bg-[color:var(--bg-soft)] inline-flex items-center gap-1.5" @click="expandAll()"><i data-lucide="chevrons-down" class="w-3.5 h-3.5"></i>すべて開く</button>
+        <button class="text-[13px] font-medium px-3 py-2 rounded-lg bg-white border hairline hover:bg-[color:var(--bg-soft)] inline-flex items-center gap-1.5" @click="collapseAll()"><i data-lucide="chevrons-up" class="w-3.5 h-3.5"></i>すべて閉じる</button>
+      </div>
+    </div>
+
+    <div class="space-y-3">
+      <template x-for="(s,i) in steps" :key="i">
+        <details class="wf-card card-lift" :open="s.open" @toggle="s.open=$event.target.open">
+          <summary :aria-label="'ステップ ' + (i+1) + ' ' + s.title + ' の詳細を開く'">
+            <div class="grid grid-cols-[auto_1fr_auto] gap-4 items-start">
+              <div class="step-bubble" :style="'background:'+s.color+';'">
+                <div class="flex flex-col items-center">
+                  <small>STEP</small>
+                  <span x-text="String(i+1).padStart(2,'0')"></span>
+                </div>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="pill" :style="'background:'+s.bg+';color:'+s.color+';'">
+                    <i :data-lucide="s.actorIcon" class="w-3 h-3"></i><span x-text="s.actor"></span>
+                  </span>
+                  <template x-if="s.tab && s.tab!=='—'">
+                    <span class="mono text-[11px] px-2 py-0.5 rounded bg-[color:var(--bg-soft)]" x-text="s.tab"></span>
+                  </template>
+                </div>
+                <h4 class="text-[18px] font-bold tracking-tight mt-1.5" x-text="s.title"></h4>
+                <p class="text-[13.5px] text-[color:var(--fg-mid)] mt-0.5 leading-snug" x-text="s.summary"></p>
+              </div>
+              <div class="hidden sm:flex items-center gap-1.5 text-[12px] text-[color:var(--fg-soft)] pt-2">
+                <span class="no-print">詳しく</span>
+                <i data-lucide="chevron-down" class="chev w-4 h-4"></i>
+              </div>
+            </div>
+          </summary>
+          <div class="acc-body mt-4 pt-4 border-t hairline grid sm:grid-cols-[1fr_240px] gap-5">
+            <div>
+              <div class="h-eyebrow mb-2">手順</div>
+              <ol class="space-y-2 text-[13.5px] text-[color:var(--fg-mid)]">
+                <template x-for="(line,j) in s.detail" :key="j">
+                  <li class="flex gap-3">
+                    <span class="mono text-[11px] mt-0.5 px-1.5 py-0.5 rounded bg-[color:var(--bg-soft)] shrink-0" x-text="String(j+1).padStart(2,'0')"></span>
+                    <span x-text="line"></span>
+                  </li>
+                </template>
+              </ol>
+              <template x-if="s.caution">
+                <div class="mt-3 rounded-xl border border-[color:var(--amber-bg)] p-3 bg-[color:var(--amber-bg)]/40 flex items-start gap-2">
+                  <i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5 shrink-0" style="color:var(--amber);"></i>
+                  <span class="text-[12.5px] text-[color:var(--fg-mid)]" x-text="s.caution"></span>
+                </div>
+              </template>
+            </div>
+            <div class="space-y-2.5">
+              <div class="rounded-xl border hairline p-3 bg-[color:var(--bg-soft)]/60">
+                <div class="h-eyebrow mb-1.5">使うツール</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <template x-for="t in s.tools" :key="t">
+                    <span class="mono text-[11px] px-2 py-0.5 rounded bg-white border hairline" x-text="t"></span>
+                  </template>
+                </div>
+              </div>
+              <div class="rounded-xl border hairline p-3 bg-white">
+                <div class="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <div class="h-eyebrow mb-1">入力</div>
+                    <div class="text-[12px] text-[color:var(--fg-mid)]" x-text="s.input"></div>
+                  </div>
+                  <div>
+                    <div class="h-eyebrow mb-1">出力</div>
+                    <div class="text-[12px] text-[color:var(--fg-mid)]" x-text="s.output"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- SHEET -->
+<section id="sheet" class="py-14 tint-mint print-break" style="scroll-margin-top:80px;">
+  <div class="container-narrow">
+    <div class="mb-7">
+      <div class="h-eyebrow">Section 02</div>
+      <h3 class="section-title mt-1">スプレッドシート構成</h3>
+      <p class="text-[14px] text-[color:var(--fg-soft)] mt-1">運用シート <a class="mono text-[12.5px] px-2 py-0.5 rounded bg-white border hairline hover:border-[color:var(--ink)] transition-colors" href="https://docs.google.com/spreadsheets/d/1uHlWlbZOGeh11ATJ131kW8iaMBzPIPPZlnea2BO79FI/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">eBayセラーリサーチ運用シート</a> の中身。</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <template x-for="(t,i) in sheetTabs" :key="i">
+        <div class="card card-lift overflow-hidden">
+          <button class="w-full text-left p-4 flex items-start gap-3" @click="t.open=!t.open">
+            <div class="sheet-icon" :style="'background:'+t.bg+';color:'+t.color+';'">
+              <i :data-lucide="t.icon" class="w-5 h-5"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="mono text-[12.5px] font-bold" :style="'color:'+t.color+';'" x-text="t.name"></div>
+              <div class="text-[12.5px] text-[color:var(--fg-mid)] mt-1 leading-snug" x-text="t.use"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-[color:var(--fg-faint)] shrink-0 transition-transform mt-2" :class="t.open?'rotate-180':''"></i>
+          </button>
+          <div x-show="t.open" x-collapse.duration.150ms class="border-t hairline bg-[color:var(--bg-soft)]/40 p-3.5">
+            <div class="h-eyebrow mb-2">主要カラム</div>
+            <div class="flex flex-wrap gap-1">
+              <template x-for="c in t.cols" :key="c">
+                <span class="mono text-[11px] px-1.5 py-0.5 bg-white border hairline rounded" x-text="c"></span>
+              </template>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- PROFITABILITY -->
+<section id="profitability" class="py-14 print-break" style="scroll-margin-top:80px;">
+  <div class="container-narrow">
+    <div class="mb-7">
+      <div class="h-eyebrow">Section 03</div>
+      <h3 class="section-title mt-1">収益判定モデル</h3>
+      <p class="text-[14px] text-[color:var(--fg-soft)] mt-1">価格差だけでなく、eBay手数料・関税・Ninja Express物流費を分けて見る。</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-3">
+      <div class="card p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <i data-lucide="receipt" class="w-5 h-5" style="color:var(--codex);"></i>
+          <div class="font-bold text-[14px]" style="color:var(--codex);">eBay手数料</div>
+        </div>
+        <ul class="space-y-1.5 text-[12.5px] text-[color:var(--fg-mid)]">
+          <li>· `手数料対象額(USD)` = eBay総額 + 売上税見込</li>
+          <li>· `落札手数料(USD)` = FVF率 + 固定手数料</li>
+          <li>· `国際手数料(USD)` = 日本登録セラー標準1.35%</li>
+          <li>· `為替手数料(USD)` と `広告費(USD)` は別列で編集</li>
+        </ul>
+      </div>
+
+      <div class="card p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <i data-lucide="landmark" class="w-5 h-5" style="color:var(--amber);"></i>
+          <div class="font-bold text-[14px]" style="color:var(--amber);">関税・通関</div>
+        </div>
+        <ul class="space-y-1.5 text-[12.5px] text-[color:var(--fg-mid)]">
+          <li>· `HTSコード`、`原産国`、`申告額(USD)` を必須管理</li>
+          <li>· 関税率は商品名から決め打ちしない</li>
+          <li>· `関税見込(JPY)` = 申告額 x 関税率 x FX</li>
+          <li>· `通関/ブローカー(JPY)` は請求実績で上書き</li>
+        </ul>
+      </div>
+
+      <div class="card p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <i data-lucide="ship" class="w-5 h-5" style="color:var(--sheet);"></i>
+          <div class="font-bold text-[14px]" style="color:var(--sheet);">物流費</div>
+        </div>
+        <ul class="space-y-1.5 text-[12.5px] text-[color:var(--fg-mid)]">
+          <li>· `Ninja国際按分(JPY)` は実重量/容積重量で按分</li>
+          <li>· `US国内送料(USD)` はeBay Shipping Calculatorか実ラベル</li>
+          <li>· `倉庫手数料(JPY)` と `その他費用(JPY)` を分ける</li>
+          <li>· 見積は実請求が出たら必ず差し替える</li>
+        </ul>
+      </div>
+
+      <div class="card p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <i data-lucide="calculator" class="w-5 h-5" style="color:var(--green);"></i>
+          <div class="font-bold text-[14px]" style="color:var(--green);">最終判定</div>
+        </div>
+        <ul class="space-y-1.5 text-[12.5px] text-[color:var(--fg-mid)]">
+          <li>· `純利益見込(JPY)` を最優先に見る</li>
+          <li>· `利益率` は売上総額JPYに対する割合</li>
+          <li>· `必要確認` にHTS未確認、US送料未確認などを残す</li>
+          <li>· 目標利益3,000円 / 目標利益率15%を初期基準にする</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-5 rounded-xl p-4 border bg-white hairline">
+      <div class="h-eyebrow mb-2">Formula</div>
+      <pre class="mono text-[11.5px] leading-relaxed whitespace-pre-wrap text-[color:var(--fg-mid)]">純利益見込(JPY)
+= eBay総額(USD) x FX
+- 国内価格目安(JPY)
+- (落札手数料 + 国際手数料 + 為替手数料 + 広告費)(USD) x FX
+- 関税見込(JPY)
+- 物流費合計(JPY)</pre>
+    </div>
+  </div>
+</section>
+
+<!-- NINJA -->
+<section id="ninja" class="py-14 tint-bone print-break" style="scroll-margin-top:80px;">
+  <div class="container-narrow">
+    <div class="mb-7">
+      <div class="h-eyebrow">Section 04</div>
+      <h3 class="section-title mt-1">Ninja Express連携</h3>
+      <p class="text-[14px] text-[color:var(--fg-soft)] mt-1">コード番号を軸に、国際輸送・在庫・出荷・請求をつなぐ。</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-3">
+      <div class="check-item">
+        <div class="check-icon ok"><i data-lucide="barcode" class="w-3.5 h-3.5"></i></div>
+        <div class="text-[13px] text-[color:var(--fg)]"><b>商品カタログ</b><br><span class="text-[color:var(--fg-soft)]">Ninjaコード番号を作り、eBay/SellstaのSKUにも入れる。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-icon ok"><i data-lucide="file-text" class="w-3.5 h-3.5"></i></div>
+        <div class="text-[13px] text-[color:var(--fg)]"><b>Export Form</b><br><span class="text-[color:var(--fg-soft)]">HTS、原産国、数量、申告額、TTSレートを確認する。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-icon ok"><i data-lucide="warehouse" class="w-3.5 h-3.5"></i></div>
+        <div class="text-[13px] text-[color:var(--fg)]"><b>オレゴン入荷</b><br><span class="text-[color:var(--fg-soft)]">到着日、到着数、写真URL、コメントを在庫へ反映する。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-icon ok"><i data-lucide="package-check" class="w-3.5 h-3.5"></i></div>
+        <div class="text-[13px] text-[color:var(--fg)]"><b>eBay出荷</b><br><span class="text-[color:var(--fg-soft)]">⑧eBay出荷で出荷指示数、注文番号、追跡番号、US送料を記録する。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-icon ok"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></div>
+        <div class="text-[13px] text-[color:var(--fg)]"><b>返品/US入荷</b><br><span class="text-[color:var(--fg-soft)]">⑤で事前登録、⑥で荷受反映。不明荷受を減らす。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-icon ok"><i data-lucide="coins" class="w-3.5 h-3.5"></i></div>
+        <div class="text-[13px] text-[color:var(--fg)]"><b>請求突合</b><br><span class="text-[color:var(--fg-soft)]">国際送料、燃油、保険、手数料を商品コード別に按分して実績更新。</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RULES -->
+<section id="rules" class="py-14 print-break" style="scroll-margin-top:80px;">
+  <div class="container-narrow">
+    <div class="mb-7">
+      <div class="h-eyebrow">Section 05</div>
+      <h3 class="section-title mt-1">判定ルール</h3>
+      <p class="text-[14px] text-[color:var(--fg-soft)] mt-1">セラーを4段階に分ける。色で覚える。</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- 最優先 -->
+      <div class="rule-card relative overflow-hidden">
+        <div class="absolute top-2 right-3 rule-num">最</div>
+        <div class="flex items-center gap-2 mb-2.5">
+          <span class="pill pill-green"><span class="dot"></span>最優先</span>
+          <span class="text-[11.5px] text-[color:var(--green)] font-bold">→ 商品取り込みへ</span>
+        </div>
+        <div class="text-[13px] text-[color:var(--fg-mid)] leading-relaxed">
+          同ジャンルの商品が多い、売価帯が合う、送料無料や日本発送が目立つ。商品取り込みまで進めたいセラー。
+        </div>
+      </div>
+      <!-- 候補 -->
+      <div class="rule-card relative overflow-hidden">
+        <div class="absolute top-2 right-3 rule-num">候</div>
+        <div class="flex items-center gap-2 mb-2.5">
+          <span class="pill pill-blue"><span class="dot"></span>候補</span>
+          <span class="text-[11.5px] text-[color:var(--blue)] font-bold">→ もう少し見る</span>
+        </div>
+        <div class="text-[13px] text-[color:var(--fg-mid)] leading-relaxed">
+          条件は悪くないが、Switch比率や状態に確認余地あり。ランク確認後に判定。
+        </div>
+      </div>
+      <!-- 保留 -->
+      <div class="rule-card relative overflow-hidden">
+        <div class="absolute top-2 right-3 rule-num">保</div>
+        <div class="flex items-center gap-2 mb-2.5">
+          <span class="pill pill-amber"><span class="dot"></span>保留</span>
+          <span class="text-[11.5px] text-[color:var(--amber)] font-bold">→ 後回し</span>
+        </div>
+        <div class="text-[13px] text-[color:var(--fg-mid)] leading-relaxed">
+          気になるが弱い。雑多寄り・Switch少なめ。別ジャンルで再評価することも。
+        </div>
+      </div>
+      <!-- 除外 -->
+      <div class="rule-card relative overflow-hidden">
+        <div class="absolute top-2 right-3 rule-num">除</div>
+        <div class="flex items-center gap-2 mb-2.5">
+          <span class="pill pill-gray"><span class="dot"></span>除外</span>
+          <span class="text-[11.5px] text-[color:var(--gray)] font-bold">→ 今回は使わない</span>
+        </div>
+        <div class="text-[13px] text-[color:var(--fg-mid)] leading-relaxed">
+          評価不足 / ジャンク多い / 雑多すぎ / 自社・大型小売 / 送料高い / Switch関連少ない。
+        </div>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-3 mt-5">
+      <div class="card p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <i data-lucide="eye" class="w-5 h-5" style="color:var(--amber);"></i>
+          <div class="font-bold text-[14px]" style="color:var(--amber);">注意するセラー</div>
+        </div>
+        <ul class="space-y-1.5 text-[12.5px] text-[color:var(--fg-mid)]">
+          <li>· Rank A/B/C など状態ランク型が多い</li>
+          <li>· Console Only / 付属品違いが多い</li>
+          <li>· or Best Offer が多い</li>
+          <li>· Free returns が多く返品リスクあり</li>
+        </ul>
+      </div>
+      <div class="card p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <i data-lucide="ban" class="w-5 h-5" style="color:var(--red);"></i>
+          <div class="font-bold text-[14px]" style="color:var(--red);">除外寄りのセラー</div>
+        </div>
+        <ul class="space-y-1.5 text-[12.5px] text-[color:var(--fg-mid)]">
+          <li>· 評価数50未満</li>
+          <li>· ジャンク / 部品が多い</li>
+          <li>· 商品ジャンルが雑多すぎる</li>
+          <li>· 自社 / 公式 / 大型小売っぽい</li>
+          <li>· 送料が高い商品ばかり</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAFETY -->
+<section id="safety" class="py-14 print-break" style="scroll-margin-top:80px;">
+  <div class="container-narrow">
+    <div class="mb-7">
+      <div class="h-eyebrow">Section 06</div>
+      <h3 class="section-title mt-1">安全運用</h3>
+      <p class="text-[14px] text-[color:var(--fg-soft)] mt-1">「やる」と「避ける」を分けて覚える。</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <!-- やる -->
+      <div class="rounded-2xl p-5 border" style="border-color:#bbe0c6;background:#f4faf6;">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background:#dcfce7;color:#15803d;"><i data-lucide="check" class="w-5 h-5"></i></div>
+          <div>
+            <div class="text-[11px] tracking-[.12em] uppercase font-bold" style="color:#15803d;">DO</div>
+            <div class="text-[18px] font-bold" style="color:#15803d;">やる運用</div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="check-item"><div class="check-icon ok"><i data-lucide="check" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">人間がセラーハックスで検索する</div></div>
+          <div class="check-item"><div class="check-icon ok"><i data-lucide="check" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">CSV / 画面コピーは人間が取得する</div></div>
+          <div class="check-item"><div class="check-icon ok"><i data-lucide="check" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">Codexは取得済みデータを整理 / 判定</div></div>
+          <div class="check-item"><div class="check-icon ok"><i data-lucide="check" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">数値だけでなく目視メモを残す</div></div>
+          <div class="check-item"><div class="check-icon ok"><i data-lucide="check" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">5〜10セラーまとめてCodexに渡す</div></div>
+        </div>
+      </div>
+      <!-- 避ける -->
+      <div class="rounded-2xl p-5 border" style="border-color:#f3c0bb;background:#fdf5f3;">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background:#fee2e2;color:#b91c1c;"><i data-lucide="x" class="w-5 h-5"></i></div>
+          <div>
+            <div class="text-[11px] tracking-[.12em] uppercase font-bold" style="color:#b91c1c;">DON'T</div>
+            <div class="text-[18px] font-bold" style="color:#b91c1c;">避ける運用</div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="x-item"><div class="check-icon ng"><i data-lucide="x" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">Codexがログイン済み画面を自動巡回</div></div>
+          <div class="x-item"><div class="check-icon ng"><i data-lucide="x" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">CodexがeBay / Terapeakを大量に開く</div></div>
+          <div class="x-item"><div class="check-icon ng"><i data-lucide="x" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">CAPTCHA や制限を回避する</div></div>
+          <div class="x-item"><div class="check-icon ng"><i data-lucide="x" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">1セラーごとにCodexへ渡す</div></div>
+          <div class="x-item"><div class="check-icon ng"><i data-lucide="x" class="w-3.5 h-3.5"></i></div><div class="text-[13.5px] text-[color:var(--fg)]">キーワード結果だけでセラーを決める</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BATCH -->
+<section id="batch" class="py-14 tint-cool print-break" style="scroll-margin-top:80px;">
+  <div class="container-narrow">
+    <div class="mb-7">
+      <div class="h-eyebrow">Section 07</div>
+      <h3 class="section-title mt-1">効率的な一括運用</h3>
+      <p class="text-[14px] text-[color:var(--fg-soft)] mt-1">「まとめてやる」が基本。</p>
+    </div>
+
+    <div class="space-y-2.5">
+      <div class="batch-row">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-white border hairline" style="color:var(--human);"><i data-lucide="search" class="w-4 h-4"></i></div>
+          <div>
+            <div class="font-bold text-[14.5px]">キーワード検索</div>
+            <div class="text-[12px] text-[color:var(--fg-soft)]">ジャンル単位でまとめる</div>
+          </div>
+        </div>
+        <span class="batch-amt">3〜5検索 / セット</span>
+      </div>
+      <div class="batch-row">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-white border hairline" style="color:var(--codex);"><i data-lucide="cpu" class="w-4 h-4"></i></div>
+          <div>
+            <div class="font-bold text-[14.5px]">セラー候補抽出</div>
+            <div class="text-[12px] text-[color:var(--fg-soft)]">CSV / コピペで渡す</div>
+          </div>
+        </div>
+        <span class="batch-amt">Codexに一括投入</span>
+      </div>
+      <div class="batch-row">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-white border hairline" style="color:var(--human);"><i data-lucide="microscope" class="w-4 h-4"></i></div>
+          <div>
+            <div class="font-bold text-[14.5px]">セラー深掘り</div>
+            <div class="text-[12px] text-[color:var(--fg-soft)]">1セラーずつ渡さない</div>
+          </div>
+        </div>
+        <span class="batch-amt">5〜10セラー / バッチ</span>
+      </div>
+      <div class="batch-row">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-white border hairline" style="color:var(--sheet);"><i data-lucide="package" class="w-4 h-4"></i></div>
+          <div>
+            <div class="font-bold text-[14.5px]">商品取り込み</div>
+            <div class="text-[12px] text-[color:var(--fg-soft)]">商品単位でリサーチ表へ</div>
+          </div>
+        </div>
+        <span class="batch-amt">優先セラー 1〜3件</span>
+      </div>
+    </div>
+
+    <div class="mt-5 rounded-xl p-4 border" style="border-color:#ecd57b;background:#fbf6e3;">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style="background:#fef08a;color:#a16207;"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+        <div>
+          <div class="font-bold text-[14.5px] mb-1.5" style="color:#a16207;">避けたい運用</div>
+          <ul class="grid sm:grid-cols-2 gap-x-4 gap-y-1 text-[13px] text-[color:var(--fg-mid)]">
+            <li>· 1セラー調べるたびにCodexへ渡す</li>
+            <li>· CSV出力にこだわりすぎて止まる</li>
+            <li>· キーワード結果だけで決める</li>
+            <li>· 目視メモを残さない</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="container-narrow py-10">
+  <div class="flex items-center justify-between text-[12px] text-[color:var(--fg-faint)] border-t hairline pt-5">
+    <div>eBayセラーリサーチ手順書 · チーム共有用</div>
+    <div class="mono">Visual edition · 2026-06-06</div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+function app(){
+  const HC = '#e8624a', CC = '#4f46e5', SC = '#0d9488';
+  const HB = '#fdeee8',  CB = '#eceaff', SB = '#dff1ed';
+  return {
+    scrolled:false, mobileNav:false, copied:null,
+    roles:[],
+    steps:[
+      {open:false,title:'キーワード検索',actor:'人間',actorIcon:'user',color:HC,bg:HB,summary:'狙うジャンルのキーワードでセラーハックスを検索する。',
+        detail:['初期ジャンル: Switch / Lite / OLED / Console','発送元: Japan、Used中心、$50–$300、BestMatch','検索例: "Nintendo Switch Console Japan", "HAC-001 Japan"'],
+        tools:['セラーハックス'],input:'狙うキーワード',output:'検索結果ページ',tab:'—',caution:null},
+      {open:false,title:'検索結果を保存',actor:'人間',actorIcon:'user',color:HC,bg:HB,summary:'CSVか画面コピーで取得して、Codexに渡す。Codexがスプシに整理して反映する。',
+        detail:['可能ならCSVで取得','CSVがない場合は検索結果画面をコピーしてCodexへ渡す','Codexが商品名 / 価格 / 送料 / セラー名 / 評価数 / Item ID を整理する'],
+        tools:['セラーハックス','Codex','Googleスプレッドシート'],input:'検索結果',output:'検索ログ行',tab:'01_キーワード検索ログ',caution:null},
+      {open:false,title:'Codexで一次集計',actor:'Codex',actorIcon:'cpu',color:CC,bg:CB,summary:'セラーごとに評価数や送料比率を出して、ざっくり判定。',
+        detail:['CSV / コピペをCodexに渡す','セラー名・評価数・出現回数・送料無料比率・平均合計価格を集計','代表商品URLと判断理由を付ける','一次判定: 最優先 / 候補 / 保留 / 除外'],
+        tools:['Codex'],input:'01_キーワード検索ログ',output:'セラー候補（一次判定付）',tab:'02_セラー候補',caution:null},
+      {open:false,title:'セラー名検索で深掘り',actor:'人間',actorIcon:'user',color:HC,bg:HB,summary:'候補セラーをセラーハックスで検索し、結果をCodexへ渡す。',
+        detail:['優先度が高そうなセラーから5〜10件ずつ検索する','セラー単位の検索結果をCSVまたは画面コピーでCodexへ渡す','Codexが 02_セラー候補 の件数、理由、目視メモを更新する'],
+        tools:['セラーハックス','Codex','Googleスプレッドシート'],input:'候補セラー名',output:'候補行の更新',tab:'02_セラー候補',
+        caution:'深掘り用の独立タブは使わず、セラー候補タブに集約します。'},
+      {open:false,title:'目視メモを確認する',actor:'人間',actorIcon:'user',color:HC,bg:HB,summary:'Codexが作成した目視メモを確認する。必要なら修正を加える。',
+        detail:['雑多、自社、カメラ多め、釣具専門、部品多めなどの傾向を見る','Codexのメモが実際の検索結果とズレていないか確認する','必要なら人間の言葉で修正してから最終判定に進む'],
+        tools:['Googleスプレッドシート'],input:'Codexが作成した目視メモ',output:'確認済みの目視メモ',tab:'02_セラー候補',
+        caution:'数値で見えない雰囲気は、最後に人間が補正します。'},
+      {open:false,title:'Codexで最終判定',actor:'Codex',actorIcon:'cpu',color:CC,bg:CB,summary:'確認済みメモと検索結果をもとに、最優先・候補・保留・除外を付ける。',
+        detail:['優先順位を色付きで整理する','判断理由を短く残す','次に商品候補化するセラーを決める'],
+        tools:['Codex','Googleスプレッドシート'],input:'確認済みの目視メモ',output:'最終判定',tab:'02_セラー候補',caution:null},
+      {open:false,title:'商品取り込み候補を作る',actor:'Codex',actorIcon:'cpu',color:CC,bg:CB,summary:'「最優先」セラーの商品から、リサーチ候補を作る。',
+        detail:['優先度（高 / 中 / 低）を付ける','商品名 / URL / 価格 / 送料 / 合計 / 状態 / カテゴリ','国内検索KW / 在庫確認KW / eBay検索KW を生成','候補理由 / リスクメモを必ず書く'],
+        tools:['Codex'],input:'最優先セラーの商品一覧',output:'商品取り込み候補',tab:'03_商品取り込み候補',caution:null},
+      {open:false,title:'既存リサーチ表へ投入',actor:'Codex',actorIcon:'cpu',color:CC,bg:CB,summary:'優先商品を既存のリサーチ表フォーマットに整形して流し込む。',
+        detail:['03_商品取り込み候補から「優先」だけを抜き出す','既存リサーチ表のカラム構成に合わせて整形','仕入れ価格 / 国内在庫 / 利益計算 / 30日・90日実績の枠を用意','商品単位の行を追記して、人間の最終チェック待ちにする'],
+        tools:['Codex','既存の商品リサーチ表'],input:'03_商品取り込み候補（優先）',output:'リサーチ表の下書き行',tab:'既存の商品リサーチ表',caution:null},
+      {open:false,title:'人間で目視チェック',actor:'人間',actorIcon:'user',color:HC,bg:HB,summary:'下書き行を1件ずつ目視で確認し、仕入れ可否を最終判断する。',
+        detail:['商品URLを開いて、写真・状態・付属品・出品者プロフィールを確認','国内相場 / 在庫 / 利益を再計算して数字を埋める','出品可否（OK / NG / 保留）を入れて、NGには理由メモを残す','OK行だけを本番の仕入れキューに進める'],
+        tools:['既存の商品リサーチ表','eBay','国内ECサイト'],input:'リサーチ表の下書き行',output:'仕入れ判断（OK / NG / 保留）',tab:'既存の商品リサーチ表',
+        caution:'Codexの判定はあくまで一次フィルタ。最終判断は必ず人間が目視で行う。'},
+      {open:false,title:'収益判定と物流実績を更新',actor:'Codex + 人間',actorIcon:'calculator',color:SC,bg:SB,summary:'eBay手数料、関税、Ninja Express実費を入れて純利益で判断する。',
+        detail:['eBay総額から落札手数料 / 国際手数料 / 為替手数料 / 広告費を分けて計算','Export FormのHTSコード / 原産国 / 申告額から関税見込を確認','Ninja国際送料、燃油、保険、インボイス、倉庫手数料を商品コード別に按分','US国内送料はeBay Shipping Calculatorまたは実ラベルで上書き','純利益見込と利益率で ◯ / △ / ✗ / 保留 を再判定する'],
+        tools:['Codex','既存の商品リサーチ表','Ninja Express','eBay Shipping Calculator'],input:'リサーチ表 + Ninja請求/出荷実績',output:'純利益見込と必要確認',tab:'05_利益計算設定 / 06_Ninja物流台帳',
+        caution:'関税率は商品名だけで決めない。HTSコード、原産国、申告額を確認してから最終判断する。'},
+    ],
+    sheetTabs:[
+      {open:false,name:'00_使い方',use:'運用手順の説明',icon:'book-open',color:'#6b7280',bg:'#f3f4f6',cols:['手順サマリー','タブ間の流れ','更新ルール']},
+      {open:false,name:'01_キーワード検索ログ',use:'キーワード検索結果を保存',icon:'search',color:'#e8624a',bg:'#fdeee8',cols:['取込ID','検索日','検索キーワード','商品名','状態','合計価格USD','商品価格USD','送料USD','送料無料','セラー名','評価数','Item ID','商品URL']},
+      {open:false,name:'02_セラー候補',use:'一次集計、セラー名検索結果、目視メモ、優先順位を管理',icon:'users',color:'#4f46e5',bg:'#eceaff',cols:['セラー名','評価数','出現回数','送料無料比率','平均合計価格','代表商品URL','目視メモ','優先順位','判断理由']},
+      {open:false,name:'03_商品取り込み候補',use:'既存の商品リサーチ表へ入れる前の商品候補を管理',icon:'package',color:'#0d9488',bg:'#dff1ed',cols:['優先度','セラー名','商品名','商品URL','eBay価格USD','送料USD','合計価格USD','状態','カテゴリ','国内検索KW','在庫確認KW','eBay検索KW','候補理由','リスクメモ']},
+      {open:false,name:'04_判定ルール',use:'最優先、候補、保留、除外の判断基準を管理',icon:'gavel',color:'#a16207',bg:'#fcefb8',cols:['判定名','条件','色','次アクション','改訂日']},
+      {open:false,name:'05_利益計算設定',use:'手数料、関税、送料、目標利益率の設定を管理',icon:'calculator',color:'#15803d',bg:'#dff5e6',cols:['FX','FVF率','国際手数料率','為替手数料率','広告率','目標利益','目標利益率','カテゴリ','Storeプラン']},
+      {open:false,name:'06_Ninja物流台帳',use:'Ninja Expressの国際輸送、在庫、出荷、請求実績を商品コードで管理',icon:'ship',color:'#0d9488',bg:'#dff1ed',cols:['Ninjaコード','Ship #','HTSコード','原産国','申告額USD','請求重量kg','国際送料按分JPY','燃油按分JPY','US国内送料USD','倉庫手数料JPY','追跡番号','写真URL']},
+    ],
+    init(){
+      window.addEventListener('scroll',()=>{this.scrolled=window.scrollY>2;},{passive:true});
+      this.$nextTick(()=>lucide.createIcons());
+      this.$watch('copied',()=>this.$nextTick(()=>lucide.createIcons()));
+    },
+    expandAll(){this.steps.forEach(s=>s.open=true);this.sheetTabs.forEach(t=>t.open=true);this.$nextTick(()=>lucide.createIcons());},
+    collapseAll(){this.steps.forEach(s=>s.open=false);this.sheetTabs.forEach(t=>t.open=false);this.$nextTick(()=>lucide.createIcons());},
+    async copySeller(name){
+      try{ await navigator.clipboard.writeText(name); this.copied=name; setTimeout(()=>{ if(this.copied===name) this.copied=null; },1200);}catch(e){}
+    }
+  }
+}
+</script>
+</body>
+</html>

@@ -332,13 +332,13 @@
       "id": "github-ebay-research-handbook",
       "sourceType": "github",
       "title": "07-hajime-tokyo/ebay-research-handbook",
-      "url": "https://github.com/07-hajime-tokyo/ebay-research-handbook",
+      "url": "https://site-management-hub.vercel.app/ebay-workflow.html",
       "capturedAt": "2026-06-06T12:00:00.000+09:00",
       "summary": "eBayセラーリサーチのチーム共有手順書。今回、商品別の収益判定とNinja Express連携を追加した。",
       "keyPoints": [
         "セラー候補作成から商品別純利益判定まで拡張",
         "利益計算設定とNinja物流台帳を運用タブとして追加",
-        "Vercel公開サイトで別PCから確認できる"
+        "業務ポータル内の公開ページで別PCから確認できる"
       ],
       "actionCandidates": [
         "実際のGoogle Sheetsへ利益計算列を反映する",
