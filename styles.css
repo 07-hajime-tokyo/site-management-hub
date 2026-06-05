@@ -883,6 +883,8 @@ select:disabled {
 .change-history-card {
   --accent-local: var(--rose);
   --accent-local-soft: var(--rose-soft);
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: start;
   align-content: start;
   gap: 12px;
 }
@@ -892,6 +894,7 @@ select:disabled {
 }
 
 .change-card-lead {
+  grid-column: 1 / -1;
   margin-top: 2px;
   color: var(--muted);
   font-size: 0.9rem;
@@ -899,6 +902,7 @@ select:disabled {
 }
 
 .change-card-list {
+  grid-column: 1 / -1;
   display: grid;
   gap: 8px;
   margin-top: 2px;
@@ -985,6 +989,7 @@ select:disabled {
 }
 
 .change-card-slide-link {
+  grid-column: 1 / -1;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1366,7 +1371,7 @@ select:disabled {
   min-height: 0;
 }
 
-.tool-card:not(.sheet-group-card) {
+.tool-card:not(.sheet-group-card):not(.change-history-card) {
   grid-template-columns: 38px minmax(0, 1fr) auto;
   align-items: center;
   gap: 14px;
@@ -1374,41 +1379,41 @@ select:disabled {
   padding: 14px 16px 14px 18px;
 }
 
-.tool-card:not(.sheet-group-card).is-compact {
+.tool-card:not(.sheet-group-card):not(.change-history-card).is-compact {
   min-height: 86px;
 }
 
-.tool-card:not(.sheet-group-card) .card-top {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-top {
   display: contents;
 }
 
-.tool-card:not(.sheet-group-card) .card-info {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-info {
   grid-column: 2;
   min-width: 0;
 }
 
-.tool-card:not(.sheet-group-card) .card-text-link {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-text-link {
   min-width: 0;
 }
 
-.tool-card:not(.sheet-group-card) .card-text-link p,
-.tool-card:not(.sheet-group-card) .kind-line,
-.tool-card:not(.sheet-group-card) .open-link,
-.tool-card:not(.sheet-group-card) .card-meta .pill:not(.category-pill) {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-text-link p,
+.tool-card:not(.sheet-group-card):not(.change-history-card) .kind-line,
+.tool-card:not(.sheet-group-card):not(.change-history-card) .open-link,
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-meta .pill:not(.category-pill) {
   display: none;
 }
 
-.tool-card:not(.sheet-group-card) h4 {
+.tool-card:not(.sheet-group-card):not(.change-history-card) h4 {
   margin: 0 0 3px;
 }
 
-.tool-card:not(.sheet-group-card) .card-meta {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-meta {
   display: none;
   grid-column: 2;
   margin-top: 0;
 }
 
-.tool-card:not(.sheet-group-card) .card-actions {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-actions {
   grid-column: 3;
 }
 
