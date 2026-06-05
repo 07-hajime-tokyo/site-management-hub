@@ -880,6 +880,134 @@ select:disabled {
   color: #fffaf2;
 }
 
+.change-history-card {
+  --accent-local: var(--rose);
+  --accent-local-soft: var(--rose-soft);
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: start;
+  align-content: start;
+  gap: 12px;
+}
+
+.change-history-card:hover {
+  transform: none;
+}
+
+.change-card-lead {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.change-card-list {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.change-card-toggle {
+  overflow: hidden;
+  border: 1px solid rgba(212, 200, 176, 0.78);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.change-card-toggle summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px;
+  align-items: start;
+  gap: 8px;
+  min-height: 48px;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+  padding: 10px;
+}
+
+.change-card-toggle summary::-webkit-details-marker {
+  display: none;
+}
+
+.change-card-toggle summary strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.change-card-toggle summary svg {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: var(--rose);
+  transition: transform 160ms ease;
+}
+
+.change-card-toggle[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.change-card-date {
+  grid-column: 1 / -1;
+  width: fit-content;
+  border-radius: 999px;
+  background: var(--rose-soft);
+  color: var(--rose);
+  padding: 3px 8px;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.change-card-detail {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid rgba(212, 200, 176, 0.66);
+  padding: 0 10px 10px;
+}
+
+.change-card-detail p,
+.change-card-detail ul {
+  margin: 0;
+}
+
+.change-card-detail p,
+.change-card-detail li {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.change-card-detail ul {
+  display: grid;
+  gap: 4px;
+  padding-left: 1.05em;
+}
+
+.change-card-slide-link {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  padding: 7px 10px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.change-card-slide-link svg {
+  width: 14px;
+  height: 14px;
+}
+
 .card-top,
 .card-actions,
 .card-meta,
@@ -1243,7 +1371,7 @@ select:disabled {
   min-height: 0;
 }
 
-.tool-card:not(.sheet-group-card) {
+.tool-card:not(.sheet-group-card):not(.change-history-card) {
   grid-template-columns: 38px minmax(0, 1fr) auto;
   align-items: center;
   gap: 14px;
@@ -1251,41 +1379,41 @@ select:disabled {
   padding: 14px 16px 14px 18px;
 }
 
-.tool-card:not(.sheet-group-card).is-compact {
+.tool-card:not(.sheet-group-card):not(.change-history-card).is-compact {
   min-height: 86px;
 }
 
-.tool-card:not(.sheet-group-card) .card-top {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-top {
   display: contents;
 }
 
-.tool-card:not(.sheet-group-card) .card-info {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-info {
   grid-column: 2;
   min-width: 0;
 }
 
-.tool-card:not(.sheet-group-card) .card-text-link {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-text-link {
   min-width: 0;
 }
 
-.tool-card:not(.sheet-group-card) .card-text-link p,
-.tool-card:not(.sheet-group-card) .kind-line,
-.tool-card:not(.sheet-group-card) .open-link,
-.tool-card:not(.sheet-group-card) .card-meta .pill:not(.category-pill) {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-text-link p,
+.tool-card:not(.sheet-group-card):not(.change-history-card) .kind-line,
+.tool-card:not(.sheet-group-card):not(.change-history-card) .open-link,
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-meta .pill:not(.category-pill) {
   display: none;
 }
 
-.tool-card:not(.sheet-group-card) h4 {
+.tool-card:not(.sheet-group-card):not(.change-history-card) h4 {
   margin: 0 0 3px;
 }
 
-.tool-card:not(.sheet-group-card) .card-meta {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-meta {
   display: none;
   grid-column: 2;
   margin-top: 0;
 }
 
-.tool-card:not(.sheet-group-card) .card-actions {
+.tool-card:not(.sheet-group-card):not(.change-history-card) .card-actions {
   grid-column: 3;
 }
 
@@ -1684,6 +1812,7 @@ svg {
   .page-title > p {
     text-align: left;
   }
+
 }
 
 @media (max-width: 620px) {

@@ -31,6 +31,71 @@ const categoryAccents = [
   "accent-violet",
 ];
 
+const changeHistoryCardId = "review-change-history";
+const changeHistoryTool = {
+  id: changeHistoryCardId,
+  title: "【要確認】変更履歴",
+  url: "./change-summary-slides.html",
+  repositoryUrl: "",
+  vercelUrl: "",
+  tidbUrl: "",
+  notionUrl: "https://github.com/07-hajime-tokyo/site-management-hub/issues/1",
+  category: "共有",
+  type: "site",
+  status: "review",
+  pinned: false,
+  description: "業務ポータルに加えた変更内容をスタッフ確認用にまとめています。",
+  tags: ["要確認", "変更履歴"],
+  createdAt: "2026-06-06T03:54:00+09:00",
+  lastOpenedAt: "",
+  openCount: 0,
+  cardOrder: -1000,
+  isChangeHistoryCard: true,
+};
+
+const changeHistoryItems = [
+  {
+    date: "2026-06-06 03:27",
+    title: "eBay手順ページを業務ポータルに追加",
+    summary: "旧手順サイトのVercel反映が止まっていたため、業務ポータル内に暫定の公開ページを追加しました。",
+    points: [
+      "`ebay-workflow.html` を新設",
+      "サイドバーに「eBay手順」導線を追加",
+      "収益判定、送料、関税、Ninja Express運用を1ページに整理",
+    ],
+  },
+  {
+    date: "2026-06-06 03:19",
+    title: "eBay収益判定とNinja運用の進捗データを追加",
+    summary: "GitGraph風の進捗ダッシュボードに、今回のeBay自動化作業を追跡できるデータを追加しました。",
+    points: [
+      "`data/progress-seed.json` に機能・イベント・ソース・セッション要約を追加",
+      "収益判定モデルとNinja Express運用整理を関連ソースとして登録",
+      "公開APIで `ebay-profitability-workflow` が返ることを確認",
+    ],
+  },
+  {
+    date: "2026-06-06 03:42",
+    title: "Notion共有ツールのリンク先を新ページへ変更",
+    summary: "「ebayリサーチ出品ワークフロー」のURLを、旧サイトから業務ポータル内の新ページへ差し替えました。",
+    points: [
+      "旧URL: `research-workflow-source.vercel.app`",
+      "新URL: `site-management-hub.vercel.app/ebay-workflow.html`",
+      "スタッフさんの管理方針に合わなければ戻せます",
+    ],
+  },
+  {
+    date: "2026-06-06 03:54",
+    title: "変更内容を説明する共有スライドを追加",
+    summary: "スタッフさんが変更内容をすぐ確認できるよう、5枚構成の簡潔なWebスライドをPRで追加しています。",
+    points: [
+      "概要、変更点、理由、影響範囲、確認依頼を整理",
+      "mainへ直接反映せず、PRでレビュー待ち",
+      "Vercel preview はチーム設定により外部閲覧不可",
+    ],
+  },
+];
+
 const defaultTools = [
   {
     id: "invoice-stock",
@@ -204,7 +269,14 @@ function getBaseTools() {
 }
 
 function getTools() {
-  return getBaseTools().map(applyPinOverride);
+  const baseTools = getBaseTools();
+  const tools = isSharedMode()
+    ? [
+        changeHistoryTool,
+        ...baseTools.filter((tool) => tool.id !== changeHistoryCardId),
+      ]
+    : baseTools;
+  return tools.map(applyPinOverride);
 }
 
 function setTools(tools) {
@@ -628,6 +700,7 @@ function createSheetGroupCards(tools) {
 }
 
 function createToolCard(tool, compact = false) {
+  if (tool.isChangeHistoryCard) return createChangeHistoryCard(tool);
   const accent = getAccentClass(tool.category);
   const platformLinks = createPlatformLinks(tool);
   return `
@@ -657,6 +730,55 @@ function createToolCard(tool, compact = false) {
           <i data-lucide="pencil" aria-hidden="true"></i>
         </button>
       </div>
+    </article>
+  `;
+}
+
+function createChangeHistoryCard(tool) {
+  const items = changeHistoryItems
+    .map((item, index) => `
+      <details class="change-card-toggle" ${index === 0 ? "open" : ""}>
+        <summary>
+          <span class="change-card-date">${escapeHtml(item.date)}</span>
+          <strong>${escapeHtml(item.title)}</strong>
+          <i data-lucide="chevron-down" aria-hidden="true"></i>
+        </summary>
+        <div class="change-card-detail">
+          <p>${escapeHtml(item.summary)}</p>
+          <ul>
+            ${item.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}
+          </ul>
+        </div>
+      </details>
+    `)
+    .join("");
+
+  return `
+    <article class="tool-card change-history-card accent-rose" data-id="${tool.id}" data-card-type="${escapeAttribute(tool.type)}">
+      <div class="card-icon" aria-hidden="true">
+        <i data-lucide="presentation" aria-hidden="true"></i>
+      </div>
+      <div class="card-info">
+        <a class="card-text-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer">
+          <h4>${escapeHtml(tool.title)}</h4>
+        </a>
+        <div class="platform-links">
+          <span class="platform-label">要確認</span>
+          <a class="platform-link notion-link" href="${escapeAttribute(tool.notionUrl)}" target="_blank" rel="noreferrer" aria-label="共有Issueを開く">
+            <span class="platform-mark notion-mark" aria-hidden="true">
+              <i data-lucide="message-square" aria-hidden="true"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+      <p class="change-card-lead">${escapeHtml(tool.description)}</p>
+      <div class="change-card-list">
+        ${items}
+      </div>
+      <a class="change-card-slide-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer">
+        変更共有スライドを見る
+        <i data-lucide="external-link" aria-hidden="true"></i>
+      </a>
     </article>
   `;
 }
