@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "check": "node --check app.js && node --check api/shared-tools.js && node --check local-server.mjs",
+    "check": "node --check app.js && node --check progress.js && node --check api/shared-tools.js && node --check api/progress.js && node --check api/memos.js && node --check api/rebuild.js && node --check local-server.mjs",
     "dev": "node local-server.mjs"
   }
 }

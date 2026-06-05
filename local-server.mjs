@@ -1,11 +1,18 @@
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
+const require = createRequire(import.meta.url);
 const port = Number(process.env.PORT || 4173);
 const host = process.env.HOST || "127.0.0.1";
+const apiHandlers = {
+  "/api/progress": require("./api/progress.js"),
+  "/api/memos": require("./api/memos.js"),
+  "/api/rebuild": require("./api/rebuild.js"),
+};
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -35,6 +42,11 @@ createServer(async (req, res) => {
       return;
     }
 
+    if (apiHandlers[url.pathname]) {
+      await runApiHandler(apiHandlers[url.pathname], req, res);
+      return;
+    }
+
     const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
     const target = normalize(join(root, decodeURIComponent(pathname)));
 
@@ -56,6 +68,30 @@ createServer(async (req, res) => {
 }).listen(port, host, () => {
   console.log(`Portal preview: http://${host}:${port}/`);
 });
+
+async function runApiHandler(handler, req, res) {
+  req.body = req.method === "GET" ? {} : await readJsonBody(req);
+  let statusCode = 200;
+  const apiRes = {
+    setHeader: (name, value) => res.setHeader(name, value),
+    status: (code) => {
+      statusCode = code;
+      return apiRes;
+    },
+    json: (payload) => {
+      if (!res.getHeader("Content-Type")) {
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+      }
+      res.writeHead(statusCode);
+      res.end(JSON.stringify(payload));
+    },
+    end: (body = "") => {
+      res.writeHead(statusCode);
+      res.end(body);
+    },
+  };
+  await handler(req, apiRes);
+}
 
 async function handleSharedTools(req, res) {
   if (req.method && !["GET", "POST", "PUT"].includes(req.method)) {

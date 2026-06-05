@@ -304,6 +304,11 @@ select {
   height: 16px;
 }
 
+.progress-site-icon {
+  background: #dce8f1;
+  color: #315f7a;
+}
+
 .site-link-icon img,
 .platform-mark img {
   display: block;

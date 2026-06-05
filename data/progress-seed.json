@@ -1,0 +1,339 @@
+{
+  "generatedAt": "2026-06-06T00:00:00.000+09:00",
+  "repository": {
+    "owner": "07-hajime-tokyo",
+    "name": "site-management-hub",
+    "fullName": "07-hajime-tokyo/site-management-hub",
+    "url": "https://github.com/07-hajime-tokyo/site-management-hub",
+    "defaultBranch": "main"
+  },
+  "vercel": {
+    "projectId": "prj_Derah8fqdDbu5kOH6tZvA0TOSjuy",
+    "teamId": "team_6dUXI0G0s5EUoy9iHG8519vn",
+    "projectUrl": "https://vercel.com/hajime-s-projects-9906072f/site-management-hub",
+    "productionUrl": "https://site-management-hub.vercel.app/"
+  },
+  "notion": {
+    "databaseId": "16591696-9a47-42bd-812d-06438af61e74",
+    "dataSourceId": "db87f784-5f06-4e23-b007-ae71837066b6",
+    "url": "https://www.notion.so/165916969a4742bd812d06438af61e74",
+    "title": "サイト管理DB"
+  },
+  "features": [
+    {
+      "id": "site-management-hub",
+      "title": "業務ハブ本体",
+      "area": "Portal",
+      "status": "active",
+      "goal": "サイト、スプレッドシート、ドキュメント、レポートの入口をNotion共有データと個人データで管理する。",
+      "startedAt": "2026-05-28",
+      "updatedAt": "2026-06-03",
+      "nextActions": [
+        "登録データの粒度をサイト管理DBで整理する",
+        "別PCから見た時の共有データ読み込みを継続確認する"
+      ],
+      "commitScopes": [
+        "site-management-hub",
+        "portal",
+        "library"
+      ],
+      "sourceIds": [
+        "notion-site-management-db",
+        "github-site-management-hub",
+        "vercel-site-management-hub"
+      ]
+    },
+    {
+      "id": "notion-shared-data",
+      "title": "Notion共有データ連携",
+      "area": "Data",
+      "status": "active",
+      "goal": "サイト管理DBを共有データの本体にして、公開範囲、種類、カテゴリー、リポジトリ、Vercel、Notionリンクを表示する。",
+      "startedAt": "2026-05-29",
+      "updatedAt": "2026-06-06",
+      "nextActions": [
+        "サイト管理DBの未分類カテゴリーを整理する",
+        "共有データが0件表示になる時の環境変数状態を見やすくする"
+      ],
+      "commitScopes": [
+        "notion-shared-data",
+        "notion",
+        "shared-tools"
+      ],
+      "sourceIds": [
+        "notion-site-management-db"
+      ]
+    },
+    {
+      "id": "progress-dashboard",
+      "title": "開発進捗ダッシュボード",
+      "area": "Progress",
+      "status": "building",
+      "goal": "機能ごとのGitGraph風履歴、次アクション、外部要約、Codex作業要点、今までのプロセスを一画面で追えるようにする。",
+      "startedAt": "2026-06-06",
+      "updatedAt": "2026-06-06",
+      "nextActions": [
+        "GitHubコミット履歴と静的進捗データを突き合わせる",
+        "Notionサイト管理DBの概要を進捗画面に出す",
+        "Vercel本番デプロイで別PC閲覧を確認する"
+      ],
+      "commitScopes": [
+        "progress-dashboard",
+        "progress"
+      ],
+      "sourceIds": [
+        "github-site-management-hub",
+        "vercel-site-management-hub",
+        "notion-site-management-db",
+        "codex-session-2026-06-06"
+      ]
+    },
+    {
+      "id": "shortcut-rail",
+      "title": "外部業務ショートカット",
+      "area": "Operations",
+      "status": "active",
+      "goal": "eBay、Sellsta、Sellerhacks、Chatwork、忍者エクスプレスなど、毎日開く入口を固定表示する。",
+      "startedAt": "2026-06-03",
+      "updatedAt": "2026-06-03",
+      "nextActions": [
+        "バックオフィス自動化に使う外部入口を追加する",
+        "操作確認が必要なサイトには状態メモを付ける"
+      ],
+      "commitScopes": [
+        "shortcut-rail",
+        "shortcuts"
+      ],
+      "sourceIds": [
+        "github-site-management-hub"
+      ]
+    },
+    {
+      "id": "exchange-rates",
+      "title": "為替レート表示",
+      "area": "Finance",
+      "status": "active",
+      "goal": "USD/JPY と EUR/JPY を業務ハブ上で確認し、輸出関連判断の入口に置く。",
+      "startedAt": "2026-06-01",
+      "updatedAt": "2026-06-03",
+      "nextActions": [
+        "送料・利益計算側の台帳と連動できるか検討する"
+      ],
+      "commitScopes": [
+        "exchange-rates",
+        "fx"
+      ],
+      "sourceIds": [
+        "github-site-management-hub"
+      ]
+    },
+    {
+      "id": "back-office-knowledge",
+      "title": "Back Officeナレッジ",
+      "area": "Knowledge",
+      "status": "planned",
+      "goal": "eBay輸出、送料、倉庫、Sellsta、YouTube制作、AI依頼文を蓄積して次回作業を速くする。",
+      "startedAt": "2026-06-06",
+      "updatedAt": "2026-06-06",
+      "nextActions": [
+        "GitHub上にback-officeナレッジ置き場を確定する",
+        "Drive/Sheets/Notionの外部要約を進捗カードに紐づける"
+      ],
+      "commitScopes": [
+        "back-office-knowledge",
+        "back-office"
+      ],
+      "sourceIds": [
+        "codex-session-2026-06-06"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "event-progress-plan",
+      "date": "2026-06-06",
+      "type": "decision",
+      "title": "進捗サイトをローカル案から公開サイト案へ変更",
+      "featureIds": [
+        "progress-dashboard"
+      ],
+      "summary": "別PCでも見られるように、既存の業務ハブをGitHub/Vercel公開サイトとして拡張する方針へ変更した。",
+      "sourceRef": "codex-session-2026-06-06"
+    },
+    {
+      "id": "event-notion-db-confirmed",
+      "date": "2026-06-06",
+      "type": "source",
+      "title": "Notion サイト管理DBを確認",
+      "featureIds": [
+        "notion-shared-data",
+        "progress-dashboard"
+      ],
+      "summary": "サイト管理DBのデータソース、プロパティ、公開範囲、種類、状態、各URL列を把握した。",
+      "sourceRef": "notion-site-management-db"
+    },
+    {
+      "id": "event-vercel-project-confirmed",
+      "date": "2026-06-06",
+      "type": "source",
+      "title": "Vercel projectを確認",
+      "featureIds": [
+        "site-management-hub",
+        "progress-dashboard"
+      ],
+      "summary": "site-management-hub のVercel project ID、team ID、本番URL、最新production deploymentを確認した。",
+      "sourceRef": "vercel-site-management-hub"
+    },
+    {
+      "id": "event-back-office-docs",
+      "date": "2026-06-06",
+      "type": "process",
+      "title": "Back Office文書群を初期プロセスとして採用",
+      "featureIds": [
+        "back-office-knowledge",
+        "progress-dashboard"
+      ],
+      "summary": "eBay輸出、送料、倉庫、Sellsta、YouTube、定型プロンプト、ロードマップを進捗表示の初期素材にする。",
+      "sourceRef": "codex-session-2026-06-06"
+    }
+  ],
+  "sources": [
+    {
+      "id": "github-site-management-hub",
+      "sourceType": "github",
+      "title": "07-hajime-tokyo/site-management-hub",
+      "url": "https://github.com/07-hajime-tokyo/site-management-hub",
+      "capturedAt": "2026-06-06T02:55:00.000+09:00",
+      "summary": "業務ハブ本体。Notion共有データ、サイト/スプシ/レポート入口、Vercel/GitHub/Notionリンク、ショートカット、為替表示を持つ。",
+      "keyPoints": [
+        "public repository",
+        "Vercel Serverless APIでNotion DBを読み書き",
+        "mainブランチのコミットを進捗の主要ソースにする"
+      ],
+      "actionCandidates": [
+        "機能単位のコミットスコープを増やす",
+        "進捗メモはGitHub IssueかNotionに集約する"
+      ],
+      "relatedFeatureIds": [
+        "site-management-hub",
+        "progress-dashboard"
+      ]
+    },
+    {
+      "id": "notion-site-management-db",
+      "sourceType": "notion",
+      "title": "サイト管理DB",
+      "url": "https://www.notion.so/165916969a4742bd812d06438af61e74",
+      "capturedAt": "2026-06-06T02:58:00.000+09:00",
+      "summary": "共有モードの登録データ本体。名前、URL、表示名、リポジトリURL、Vercel URL、TiDB URL、Notion URL、カテゴリー、種類、状態、公開範囲、表示順を持つ。",
+      "keyPoints": [
+        "data source: db87f784-5f06-4e23-b007-ae71837066b6",
+        "公開範囲は共有/公開/個人/非公開",
+        "種類はサイト/スプレッドシート/ドキュメント/レポート"
+      ],
+      "actionCandidates": [
+        "進捗メモ用DBを追加するかGitHub Issueに寄せるかを運用で決める",
+        "カテゴリーの表記ゆれを整理する"
+      ],
+      "relatedFeatureIds": [
+        "notion-shared-data",
+        "progress-dashboard"
+      ]
+    },
+    {
+      "id": "vercel-site-management-hub",
+      "sourceType": "vercel",
+      "title": "site-management-hub on Vercel",
+      "url": "https://site-management-hub.vercel.app/",
+      "capturedAt": "2026-06-06T03:02:00.000+09:00",
+      "summary": "別PCから見られる本番サイト。Vercel project IDは prj_Derah8fqdDbu5kOH6tZvA0TOSjuy。",
+      "keyPoints": [
+        "production URL: site-management-hub.vercel.app",
+        "Node.js runtime: 24.x",
+        "Notion連携はVercel環境変数で管理"
+      ],
+      "actionCandidates": [
+        "本番反映後に公開URLでAPIと表示を確認する"
+      ],
+      "relatedFeatureIds": [
+        "site-management-hub",
+        "progress-dashboard"
+      ]
+    },
+    {
+      "id": "codex-session-2026-06-06",
+      "sourceType": "codex",
+      "title": "Codex作業セッション 2026-06-06",
+      "url": "",
+      "capturedAt": "2026-06-06T03:05:00.000+09:00",
+      "summary": "最初はローカル進捗サイト案だったが、既存業務ハブの内容把握後、GitHub/Vercel公開サイトとして進捗ダッシュボードを足す方針に変更した。",
+      "keyPoints": [
+        "GitHub repo、Vercel project、Notion DBを特定済み",
+        "既存アプリはNextではなくvanilla JS + Vercel API",
+        "進捗はGitHubコミットと静的メモを合わせて表示する"
+      ],
+      "actionCandidates": [
+        "公開後、実際の運用メモをGitHub Issueとして貯め始める"
+      ],
+      "relatedFeatureIds": [
+        "progress-dashboard",
+        "back-office-knowledge"
+      ]
+    }
+  ],
+  "sessions": [
+    {
+      "id": "session-2026-06-06-progress-dashboard",
+      "date": "2026-06-06",
+      "title": "進捗ダッシュボード設計と公開方針変更",
+      "summary": "日々機能追加していく業務ハブに、機能ごとの履歴、次アクション、外部要約、Codexとの会話要点を見せる進捗画面を追加する。ローカルではなくGitHub/Vercel公開サイトにする。",
+      "featureIds": [
+        "progress-dashboard",
+        "site-management-hub",
+        "notion-shared-data"
+      ],
+      "decisions": [
+        "既存site-management-hubを土台にする",
+        "Notionサイト管理DBを共有データの本体として扱う",
+        "メモはGitHub Issue化できる入口を用意する"
+      ],
+      "nextActions": [
+        "進捗ページを追加",
+        "GitHubへpush",
+        "Vercel本番URLで確認"
+      ]
+    }
+  ],
+  "roadmap": [
+    {
+      "phase": "Phase 0",
+      "title": "ローカル土台",
+      "status": "done",
+      "summary": "back-office文書、eBay輸出、送料、倉庫、Sellsta、YouTube、Codex依頼文の最小メモを作る。"
+    },
+    {
+      "phase": "Phase 1",
+      "title": "GitHub/Vercel共有",
+      "status": "building",
+      "summary": "サイト管理ハブをGitHubで管理し、Vercel本番URLから別PCでも見られるようにする。"
+    },
+    {
+      "phase": "Phase 2",
+      "title": "Google Drive/Sheets/Notion連携",
+      "status": "building",
+      "summary": "Notionサイト管理DB、Google Sheets台帳、Drive素材を入口と要約で結ぶ。"
+    },
+    {
+      "phase": "Phase 3",
+      "title": "実務ワークフロー化",
+      "status": "planned",
+      "summary": "商品リサーチ、送料見積、Sellsta、注文確認、YouTube制作を手順化する。"
+    },
+    {
+      "phase": "Phase 4",
+      "title": "AIバックオフィス自動化",
+      "status": "planned",
+      "summary": "注文、在庫、メール、請求、利益率、動画制作などを人間確認ポイント付きで半自動化する。"
+    }
+  ]
+}

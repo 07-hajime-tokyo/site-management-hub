@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>進捗ダッシュボード | 業務ポータル</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css?v=20260606-1" />
+    <link rel="stylesheet" href="./progress.css?v=20260606-1" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <script src="./progress.js?v=20260606-1" defer></script>
+  </head>
+  <body class="progress-page">
+    <div class="progress-shell">
+      <aside class="progress-sidebar" aria-label="進捗ナビゲーション">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">M</div>
+          <div>
+            <h1>業務ハブ</h1>
+            <p class="brand-kicker">Progress</p>
+          </div>
+        </div>
+
+        <nav class="progress-nav" aria-label="ページ">
+          <a class="progress-nav-link" href="./index.html">
+            <i data-lucide="layout-dashboard" aria-hidden="true"></i>
+            入口
+          </a>
+          <a class="progress-nav-link is-active" href="./progress.html" aria-current="page">
+            <i data-lucide="git-branch" aria-hidden="true"></i>
+            進捗
+          </a>
+        </nav>
+
+        <div class="progress-source-stack" id="sourceStack"></div>
+      </aside>
+
+      <main class="progress-main">
+        <header class="progress-topbar">
+          <div class="progress-title">
+            <p class="eyebrow">BACK OFFICE / BUILD HISTORY</p>
+            <h2>開発進捗</h2>
+          </div>
+          <div class="progress-toolbar">
+            <label class="search-box progress-search" for="progressSearch">
+              <i data-lucide="search" aria-hidden="true"></i>
+              <input id="progressSearch" type="search" aria-label="進捗検索" autocomplete="off" />
+            </label>
+            <select id="areaFilter" class="sort-select" aria-label="領域"></select>
+            <select id="statusFilter" class="sort-select" aria-label="状態"></select>
+            <select id="eventFilter" class="sort-select" aria-label="イベント"></select>
+            <button class="icon-text ghost" type="button" id="refreshProgressButton">
+              <i data-lucide="refresh-cw" aria-hidden="true"></i>
+              更新
+            </button>
+          </div>
+        </header>
+
+        <section class="progress-metrics" aria-label="進捗概要">
+          <div class="progress-metric">
+            <span>機能</span>
+            <strong id="featureCount">0</strong>
+          </div>
+          <div class="progress-metric">
+            <span>コミット</span>
+            <strong id="commitCount">0</strong>
+          </div>
+          <div class="progress-metric">
+            <span>Notion登録</span>
+            <strong id="notionCount">0</strong>
+          </div>
+          <div class="progress-metric">
+            <span>最新更新</span>
+            <strong id="latestUpdate">--</strong>
+          </div>
+        </section>
+
+        <section class="progress-board" aria-label="機能ごとの進捗">
+          <div class="feature-pane">
+            <div class="progress-section-head">
+              <div>
+                <p class="eyebrow">FEATURES</p>
+                <h3>機能</h3>
+              </div>
+              <span class="count-pill" id="filteredFeatureCount">0</span>
+            </div>
+            <div class="feature-list" id="featureList"></div>
+          </div>
+
+          <div class="graph-pane">
+            <div class="progress-section-head">
+              <div>
+                <p class="eyebrow">GITGRAPH</p>
+                <h3>履歴</h3>
+              </div>
+              <span class="count-pill" id="filteredEventCount">0</span>
+            </div>
+            <div class="graph-legend" id="graphLegend"></div>
+            <div class="progress-graph" id="progressGraph"></div>
+          </div>
+
+          <aside class="detail-pane" aria-label="選択中の機能">
+            <div id="featureDetail"></div>
+          </aside>
+        </section>
+
+        <section class="process-board" aria-label="今までのプロセス">
+          <div class="progress-section-head">
+            <div>
+              <p class="eyebrow">PROCESS</p>
+              <h3>今までのプロセス</h3>
+            </div>
+          </div>
+          <div class="roadmap-grid" id="roadmapGrid"></div>
+        </section>
+
+        <section class="knowledge-board" aria-label="要約とメモ">
+          <div class="summary-pane">
+            <div class="progress-section-head">
+              <div>
+                <p class="eyebrow">SOURCES</p>
+                <h3>外部要約</h3>
+              </div>
+            </div>
+            <div class="summary-list" id="sourceSummaryList"></div>
+          </div>
+
+          <div class="summary-pane">
+            <div class="progress-section-head">
+              <div>
+                <p class="eyebrow">CODEX</p>
+                <h3>会話要点</h3>
+              </div>
+            </div>
+            <div class="summary-list" id="sessionSummaryList"></div>
+          </div>
+
+          <form class="memo-pane" id="memoForm">
+            <div class="progress-section-head">
+              <div>
+                <p class="eyebrow">MEMO</p>
+                <h3>次にやること</h3>
+              </div>
+            </div>
+            <label>
+              タイトル
+              <input id="memoTitle" type="text" required />
+            </label>
+            <label>
+              機能
+              <select id="memoFeature"></select>
+            </label>
+            <label>
+              参照URL
+              <input id="memoSourceUrl" type="url" />
+            </label>
+            <label>
+              メモ
+              <textarea id="memoNote" rows="5" required></textarea>
+            </label>
+            <button class="icon-text primary" type="submit">
+              <i data-lucide="send" aria-hidden="true"></i>
+              登録
+            </button>
+            <p class="memo-result" id="memoResult" aria-live="polite"></p>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="progressToast" role="status" aria-live="polite"></div>
+  </body>
+</html>
