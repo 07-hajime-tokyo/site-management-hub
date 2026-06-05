@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>変更共有スライド | 業務ポータル</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Zen+Maru+Gothic:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <style>
+      :root {
+        --bg: #f4ede0;
+        --paper: #fbf6ec;
+        --surface: #ffffff;
+        --ink: #3d3328;
+        --text: #4a3f33;
+        --muted: #817465;
+        --border: #e3d7c5;
+        --accent: #c97f5a;
+        --accent-soft: #f4e0d2;
+        --leaf: #6f8a5e;
+        --leaf-soft: #e2ecd6;
+        --sky: #5a7e9e;
+        --sky-soft: #dce8f1;
+        --rose: #b85d64;
+        --rose-soft: #f5dce0;
+        --shadow: 0 18px 42px rgba(88, 65, 40, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-snap-type: y proximity;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          "Zen Maru Gothic", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+        line-height: 1.5;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(251, 246, 236, 0.9);
+        padding: 12px clamp(16px, 4vw, 40px);
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        color: var(--ink);
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #d88e5d, #c97f5a);
+        color: #fffaf2;
+        font-family: Inter, system-ui, sans-serif;
+      }
+
+      .top-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .top-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 34px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.64);
+        padding: 6px 11px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 800;
+      }
+
+      .deck {
+        display: grid;
+        gap: 28px;
+        width: min(1120px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 28px 0 48px;
+      }
+
+      .slide {
+        min-height: min(680px, calc(100vh - 108px));
+        scroll-snap-align: start;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 26px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        padding: clamp(22px, 4vw, 46px);
+      }
+
+      .slide-kicker {
+        margin: 0;
+        color: var(--accent);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .slide h1,
+      .slide h2 {
+        max-width: 860px;
+        margin: 8px 0 0;
+        color: var(--ink);
+        font-size: clamp(2rem, 5vw, 4.35rem);
+        line-height: 1.06;
+        letter-spacing: 0;
+      }
+
+      .slide h2 {
+        font-size: clamp(1.8rem, 4vw, 3.2rem);
+      }
+
+      .lead {
+        max-width: 760px;
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: clamp(1rem, 2vw, 1.32rem);
+        font-weight: 700;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        align-content: center;
+      }
+
+      .panel {
+        min-width: 0;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 18px;
+      }
+
+      .panel-icon {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border-radius: 10px;
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .panel h3 {
+        margin: 14px 0 8px;
+        color: var(--ink);
+        font-size: 1.05rem;
+      }
+
+      .panel p,
+      .panel li {
+        color: var(--muted);
+        font-size: 0.98rem;
+        font-weight: 700;
+      }
+
+      .panel p {
+        margin: 0;
+      }
+
+      .panel ul {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding-left: 1.05em;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        align-content: center;
+      }
+
+      .step {
+        position: relative;
+        min-width: 0;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 18px;
+      }
+
+      .step strong {
+        display: block;
+        color: var(--ink);
+        font-size: 1rem;
+      }
+
+      .step span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        font-weight: 700;
+      }
+
+      .number {
+        display: inline-grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 999px;
+        background: var(--ink);
+        color: #fffaf2;
+        font-family: Inter, system-ui, sans-serif;
+        font-weight: 800;
+        margin-bottom: 14px;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 12px;
+        align-content: center;
+      }
+
+      .check {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 15px;
+      }
+
+      .check i {
+        color: var(--leaf);
+      }
+
+      .check strong {
+        display: block;
+        color: var(--ink);
+      }
+
+      .check span {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .callout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: center;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--sky-soft), var(--leaf-soft));
+        padding: 20px;
+      }
+
+      .callout strong {
+        color: var(--ink);
+      }
+
+      .callout span {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .pill {
+        border-radius: 999px;
+        background: #fffaf2;
+        color: var(--ink);
+        padding: 7px 10px;
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .tone-accent {
+        background: var(--accent-soft);
+      }
+
+      .tone-sky {
+        background: var(--sky-soft);
+      }
+
+      .tone-rose {
+        background: var(--rose-soft);
+      }
+
+      @media (max-width: 860px) {
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .top-links {
+          justify-content: flex-start;
+        }
+
+        .slide {
+          min-height: auto;
+        }
+
+        .grid,
+        .timeline {
+          grid-template-columns: 1fr;
+        }
+
+        .callout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        html {
+          scroll-snap-type: none;
+        }
+
+        body {
+          background: #fff;
+        }
+
+        .topbar {
+          display: none;
+        }
+
+        .deck {
+          width: auto;
+          padding: 0;
+        }
+
+        .slide {
+          min-height: 100vh;
+          break-after: page;
+          box-shadow: none;
+          border-radius: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span>変更共有スライド</span>
+      </div>
+      <nav class="top-links" aria-label="関連リンク">
+        <a class="top-link" href="./index.html">
+          <i data-lucide="layout-dashboard" aria-hidden="true"></i>
+          業務ハブ
+        </a>
+        <a class="top-link" href="./ebay-workflow.html">
+          <i data-lucide="package-check" aria-hidden="true"></i>
+          eBay手順
+        </a>
+        <a class="top-link" href="https://github.com/07-hajime-tokyo/site-management-hub/issues/1" target="_blank" rel="noreferrer">
+          <i data-lucide="message-square" aria-hidden="true"></i>
+          共有Issue
+        </a>
+      </nav>
+    </header>
+
+    <main class="deck" aria-label="業務ポータル変更共有スライド">
+      <section class="slide" aria-label="概要">
+        <div>
+          <p class="slide-kicker">01 / SUMMARY</p>
+          <h1>業務ポータルにeBay運用の共有ページを追加しました</h1>
+          <p class="lead">
+            収益判定とNinja Express運用をスタッフさんが確認できるよう、既存ポータル内に手順ページと進捗記録を追加しました。
+          </p>
+        </div>
+        <div class="grid">
+          <article class="panel">
+            <span class="panel-icon" aria-hidden="true"><i data-lucide="package-check"></i></span>
+            <h3>追加ページ</h3>
+            <p>`ebay-workflow.html` を新設し、eBay手順を公開ページ化。</p>
+          </article>
+          <article class="panel">
+            <span class="panel-icon" aria-hidden="true"><i data-lucide="git-branch"></i></span>
+            <h3>進捗記録</h3>
+            <p>収益判定/Ninja運用の変更履歴を進捗データに追加。</p>
+          </article>
+          <article class="panel">
+            <span class="panel-icon" aria-hidden="true"><i data-lucide="database"></i></span>
+            <h3>共有DB</h3>
+            <p>Notion共有ツールのURLを新ページへ差し替え。</p>
+          </article>
+        </div>
+        <footer class="footer">
+          <span>site-management-hub</span>
+          <span>2026-06-06</span>
+        </footer>
+      </section>
+
+      <section class="slide" aria-label="変更点">
+        <div>
+          <p class="slide-kicker">02 / WHAT CHANGED</p>
+          <h2>変更点は3つだけです</h2>
+        </div>
+        <div class="timeline">
+          <article class="step">
+            <span class="number">1</span>
+            <strong>サイドバー導線</strong>
+            <span>`index.html` に「eBay手順」を追加。</span>
+          </article>
+          <article class="step">
+            <span class="number">2</span>
+            <strong>手順ページ</strong>
+            <span>収益判定、送料、関税、Ninja運用を1ページに整理。</span>
+          </article>
+          <article class="step">
+            <span class="number">3</span>
+            <strong>進捗データ</strong>
+            <span>`progress-seed.json` に今回の作業ログを追加。</span>
+          </article>
+          <article class="step">
+            <span class="number">4</span>
+            <strong>Notion URL</strong>
+            <span>共有ツールDBのリンク先を新ページへ更新。</span>
+          </article>
+        </div>
+        <footer class="footer">
+          <span>対象: index.html / ebay-workflow.html / data/progress-seed.json</span>
+          <span>2 commits</span>
+        </footer>
+      </section>
+
+      <section class="slide" aria-label="理由">
+        <div>
+          <p class="slide-kicker">03 / WHY</p>
+          <h2>理由は、旧手順サイトへ最新内容を反映できなかったためです</h2>
+          <p class="lead">
+            `research-workflow-source` のVercelデプロイが `UNKNOWN/BLOCKED` になり、最新手順を公開URLへ反映できませんでした。
+          </p>
+        </div>
+        <div class="callout">
+          <div>
+            <strong>暫定対応</strong>
+            <span>
+              すでに公開・管理されている業務ポータル内へ同梱し、スタッフさんが別PCから確認できる状態を優先しました。
+            </span>
+          </div>
+          <div class="pill-row" aria-label="判断の軸">
+            <span class="pill">公開確認済み</span>
+            <span class="pill">ローカル不要</span>
+            <span class="pill">スタッフ確認待ち</span>
+          </div>
+        </div>
+        <footer class="footer">
+          <span>判断: 運用を止めないための暫定配置</span>
+          <span>要レビュー</span>
+        </footer>
+      </section>
+
+      <section class="slide" aria-label="影響範囲">
+        <div>
+          <p class="slide-kicker">04 / IMPACT</p>
+          <h2>既存機能は触らず、入口と静的ページを追加しました</h2>
+        </div>
+        <div class="grid">
+          <article class="panel tone-accent">
+            <h3>既存カード一覧</h3>
+            <ul>
+              <li>検索・フィルタ機能は未変更</li>
+              <li>既存データ構造は維持</li>
+            </ul>
+          </article>
+          <article class="panel tone-sky">
+            <h3>公開確認</h3>
+            <ul>
+              <li>PC/スマホ幅で横はみ出しなし</li>
+              <li>進捗APIで新データ確認済み</li>
+            </ul>
+          </article>
+          <article class="panel tone-rose">
+            <h3>注意点</h3>
+            <ul>
+              <li>mainへ直接push済み</li>
+              <li>スタッフさんの方針確認が必要</li>
+            </ul>
+          </article>
+        </div>
+        <footer class="footer">
+          <span>検証: npm run check / JSON parse / Chrome表示確認</span>
+          <span>影響は限定的</span>
+        </footer>
+      </section>
+
+      <section class="slide" aria-label="確認依頼">
+        <div>
+          <p class="slide-kicker">05 / REQUEST</p>
+          <h2>確認してほしいこと</h2>
+        </div>
+        <div class="checklist">
+          <div class="check">
+            <i data-lucide="circle-check" aria-hidden="true"></i>
+            <div>
+              <strong>業務ポータル内に手順ページを置いてよいか</strong>
+              <span>別サイト復旧までの暫定配置として問題ないか。</span>
+            </div>
+          </div>
+          <div class="check">
+            <i data-lucide="circle-check" aria-hidden="true"></i>
+            <div>
+              <strong>「eBay手順」の導線位置・文言は適切か</strong>
+              <span>スタッフさんの管理ルールに合う見せ方へ調整可能。</span>
+            </div>
+          </div>
+          <div class="check">
+            <i data-lucide="circle-check" aria-hidden="true"></i>
+            <div>
+              <strong>今後はPR/Issue経由で進める</strong>
+              <span>直接main更新ではなく、確認後に反映する運用へ戻します。</span>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <span>共有Issue: #1</span>
+          <span>レビュー依頼</span>
+        </footer>
+      </section>
+    </main>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+    </script>
+  </body>
+</html>
