@@ -55,6 +55,7 @@ const changeHistoryTool = {
 
 const changeHistoryItems = [
   {
+    kind: "site",
     date: "2026-06-06 03:27",
     title: "eBay手順ページを業務ポータルに追加",
     summary: "旧手順サイトのVercel反映が止まっていたため、業務ポータル内に暫定の公開ページを追加しました。",
@@ -65,6 +66,7 @@ const changeHistoryItems = [
     ],
   },
   {
+    kind: "rule",
     date: "2026-06-06 03:19",
     title: "eBay収益判定とNinja運用の進捗データを追加",
     summary: "GitGraph風の進捗ダッシュボードに、今回のeBay自動化作業を追跡できるデータを追加しました。",
@@ -75,6 +77,7 @@ const changeHistoryItems = [
     ],
   },
   {
+    kind: "site",
     date: "2026-06-06 03:42",
     title: "Notion共有ツールのリンク先を新ページへ変更",
     summary: "「ebayリサーチ出品ワークフロー」のURLを、旧サイトから業務ポータル内の新ページへ差し替えました。",
@@ -85,6 +88,7 @@ const changeHistoryItems = [
     ],
   },
   {
+    kind: "site",
     date: "2026-06-06 03:54",
     title: "変更内容を説明する共有スライドを追加",
     summary: "スタッフさんが変更内容をすぐ確認できるよう、5枚構成の簡潔なWebスライドをPRで追加しています。",
@@ -735,11 +739,16 @@ function createToolCard(tool, compact = false) {
 }
 
 function createChangeHistoryCard(tool) {
+  const siteCount = changeHistoryItems.filter((item) => item.kind === "site").length;
+  const ruleCount = changeHistoryItems.filter((item) => item.kind === "rule").length;
   const items = changeHistoryItems
-    .map((item, index) => `
-      <details class="change-card-toggle" ${index === 0 ? "open" : ""}>
+    .map((item) => `
+      <details class="change-card-toggle change-kind-${escapeAttribute(item.kind)}">
         <summary>
-          <span class="change-card-date">${escapeHtml(item.date)}</span>
+          <span class="change-card-row-meta">
+            <span class="change-kind-badge change-kind-${escapeAttribute(item.kind)}">${escapeHtml(getChangeKindLabel(item.kind))}</span>
+            <span class="change-card-date">${escapeHtml(item.date)}</span>
+          </span>
           <strong>${escapeHtml(item.title)}</strong>
           <i data-lucide="chevron-down" aria-hidden="true"></i>
         </summary>
@@ -755,32 +764,44 @@ function createChangeHistoryCard(tool) {
 
   return `
     <article class="tool-card change-history-card accent-rose" data-id="${tool.id}" data-card-type="${escapeAttribute(tool.type)}">
-      <div class="card-icon" aria-hidden="true">
-        <i data-lucide="presentation" aria-hidden="true"></i>
-      </div>
-      <div class="card-info">
-        <a class="card-text-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer">
-          <h4>${escapeHtml(tool.title)}</h4>
-        </a>
-        <div class="platform-links">
-          <span class="platform-label">要確認</span>
-          <a class="platform-link notion-link" href="${escapeAttribute(tool.notionUrl)}" target="_blank" rel="noreferrer" aria-label="共有Issueを開く">
-            <span class="platform-mark notion-mark" aria-hidden="true">
-              <i data-lucide="message-square" aria-hidden="true"></i>
+      <details class="change-card-shell">
+        <summary class="change-card-main">
+          <span class="card-icon" aria-hidden="true">
+            <i data-lucide="presentation" aria-hidden="true"></i>
+          </span>
+          <span class="change-card-main-text">
+            <h4>${escapeHtml(tool.title)}</h4>
+            <span class="change-card-summary-line">
+              <span class="platform-label">要確認</span>
+              <span class="change-kind-badge change-kind-site">サイト変更 ${siteCount}</span>
+              <span class="change-kind-badge change-kind-rule">実務ルール ${ruleCount}</span>
             </span>
-          </a>
+          </span>
+          <i data-lucide="chevron-down" aria-hidden="true"></i>
+        </summary>
+        <div class="change-card-body">
+          <p class="change-card-lead">${escapeHtml(tool.description)}</p>
+          <div class="change-card-list">
+            ${items}
+          </div>
+          <div class="change-card-links">
+            <a class="change-card-slide-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer">
+              変更共有スライドを見る
+              <i data-lucide="external-link" aria-hidden="true"></i>
+            </a>
+            <a class="change-card-slide-link is-secondary" href="${escapeAttribute(tool.notionUrl)}" target="_blank" rel="noreferrer">
+              共有Issue
+              <i data-lucide="message-square" aria-hidden="true"></i>
+            </a>
+          </div>
         </div>
-      </div>
-      <p class="change-card-lead">${escapeHtml(tool.description)}</p>
-      <div class="change-card-list">
-        ${items}
-      </div>
-      <a class="change-card-slide-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer">
-        変更共有スライドを見る
-        <i data-lucide="external-link" aria-hidden="true"></i>
-      </a>
+      </details>
     </article>
   `;
+}
+
+function getChangeKindLabel(kind) {
+  return kind === "rule" ? "実務ルール変更" : "サイト変更";
 }
 
 function createPlatformLinks(tool) {
