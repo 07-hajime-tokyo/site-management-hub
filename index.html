@@ -186,6 +186,87 @@
           </div>
         </section>
 
+        <section class="review-changelog" aria-labelledby="reviewChangelogTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">REVIEW REQUIRED</p>
+              <h3 id="reviewChangelogTitle">【要確認】変更履歴</h3>
+            </div>
+            <a class="review-issue-link" href="https://github.com/07-hajime-tokyo/site-management-hub/issues/1" target="_blank" rel="noreferrer">
+              <i data-lucide="message-square" aria-hidden="true"></i>
+              共有Issue
+            </a>
+          </div>
+          <div class="change-toggle-list">
+            <details class="change-toggle" open>
+              <summary>
+                <span class="change-date">2026-06-06 03:27</span>
+                <strong>eBay手順ページを業務ポータルに追加</strong>
+                <i data-lucide="chevron-down" aria-hidden="true"></i>
+              </summary>
+              <div class="change-detail">
+                <p>旧手順サイトのVercel反映が止まっていたため、業務ポータル内に暫定の公開ページを追加しました。</p>
+                <ul>
+                  <li>`ebay-workflow.html` を新設</li>
+                  <li>サイドバーに「eBay手順」導線を追加</li>
+                  <li>収益判定、送料、関税、Ninja Express運用を1ページに整理</li>
+                </ul>
+                <a href="./ebay-workflow.html">eBay手順を見る</a>
+              </div>
+            </details>
+
+            <details class="change-toggle">
+              <summary>
+                <span class="change-date">2026-06-06 03:19</span>
+                <strong>eBay収益判定とNinja運用の進捗データを追加</strong>
+                <i data-lucide="chevron-down" aria-hidden="true"></i>
+              </summary>
+              <div class="change-detail">
+                <p>GitGraph風の進捗ダッシュボードに、今回のeBay自動化作業を追跡できるデータを追加しました。</p>
+                <ul>
+                  <li>`data/progress-seed.json` に機能・イベント・ソース・セッション要約を追加</li>
+                  <li>収益判定モデルとNinja Express運用整理を関連ソースとして登録</li>
+                  <li>公開APIで `ebay-profitability-workflow` が返ることを確認</li>
+                </ul>
+                <a href="./progress.html">進捗を見る</a>
+              </div>
+            </details>
+
+            <details class="change-toggle">
+              <summary>
+                <span class="change-date">2026-06-06 03:42</span>
+                <strong>Notion共有ツールのリンク先を新ページへ変更</strong>
+                <i data-lucide="chevron-down" aria-hidden="true"></i>
+              </summary>
+              <div class="change-detail">
+                <p>「ebayリサーチ出品ワークフロー」のURLを、旧サイトから業務ポータル内の新ページへ差し替えました。</p>
+                <ul>
+                  <li>旧URL: `research-workflow-source.vercel.app`</li>
+                  <li>新URL: `site-management-hub.vercel.app/ebay-workflow.html`</li>
+                  <li>スタッフさんの管理方針に合わなければ戻せます</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="change-toggle">
+              <summary>
+                <span class="change-date">2026-06-06 03:54</span>
+                <strong>変更内容を説明する共有スライドを追加</strong>
+                <i data-lucide="chevron-down" aria-hidden="true"></i>
+              </summary>
+              <div class="change-detail">
+                <p>スタッフさんが変更内容をすぐ確認できるよう、5枚構成の簡潔なWebスライドをPRで追加しています。</p>
+                <ul>
+                  <li>概要、変更点、理由、影響範囲、確認依頼を整理</li>
+                  <li>mainへ直接反映せず、PRでレビュー待ち</li>
+                  <li>Vercel preview はチーム設定により外部閲覧不可</li>
+                </ul>
+                <a href="./change-summary-slides.html">変更共有スライドを見る</a>
+              </div>
+            </details>
+          </div>
+        </section>
+
         <section class="quick-access" aria-label="優先表示">
           <div class="section-heading">
             <div>
