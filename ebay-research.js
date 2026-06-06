@@ -270,7 +270,7 @@ function renderPreview() {
           <h3>物流・梱包</h3>
         </div>
         <dl class="detail-list">
-          ${detailRow("忍者→Oregon", formatYen(item.logistics.ninjaToOregonJpy))}
+          ${detailRow("東京→Oregon（忍者倉庫）", formatYen(item.logistics.ninjaToOregonJpy))}
           ${detailRow("Oregon→Buyer", formatYen(item.logistics.oregonToBuyerJpy))}
           ${detailRow("合計送料目安", formatYen(item.logistics.totalLogisticsJpy))}
           ${detailRow("梱包サイズ", item.packaging.size)}

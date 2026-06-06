@@ -155,7 +155,7 @@ const changeHistoryItems = [
     kind: "rule",
     date: "2026-06-06 11:58",
     title: "eBay利益計算ルールをコミュニケーションレポートへ追加",
-    summary: "Oregon倉庫、Ninja Express、関税、消費税還付候補、シャフト回収を含めた利益計算の共有ページを追加しました。",
+    summary: "Ninja ExpressのOregon倉庫、関税、消費税還付候補、シャフト回収を含めた利益計算の共有ページを追加しました。",
     points: [
       "`reports/ebay-oregon-profit-20260606.html` を新設",
       "レポート欄に「コミュニケーションレポート」カードを追加",
