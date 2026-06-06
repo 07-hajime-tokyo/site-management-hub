@@ -34,6 +34,7 @@ const categoryAccents = [
 const changeHistoryCardId = "review-change-history";
 const communicationReportCardId = "communication-reports";
 const ebayResearchDashboardCardId = "ebay-research-dashboard";
+const ebaySourcingGuideCardId = "ebay-sourcing-guide";
 const environmentSetupCardId = "environment-setup-guide";
 const changeHistoryTool = {
   id: changeHistoryCardId,
@@ -74,6 +75,27 @@ const ebayResearchDashboardTool = {
   lastOpenedAt: "",
   openCount: 0,
   cardOrder: -875,
+};
+
+const ebaySourcingGuideTool = {
+  id: ebaySourcingGuideCardId,
+  title: "eBay仕入れ候補リサーチ手順",
+  url: "./ebay-sourcing-guide.html",
+  repositoryUrl: "",
+  vercelUrl: "",
+  tidbUrl: "",
+  notionUrl: "",
+  category: "共有",
+  type: "site",
+  status: "review",
+  pinned: false,
+  description:
+    "入力シートとURLオープナーを使って、国内仕入れ候補URLを記録するスタッフ向け手順です。",
+  tags: ["eBay", "リサーチ", "仕入れ候補", "URLオープナー", "スタッフ手順"],
+  createdAt: "2026-06-07T04:20:00+09:00",
+  lastOpenedAt: "",
+  openCount: 0,
+  cardOrder: -874,
 };
 
 const environmentSetupTool = {
@@ -381,12 +403,14 @@ function getTools() {
         changeHistoryTool,
         communicationReportTool,
         ebayResearchDashboardTool,
+        ebaySourcingGuideTool,
         ...baseTools.filter(
           (tool) =>
             ![
               changeHistoryCardId,
               communicationReportCardId,
               ebayResearchDashboardCardId,
+              ebaySourcingGuideCardId,
               environmentSetupCardId,
             ].includes(tool.id),
         ),

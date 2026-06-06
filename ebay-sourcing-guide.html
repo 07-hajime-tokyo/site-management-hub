@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>eBay仕入れ候補リサーチ手順</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Zen+Maru+Gothic:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./ebay-sourcing-guide.css?v=20260607-2" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+    </script>
+  </head>
+  <body>
+    <main class="deck-shell">
+      <header class="deck-header">
+        <div class="header-copy">
+          <a class="back-link" href="./index.html">
+            <i data-lucide="arrow-left" aria-hidden="true"></i>
+            業務ハブ
+          </a>
+          <p class="eyebrow">STAFF SLIDES</p>
+          <h1>eBay仕入れ候補URL入力</h1>
+          <p>
+            AI判断が◯の商品について、国内で安く仕入れられそうな商品ページURLをシートへ入力する作業です。
+          </p>
+        </div>
+        <div class="action-panel" aria-label="作業入口">
+          <a href="./ebay-research.html" target="_blank" rel="noreferrer">
+            <i data-lucide="layout-dashboard" aria-hidden="true"></i>
+            判定ビューを開く
+          </a>
+          <a
+            href="https://docs.google.com/spreadsheets/d/1Xm_cdYS3tkmTDYLcyXZi85Ctxy1s3bKNyEHOIwBoQPg/edit?gid=1294305931#gid=1294305931"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i data-lucide="table" aria-hidden="true"></i>
+            入力シートを開く
+          </a>
+        </div>
+      </header>
+
+      <section class="slide-grid" aria-label="作業説明スライド">
+        <article class="slide-card goal">
+          <div class="slide-number">01</div>
+          <div class="slide-icon">
+            <i data-lucide="target" aria-hidden="true"></i>
+          </div>
+          <h2>作業ゴール</h2>
+          <ul>
+            <li>AI判断◯の商品だけを見る</li>
+            <li>仕入上限以内の商品ページURLを探す</li>
+            <li>B列の候補URL欄へ貼る</li>
+          </ul>
+        </article>
+
+        <article class="slide-card">
+          <div class="slide-number">02</div>
+          <div class="slide-icon sky">
+            <i data-lucide="list-checks" aria-hidden="true"></i>
+          </div>
+          <h2>1商品の流れ</h2>
+          <ol>
+            <li>商品タイトル・仕様・30日Soldを確認</li>
+            <li>F列以降の検索URLを開く</li>
+            <li>条件に合う国内商品を探す</li>
+            <li>B列へ候補URLを入力</li>
+          </ol>
+        </article>
+
+        <article class="slide-card">
+          <div class="slide-number">03</div>
+          <div class="slide-icon honey">
+            <i data-lucide="table-2" aria-hidden="true"></i>
+          </div>
+          <h2>シートで見る場所</h2>
+          <div class="mini-table" role="table" aria-label="入力シートの見る場所">
+            <div><span>F:P</span><strong>検索URL</strong><p>ヤフオク、メルカリ、楽天、専門店など</p></div>
+            <div><span>B</span><strong>仕入上限</strong><p>税込・送料込の目安</p></div>
+            <div><span>D:E</span><strong>30日Sold</strong><p>入力URL枠数の目安</p></div>
+            <div><span>B5〜</span><strong>候補URL</strong><p>スタッフが入力する場所</p></div>
+          </div>
+        </article>
+
+        <article class="slide-card">
+          <div class="slide-number">04</div>
+          <div class="slide-icon green">
+            <i data-lucide="badge-check" aria-hidden="true"></i>
+          </div>
+          <h2>候補にしてよいURL</h2>
+          <ul>
+            <li>実際に購入・入札できる商品ページ</li>
+            <li>型番、番手、右左、ヘッド/シャフト条件が近い</li>
+            <li>本体価格 + 送料が仕入上限以内</li>
+          </ul>
+          <p class="caution">検索結果ページや条件が違う商品は入れない。</p>
+        </article>
+
+        <article class="slide-card">
+          <div class="slide-number">05</div>
+          <div class="slide-icon coral">
+            <i data-lucide="mouse-pointer-click" aria-hidden="true"></i>
+          </div>
+          <h2>URLオープナー</h2>
+          <p class="folder">確認済み: Desktop / 拡張機能 / pastey-url-opener 2</p>
+          <div class="shortcut-stack">
+            <div><kbd>Cmd</kbd><kbd>Shift</kbd><kbd>U</kbd><span>選択したURLを開く</span></div>
+            <div><kbd>Cmd</kbd><kbd>Shift</kbd><kbd>Y</kbd><span>コピー済みURLを開く</span></div>
+            <div><kbd>Cmd</kbd><kbd>Shift</kbd><kbd>L</kbd><span>開いたタブを閉じる</span></div>
+          </div>
+        </article>
+
+        <article class="slide-card">
+          <div class="slide-number">06</div>
+          <div class="slide-icon violet">
+            <i data-lucide="pencil-line" aria-hidden="true"></i>
+          </div>
+          <h2>入力ルール</h2>
+          <ul>
+            <li>B列: 候補商品のURLをそのまま貼る</li>
+            <li>C列: 担当者名を入れる</li>
+            <li>D/E列: 確認状況や注意点を短く残す</li>
+          </ul>
+          <p class="example">例: 状態注意 / 送料高い / 付属品あり / 候補なし</p>
+        </article>
+      </section>
+
+      <section class="bottom-note" aria-label="作業時の注意">
+        <div>
+          <strong>迷ったら</strong>
+          <p>判定ビューで仕様を確認し、無理に入力せずメモに理由を残してください。</p>
+        </div>
+        <div>
+          <strong>URL枠数</strong>
+          <p>30日Soldの約1/10が目安です。Sold60なら6件、Sold10以下なら1件でOKです。</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
