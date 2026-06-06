@@ -1,4 +1,4 @@
-const DATA_URL = "./data/ebay-research-dashboard.json?v=20260606-2";
+const DATA_URL = "./data/ebay-research-dashboard.json?v=20260607-1";
 const REVIEW_STORAGE_KEY = "ebayResearchManualReviews:v1";
 const HUMAN_DECISIONS = ["未判断", "◯", "△", "✗"];
 

@@ -151,6 +151,12 @@ def packaging(title: str, shipping_class: str) -> dict:
             "material": "長尺ダンボールまたは紙管 + 両端キャップ",
             "note": "曲がり防止を最優先。中で動かないよう中央も固定。",
         }
+    if re.search(r"\bdriver\b", title_l) and "head only" in title_l:
+        return {
+            "size": "60サイズ目安",
+            "material": "60サイズ小型ダンボール + プチプチ二重",
+            "note": "ドライバーヘッドの角とフェース面を重点保護。ヘッドカバー同梱時は擦れ防止。",
+        }
     if re.search(r"\b(driver|fairway|wood|hybrid|utility|wedge|putter)\b", title_l) and "head only" not in title_l:
         return {
             "size": "120-140長尺",
