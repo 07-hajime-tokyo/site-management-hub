@@ -34,6 +34,7 @@ const categoryAccents = [
 const changeHistoryCardId = "review-change-history";
 const communicationReportCardId = "communication-reports";
 const ebayResearchDashboardCardId = "ebay-research-dashboard";
+const environmentSetupCardId = "environment-setup-guide";
 const changeHistoryTool = {
   id: changeHistoryCardId,
   title: "【要確認】変更履歴",
@@ -73,6 +74,26 @@ const ebayResearchDashboardTool = {
   lastOpenedAt: "",
   openCount: 0,
   cardOrder: -875,
+};
+
+const environmentSetupTool = {
+  id: environmentSetupCardId,
+  title: "環境構築ガイド",
+  url: "./environment-setup.html",
+  repositoryUrl: "",
+  vercelUrl: "",
+  tidbUrl: "",
+  notionUrl: "",
+  category: "共有",
+  type: "site",
+  status: "active",
+  pinned: false,
+  description: "他PCで同じ作業環境を使うために、Codexへ依頼する文面と確認項目をまとめています。",
+  tags: ["環境構築", "GitHub", "Google Drive", "Codex"],
+  createdAt: "2026-06-06T18:55:00+09:00",
+  lastOpenedAt: "",
+  openCount: 0,
+  isEnvironmentSetupCard: true,
 };
 
 const communicationReportTool = {
@@ -362,8 +383,14 @@ function getTools() {
         ebayResearchDashboardTool,
         ...baseTools.filter(
           (tool) =>
-            ![changeHistoryCardId, communicationReportCardId, ebayResearchDashboardCardId].includes(tool.id),
+            ![
+              changeHistoryCardId,
+              communicationReportCardId,
+              ebayResearchDashboardCardId,
+              environmentSetupCardId,
+            ].includes(tool.id),
         ),
+        environmentSetupTool,
       ]
     : baseTools;
   return tools.map(applyPinOverride);
@@ -792,6 +819,7 @@ function createSheetGroupCards(tools) {
 function createToolCard(tool, compact = false) {
   if (tool.isChangeHistoryCard) return createChangeHistoryCard(tool);
   if (tool.isCommunicationReportCard) return createCommunicationReportCard(tool);
+  if (tool.isEnvironmentSetupCard) return createEnvironmentSetupCard(tool, compact);
   const accent = getAccentClass(tool.category);
   const platformLinks = createPlatformLinks(tool);
   return `
@@ -821,6 +849,31 @@ function createToolCard(tool, compact = false) {
           <i data-lucide="pencil" aria-hidden="true"></i>
         </button>
       </div>
+    </article>
+  `;
+}
+
+function createEnvironmentSetupCard(tool, compact = false) {
+  return `
+    <article class="tool-card environment-setup-card accent-teal ${compact ? "is-compact" : ""}" data-id="${tool.id}" data-card-type="${escapeAttribute(tool.type)}">
+      <span class="card-icon" aria-hidden="true">
+        <i data-lucide="monitor-cog" aria-hidden="true"></i>
+      </span>
+      <div class="environment-card-main">
+        <a class="card-text-link" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open">
+          <h4>${escapeHtml(tool.title)}</h4>
+        </a>
+        <p>${escapeHtml(tool.description)}</p>
+        <div class="environment-card-tags" aria-label="対象サービス">
+          <span>GitHub</span>
+          <span>Drive</span>
+          <span>Chrome</span>
+          <span>Notion</span>
+        </div>
+      </div>
+      <a class="icon-only environment-card-open" href="${escapeAttribute(tool.url)}" target="_blank" rel="noreferrer" data-action="open" aria-label="開く">
+        <i data-lucide="arrow-right" aria-hidden="true"></i>
+      </a>
     </article>
   `;
 }

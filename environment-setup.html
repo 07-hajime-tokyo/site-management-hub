@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>環境構築ガイド | 業務ハブ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <style>
+      :root {
+        --bg: #f4ede0;
+        --paper: #fbf6ec;
+        --surface: #ffffff;
+        --ink: #342f2a;
+        --text: #4b4035;
+        --muted: #817466;
+        --border: #e4d8c6;
+        --accent: #4d7f83;
+        --accent-soft: #dcebe2;
+        --honey: #d4a248;
+        --shadow: 0 22px 55px rgba(88, 65, 40, 0.13);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          "Zen Maru Gothic", "Yu Gothic UI", "Meiryo", "Hiragino Maru Gothic ProN",
+          system-ui, sans-serif;
+        line-height: 1.65;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 24px 0 56px;
+      }
+
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 22px;
+      }
+
+      .back-link,
+      .copy-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 40px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--text);
+        padding: 8px 12px;
+        text-decoration: none;
+        font-weight: 800;
+      }
+
+      .back-link svg,
+      .copy-button svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 18px;
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        padding: clamp(22px, 4vw, 40px);
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--accent);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        color: var(--ink);
+        font-size: 3.8rem;
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      .hero p {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 1.02rem;
+        font-weight: 700;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .summary-item {
+        display: grid;
+        gap: 6px;
+        min-height: 96px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 14px;
+      }
+
+      .summary-item svg {
+        width: 20px;
+        height: 20px;
+        color: var(--accent);
+      }
+
+      .summary-item strong {
+        color: var(--ink);
+      }
+
+      .summary-item span {
+        color: var(--muted);
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      .section {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .section-head h2 {
+        color: var(--ink);
+        font-size: 1.35rem;
+        line-height: 1.25;
+      }
+
+      .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .prompt-block,
+      .note-block {
+        display: grid;
+        gap: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 18px;
+      }
+
+      .prompt-block h3 {
+        color: var(--ink);
+        font-size: 1rem;
+      }
+
+      .prompt-box {
+        min-height: 220px;
+        border: 1px solid #d9d0c0;
+        border-radius: 8px;
+        background: #fffdf8;
+        color: #2f2a25;
+        padding: 14px;
+        white-space: pre-wrap;
+        font-family:
+          "Zen Maru Gothic", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+        font-size: 0.94rem;
+      }
+
+      .copy-button {
+        justify-self: start;
+        background: var(--accent-soft);
+        color: #2f5d50;
+      }
+
+      .note-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .note-block ul {
+        margin: 0;
+        padding-left: 1.1rem;
+      }
+
+      .note-block li {
+        margin: 6px 0;
+      }
+
+      .note-block h3 {
+        color: var(--ink);
+        font-size: 1rem;
+      }
+
+      .toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        transform: translateY(18px);
+        opacity: 0;
+        border-radius: 10px;
+        background: #2f2a25;
+        color: #fffaf2;
+        padding: 10px 14px;
+        font-weight: 800;
+        transition: opacity 160ms ease, transform 160ms ease;
+        pointer-events: none;
+      }
+
+      .toast.is-visible {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      @media (max-width: 860px) {
+        h1 {
+          font-size: 2.7rem;
+        }
+
+        .summary-grid,
+        .prompt-grid,
+        .note-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <nav class="top-nav" aria-label="ページ移動">
+        <a class="back-link" href="./index.html">
+          <i data-lucide="arrow-left" aria-hidden="true"></i>
+          業務ハブへ戻る
+        </a>
+      </nav>
+
+      <section class="hero">
+        <p class="eyebrow">MULTI PC SETUP</p>
+        <h1>他PCでも同じ作業環境を使う</h1>
+        <p>
+          GitHubに手順とプロンプト、Google Drive/Sheetsに実データ、Notionに運用知識を置きます。
+          他PCではCodexに依頼して、clone、確認、ログイン案内、同期まで進めてもらいます。
+        </p>
+        <div class="summary-grid" aria-label="役割分担">
+          <div class="summary-item">
+            <i data-lucide="github" aria-hidden="true"></i>
+            <strong>GitHub</strong>
+            <span>手順・コード・プロンプト</span>
+          </div>
+          <div class="summary-item">
+            <i data-lucide="hard-drive" aria-hidden="true"></i>
+            <strong>Google Drive</strong>
+            <span>実データ・素材・台帳</span>
+          </div>
+          <div class="summary-item">
+            <i data-lucide="book-open" aria-hidden="true"></i>
+            <strong>Notion</strong>
+            <span>判断ログ・運用wiki</span>
+          </div>
+          <div class="summary-item">
+            <i data-lucide="monitor-cog" aria-hidden="true"></i>
+            <strong>Local PC</strong>
+            <span>ログイン・秘密情報・作業実行</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>Codexに依頼する文面</h2>
+        </div>
+        <div class="prompt-grid">
+          <article class="prompt-block">
+            <h3>初回セットアップ</h3>
+            <pre class="prompt-box" id="promptInitial">このPCでeBay輸出のback-office作業環境を使えるようにセットアップして。
+
+GitHubのprivate repoから作業環境を取得し、back-officeのREADME、setup/new-pc-checklist.md、setup/sync-runbook.mdを読んで、必要な初期化を進めてください。
+
+やってほしいこと:
+- リポジトリを取得済みか確認。未取得なら取得方法を確認して進める
+- back-office/setup/bootstrap-local.sh を実行できる場合は実行する
+- .env があるか確認し、なければ .env.example から作る
+- .env、tmp、大容量ファイル、個人情報がGitHub管理対象になっていないか確認する
+- Chrome、Google Drive、GitHub、Notion、Spreadsheetsの接続状態を確認する
+- eBay、Sellsta、Ninja Express、Google Sheets、Notionでログインが必要なものだけ私に教える
+
+秘密情報、Cookie、APIキー、パスワード、注文の個人情報はGitHub、Google Drive、Notionに保存しないでください。</pre>
+            <button class="copy-button" type="button" data-copy-target="promptInitial">
+              <i data-lucide="copy" aria-hidden="true"></i>
+              コピー
+            </button>
+          </article>
+
+          <article class="prompt-block">
+            <h3>作業開始前チェック</h3>
+            <pre class="prompt-box" id="promptStart">このPCで今日の作業を始める前に、back-office環境を最新化して確認して。
+
+やってほしいこと:
+- GitHubの最新状態を取り込む
+- 作業対象のREADMEや関連するsetup/ops/promptsを読む
+- Chromeで必要なログイン状態を確認する
+- Google Drive/Sheets/Notion/GitHubプラグインが使えるか確認する
+- 今日の作業に必要なシート、Driveフォルダ、Notionページ、eBay/Sellstaページを開けるか確認する
+- 問題があれば、私がするべきログインや認証だけ短く教える
+
+コマンドが必要な場合はCodex側で実行してください。私は文章で依頼するだけにしたいです。</pre>
+            <button class="copy-button" type="button" data-copy-target="promptStart">
+              <i data-lucide="copy" aria-hidden="true"></i>
+              コピー
+            </button>
+          </article>
+
+          <article class="prompt-block">
+            <h3>作業終了後の同期</h3>
+            <pre class="prompt-box" id="promptFinish">今日このPCで行ったback-office関連の変更を整理して、他PCでも使えるようにGitHubへ反映して。
+
+やってほしいこと:
+- 変更差分を確認する
+- .env、tmp、大容量ファイル、個人情報、注文の住所、APIキー、Cookieが混ざっていないか確認する
+- 手順書、プロンプト、設定テンプレート、コードだけを適切にステージする
+- 変更内容が分かるコミットメッセージでコミットする
+- GitHubへpushする
+- Google Drive/Sheets/Notionに残すべき実データや判断ログがあれば、保存先を整理して教える
+
+push前に、何をGitHubへ反映するか短く確認してください。</pre>
+            <button class="copy-button" type="button" data-copy-target="promptFinish">
+              <i data-lucide="copy" aria-hidden="true"></i>
+              コピー
+            </button>
+          </article>
+
+          <article class="prompt-block">
+            <h3>環境診断</h3>
+            <pre class="prompt-box" id="promptAudit">このPCのback-office環境が、メインPCと同じように作業できる状態か診断して。
+
+確認してほしいこと:
+- GitHub repoのremote、branch、最新状態
+- back-office/setup/new-pc-checklist.md と sync-runbook.md の内容
+- .env が存在し、GitHub管理対象外になっているか
+- ChromeでeBay、Sellsta、Ninja Express、Google Sheets、Notionにアクセスできるか
+- Google Drive、GitHub、Notion、Spreadsheetsプラグインが使えるか
+- Google Drive/Sheets/Notionに実データ、GitHubに手順・プロンプトという分担になっているか
+
+不足があれば「私がやること」と「Codexが続けてできること」に分けて教えて。</pre>
+            <button class="copy-button" type="button" data-copy-target="promptAudit">
+              <i data-lucide="copy" aria-hidden="true"></i>
+              コピー
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>他PCで人間がすること</h2>
+        </div>
+        <div class="note-grid">
+          <article class="note-block">
+            <h3>ログイン</h3>
+            <ul>
+              <li>ChromeでGoogleアカウントへログイン</li>
+              <li>eBay、Sellsta、Ninja Expressへログイン</li>
+              <li>NotionとGoogle Sheetsを開けるか確認</li>
+            </ul>
+          </article>
+          <article class="note-block">
+            <h3>Codex接続</h3>
+            <ul>
+              <li>Chromeプラグイン</li>
+              <li>Google Driveプラグイン</li>
+              <li>GitHubプラグイン</li>
+              <li>Notion、Spreadsheetsプラグイン</li>
+            </ul>
+          </article>
+          <article class="note-block">
+            <h3>守ること</h3>
+            <ul>
+              <li>秘密情報はGitHubに入れない</li>
+              <li>実データはDrive/Sheetsへ置く</li>
+              <li>判断ログはNotionかback-officeへ残す</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite">コピーしました</div>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+        const toast = document.querySelector("#toast");
+        let timer = null;
+        document.querySelectorAll("[data-copy-target]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const target = document.querySelector(`#${button.dataset.copyTarget}`);
+            if (!target) return;
+            await navigator.clipboard.writeText(target.textContent.trim());
+            toast.classList.add("is-visible");
+            clearTimeout(timer);
+            timer = setTimeout(() => toast.classList.remove("is-visible"), 1400);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

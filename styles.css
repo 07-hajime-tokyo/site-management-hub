@@ -1306,6 +1306,59 @@ select:disabled {
   height: 14px;
 }
 
+.environment-setup-card {
+  grid-template-columns: 48px minmax(0, 1fr) 36px;
+  align-items: center;
+}
+
+.environment-setup-card .card-icon {
+  margin: 0;
+}
+
+.environment-card-main {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.environment-card-main h4 {
+  margin: 0;
+}
+
+.environment-card-main p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.environment-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.environment-card-tags span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  border-radius: 999px;
+  background: var(--sky-soft);
+  color: var(--sky);
+  padding: 3px 8px;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.environment-card-open {
+  align-self: center;
+  justify-self: end;
+  border-color: var(--border);
+  background: var(--paper);
+  color: var(--accent-strong);
+}
+
 .card-top,
 .card-actions,
 .card-meta,
