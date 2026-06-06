@@ -1,4 +1,4 @@
-const DATA_URL = "./data/ebay-research-dashboard.json?v=20260606-1";
+const DATA_URL = "./data/ebay-research-dashboard.json?v=20260606-2";
 
 const state = {
   items: [],
