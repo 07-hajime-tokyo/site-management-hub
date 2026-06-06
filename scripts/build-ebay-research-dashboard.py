@@ -9,7 +9,7 @@ import re
 import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 import pandas as pd
 
@@ -19,6 +19,17 @@ EBAY_FEE_RATE = 0.15
 CUSTOMS_DUTY_RATE = 0.10
 PAYOUT_RATE = 1 - EBAY_FEE_RATE
 JST = timezone(timedelta(hours=9))
+IMAGE_URL_RE = re.compile(r"https?://[^\s\"'<>),]+", re.IGNORECASE)
+IMAGE_EXT_RE = re.compile(r"\.(?:avif|gif|jpe?g|png|webp)(?:[?#].*)?$", re.IGNORECASE)
+IMAGE_HOST_HINTS = {
+    "i.ebayimg.com",
+    "thumbs.ebaystatic.com",
+    "auctions.c.yimg.jp",
+    "static.mercdn.net",
+    "tshop.r10s.jp",
+    "thumbnail.image.rakuten.co.jp",
+    "m.media-amazon.com",
+}
 
 
 def clean_text(value) -> str:
@@ -289,9 +300,64 @@ def safe_link(value: str) -> str:
     return value if value.startswith("http://") or value.startswith("https://") else ""
 
 
-def row_to_item(row: dict) -> dict:
+def extract_urls(value: str) -> list[str]:
+    return [url.rstrip(".,;") for url in IMAGE_URL_RE.findall(clean_text(value))]
+
+
+def is_image_url(url: str) -> bool:
+    parsed = urlparse(url)
+    host = parsed.netloc.lower()
+    return bool(parsed.scheme in {"http", "https"} and (IMAGE_EXT_RE.search(url) or host in IMAGE_HOST_HINTS))
+
+
+def safe_image_url(value: str) -> str:
+    for url in extract_urls(value):
+        if is_image_url(url):
+            return url
+    return ""
+
+
+def pick_image_url(row: dict, columns: list[str]) -> str:
+    for column in columns:
+        url = safe_image_url(row.get(column))
+        if url:
+            return url
+    return ""
+
+
+def load_image_overrides(data_dir: Path) -> dict:
+    path = data_dir / "ebay-research-image-overrides.json"
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        print(f"warning: ignored invalid image override file: {path}", file=sys.stderr)
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def get_override_image(overrides: dict, item_id: str, normalized_title: str, source_key: str) -> str:
+    candidates = [overrides.get(item_id, {}), overrides.get(normalized_title, {})]
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            continue
+        image_url = safe_image_url(candidate.get(source_key))
+        if image_url:
+            return image_url
+        sources = candidate.get("sources", {})
+        if isinstance(sources, dict):
+            image_url = safe_image_url(sources.get(source_key))
+            if image_url:
+                return image_url
+    return ""
+
+
+def row_to_item(row: dict, image_overrides: dict | None = None) -> dict:
     title = clean_text(row.get("商品名"))
     item_no = clean_int(row.get("#"))
+    item_id = f"item-{item_no}"
+    normalized_title = normalize_title(title)
     ebay_price_usd = clean_number(row.get("eBay売価(USD)"))
     shipping_usd = clean_number(row.get("送料(USD)"))
     ebay_total_usd = clean_number(row.get("eBay総額(USD)"), ebay_price_usd + shipping_usd)
@@ -313,6 +379,60 @@ def row_to_item(row: dict) -> dict:
     ebay_search_url = safe_link(row.get("eBay出品"))
     product_research_url = safe_link(row.get("eBayプロダクトリサーチ"))
     specialist_source = build_specialist_source(domestic_kw, title, safe_link(row.get("専門・補助検索")))
+    image_overrides = image_overrides or {}
+    source_images = {
+        "makse": get_override_image(image_overrides, item_id, normalized_title, "makse")
+        or pick_image_url(
+            row,
+            [
+                "makse画像URL",
+                "競合画像URL",
+                "eBay画像URL",
+                "eBay写真URL",
+                "商品画像URL",
+                "画像URL",
+                "写真URL",
+                "サムネイルURL",
+            ],
+        ),
+        "ebay-research-us": get_override_image(image_overrides, item_id, normalized_title, "ebay-research-us")
+        or pick_image_url(
+            row,
+            [
+                "eBayリサーチ画像URL",
+                "eBay画像URL",
+                "競合画像URL",
+                "商品画像URL",
+                "画像URL",
+                "写真URL",
+                "サムネイルURL",
+            ],
+        ),
+        "domestic": get_override_image(image_overrides, item_id, normalized_title, "domestic")
+        or pick_image_url(
+            row,
+            [
+                "国内画像URL",
+                "仕入先画像URL",
+                "Yahooオークション画像URL",
+                "ヤフオク画像URL",
+                "メルカリ画像URL",
+                "楽天画像URL",
+                "Amazon画像URL",
+            ],
+        ),
+        "specialist": get_override_image(image_overrides, item_id, normalized_title, "specialist")
+        or pick_image_url(
+            row,
+            [
+                "専門店画像URL",
+                "専門画像URL",
+                "ゴルフパートナー画像URL",
+                "ゴルフ・ドゥ画像URL",
+                "ゴルフドゥ画像URL",
+            ],
+        ),
+    }
 
     links = {
         "competitor": competitor_url,
@@ -329,10 +449,10 @@ def row_to_item(row: dict) -> dict:
         "specialist": safe_link(row.get("専門・補助検索")),
     }
     return {
-        "id": f"item-{item_no}",
+        "id": item_id,
         "no": item_no,
         "title": title,
-        "normalizedTitle": normalize_title(title),
+        "normalizedTitle": normalized_title,
         "category": clean_text(row.get("カテゴリ")),
         "condition": clean_text(row.get("状態")),
         "domesticKeyword": domestic_kw,
@@ -381,7 +501,7 @@ def row_to_item(row: dict) -> dict:
                 "label": "makse",
                 "title": "makse2313のSold/競合確認",
                 "url": build_makse_url(ebay_kw, title),
-                "imageUrl": "",
+                "imageUrl": source_images["makse"],
                 "emptyText": "makse画像URL未取得",
                 "note": "元リサーチ対象セラーのSold確認",
             },
@@ -390,7 +510,7 @@ def row_to_item(row: dict) -> dict:
                 "label": "eBay KW Research",
                 "title": "Ship to US / EBAY-US",
                 "url": product_research_url or build_ebay_keyword_research_url(ebay_kw, title),
-                "imageUrl": "",
+                "imageUrl": source_images["ebay-research-us"],
                 "emptyText": "eBay画像URL未取得",
                 "note": "90日Soldのキーワード確認",
             },
@@ -399,7 +519,7 @@ def row_to_item(row: dict) -> dict:
                 "label": pick_domestic_source(row)["label"],
                 "title": domestic_kw or title,
                 "url": pick_domestic_source(row)["url"],
-                "imageUrl": pick_domestic_source(row)["imageUrl"],
+                "imageUrl": source_images["domestic"] or pick_domestic_source(row)["imageUrl"],
                 "emptyText": "国内仕入画像URL未取得",
                 "note": "国内仕入先候補",
             },
@@ -408,7 +528,7 @@ def row_to_item(row: dict) -> dict:
                 "label": specialist_source["label"],
                 "title": "ゴルフパートナー / ゴルフ・ドゥ",
                 "url": specialist_source["url"],
-                "imageUrl": specialist_source["imageUrl"],
+                "imageUrl": source_images["specialist"] or specialist_source["imageUrl"],
                 "emptyText": "専門店画像URL未取得",
                 "note": "該当ページは候補検索から確認",
                 "links": specialist_source["links"],
@@ -434,7 +554,12 @@ def main() -> int:
     input_path = Path(sys.argv[1])
     output_path = Path(sys.argv[2])
     df = pd.read_excel(input_path, sheet_name="還付込利益判定").fillna("")
-    rows = [row_to_item(row) for row in df.to_dict("records") if clean_text(row.get("商品名"))]
+    image_overrides = load_image_overrides(output_path.parent)
+    rows = [
+        row_to_item(row, image_overrides)
+        for row in df.to_dict("records")
+        if clean_text(row.get("商品名"))
+    ]
     counts = {}
     for item in rows:
         counts[item["decision"]] = counts.get(item["decision"], 0) + 1
@@ -460,7 +585,7 @@ def main() -> int:
                 "出品済み判定は未照合です。SellerHacksまたはeBayアクティブ出品のスナップショット投入で精密化できます。",
                 "競合出品URLが空の行はeBay検索リンクを競合確認リンクとして表示します。",
                 "HTSコードはタイトルからの候補推定です。関税計算はユーザー指定により10%固定です。",
-                "写真URLは現時点のシートにないため、SellerHacks CSVや商品ページ由来の画像URLを入れると表示できます。",
+                "写真は画像URL列またはdata/ebay-research-image-overrides.jsonに登録されたURLを表示します。",
             ],
             "sources": [
                 {
