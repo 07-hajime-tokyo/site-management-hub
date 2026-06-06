@@ -90,7 +90,7 @@ const ebaySourcingGuideTool = {
   status: "review",
   pinned: false,
   description:
-    "入力シートとURLオープナーを使って、国内仕入れ候補URLを記録するスタッフ向け手順です。",
+    "入力シートとDrive配布済みURLオープナーを使って、ヤフオクのオークションURL中心に国内仕入れ候補を記録するスタッフ向け手順です。",
   tags: ["eBay", "リサーチ", "仕入れ候補", "URLオープナー", "スタッフ手順"],
   createdAt: "2026-06-07T04:20:00+09:00",
   lastOpenedAt: "",

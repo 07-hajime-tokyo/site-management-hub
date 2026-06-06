@@ -269,6 +269,32 @@ h1 {
   overflow-wrap: anywhere;
 }
 
+.download-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.download-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.download-actions svg {
+  width: 16px;
+  height: 16px;
+}
+
 .shortcut-stack {
   display: grid;
   gap: 8px;
@@ -339,6 +365,7 @@ kbd {
   .deck-header,
   .slide-grid,
   .action-panel,
+  .download-actions,
   .bottom-note {
     grid-template-columns: 1fr;
   }

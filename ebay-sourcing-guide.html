@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Zen+Maru+Gothic:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./ebay-sourcing-guide.css?v=20260607-2" />
+    <link rel="stylesheet" href="./ebay-sourcing-guide.css?v=20260607-4" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
@@ -29,7 +29,7 @@
           <p class="eyebrow">STAFF SLIDES</p>
           <h1>eBay仕入れ候補URL入力</h1>
           <p>
-            AI判断が◯の商品について、国内で安く仕入れられそうな商品ページURLをシートへ入力する作業です。
+            AI判断が◯の商品について、ヤフオクのオークションURLを中心に、国内で安く仕入れられそうな候補URLを集める作業です。
           </p>
         </div>
         <div class="action-panel" aria-label="作業入口">
@@ -57,7 +57,7 @@
           <h2>作業ゴール</h2>
           <ul>
             <li>AI判断◯の商品だけを見る</li>
-            <li>仕入上限以内の商品ページURLを探す</li>
+            <li>ヤフオクのオークションURLを優先して探す</li>
             <li>B列の候補URL欄へ貼る</li>
           </ul>
         </article>
@@ -71,7 +71,7 @@
           <ol>
             <li>商品タイトル・仕様・30日Soldを確認</li>
             <li>F列以降の検索URLを開く</li>
-            <li>条件に合う国内商品を探す</li>
+            <li>ヤフオクの入札候補を中心に探す</li>
             <li>B列へ候補URLを入力</li>
           </ol>
         </article>
@@ -83,10 +83,10 @@
           </div>
           <h2>シートで見る場所</h2>
           <div class="mini-table" role="table" aria-label="入力シートの見る場所">
-            <div><span>F:P</span><strong>検索URL</strong><p>ヤフオク、メルカリ、楽天、専門店など</p></div>
+            <div><span>F:P</span><strong>検索URL</strong><p>まずヤフオク。メルカリ、楽天、専門店は補助</p></div>
             <div><span>B</span><strong>仕入上限</strong><p>税込・送料込の目安</p></div>
-            <div><span>D:E</span><strong>30日Sold</strong><p>入力URL枠数の目安</p></div>
-            <div><span>B5〜</span><strong>候補URL</strong><p>スタッフが入力する場所</p></div>
+            <div><span>Sold</span><strong>30日Sold</strong><p>入力URL枠数の目安</p></div>
+            <div><span>B5〜</span><strong>候補URL</strong><p>リサーチ担当が入力する場所</p></div>
           </div>
         </article>
 
@@ -97,11 +97,11 @@
           </div>
           <h2>候補にしてよいURL</h2>
           <ul>
-            <li>実際に購入・入札できる商品ページ</li>
+            <li>ヤフオクはオークション詳細ページを優先</li>
             <li>型番、番手、右左、ヘッド/シャフト条件が近い</li>
             <li>本体価格 + 送料が仕入上限以内</li>
           </ul>
-          <p class="caution">検索結果ページや条件が違う商品は入れない。</p>
+          <p class="caution">検索結果ページ、条件違い、入札できない終了済みページは入れない。</p>
         </article>
 
         <article class="slide-card">
@@ -111,6 +111,20 @@
           </div>
           <h2>URLオープナー</h2>
           <p class="folder">確認済み: Desktop / 拡張機能 / pastey-url-opener 2</p>
+          <div class="download-actions" aria-label="URLオープナー配布リンク">
+            <a
+              href="https://docs.google.com/document/d/1HODqLAeQ_5UPAj2_sFICHjuelq2QQ14Z_pFjfrUn21w/edit?usp=drivesdk"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i data-lucide="file-text" aria-hidden="true"></i>
+              Drive配布ページ
+            </a>
+            <a href="./downloads/pastey-url-opener-v1.4.0.zip" download>
+              <i data-lucide="download" aria-hidden="true"></i>
+              zipを取得
+            </a>
+          </div>
           <div class="shortcut-stack">
             <div><kbd>Cmd</kbd><kbd>Shift</kbd><kbd>U</kbd><span>選択したURLを開く</span></div>
             <div><kbd>Cmd</kbd><kbd>Shift</kbd><kbd>Y</kbd><span>コピー済みURLを開く</span></div>
@@ -123,11 +137,12 @@
           <div class="slide-icon violet">
             <i data-lucide="pencil-line" aria-hidden="true"></i>
           </div>
-          <h2>入力ルール</h2>
+          <h2>分業と入力欄</h2>
           <ul>
-            <li>B列: 候補商品のURLをそのまま貼る</li>
-            <li>C列: 担当者名を入れる</li>
-            <li>D/E列: 確認状況や注意点を短く残す</li>
+            <li>B列: リサーチ担当が候補URLを貼る</li>
+            <li>C列: リサーチ担当者名を入れる</li>
+            <li>D列: 仕入れ担当が入札・仕入れ状況で使う</li>
+            <li>E列: 注意点や判断メモを短く残す</li>
           </ul>
           <p class="example">例: 状態注意 / 送料高い / 付属品あり / 候補なし</p>
         </article>
@@ -136,11 +151,11 @@
       <section class="bottom-note" aria-label="作業時の注意">
         <div>
           <strong>迷ったら</strong>
-          <p>判定ビューで仕様を確認し、無理に入力せずメモに理由を残してください。</p>
+          <p>判定ビューで仕様を確認し、D列は触らず、E列に理由を短く残してください。</p>
         </div>
         <div>
-          <strong>URL枠数</strong>
-          <p>30日Soldの約1/10が目安です。Sold60なら6件、Sold10以下なら1件でOKです。</p>
+          <strong>仕入れ担当への渡し方</strong>
+          <p>ヤフオク候補を優先してB列に残すと、仕入れ担当が別の入札ツールでそのまま作業しやすくなります。</p>
         </div>
       </section>
     </main>
