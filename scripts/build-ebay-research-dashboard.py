@@ -16,6 +16,7 @@ import pandas as pd
 
 FX_JPY = 150
 EBAY_FEE_RATE = 0.15
+CUSTOMS_DUTY_RATE = 0.10
 PAYOUT_RATE = 1 - EBAY_FEE_RATE
 JST = timezone(timedelta(hours=9))
 
@@ -72,35 +73,40 @@ def estimate_hts(title: str, shipping_class: str) -> dict:
         return {
             "code": "4202.91.10.00",
             "label": "Golf bags",
-            "dutyRate": 0.045,
+            "officialDutyRate": 0.045,
             "confidence": "要確認",
+            "referenceUrl": "https://hts.usitc.gov/search?query=4202911000",
         }
     if re.search(r"\b(head only|shaft|shafts|adapter|sleeve|wrench|headcover|head cover)\b", title_l):
         return {
             "code": "9506.39.00.60",
             "label": "Parts of golf clubs",
-            "dutyRate": 0.049,
+            "officialDutyRate": 0.049,
             "confidence": "候補",
+            "referenceUrl": "https://hts.usitc.gov/search?query=9506390060",
         }
     if re.search(r"\b(iron ?set|club set|complete set|driver|fairway|wood|hybrid|utility|wedge|putter)\b", title_l):
         return {
             "code": "9506.31.00.00",
             "label": "Golf clubs, complete",
-            "dutyRate": 0.044,
+            "officialDutyRate": 0.044,
             "confidence": "候補",
+            "referenceUrl": "https://hts.usitc.gov/search?query=9506310000",
         }
     if shipping_class == "大型":
         return {
             "code": "9506.31.00.00",
             "label": "Golf clubs, complete",
-            "dutyRate": 0.044,
+            "officialDutyRate": 0.044,
             "confidence": "要確認",
+            "referenceUrl": "https://hts.usitc.gov/search?query=9506310000",
         }
     return {
         "code": "9506.39.00.80",
         "label": "Other golf equipment",
-        "dutyRate": 0.049,
+        "officialDutyRate": 0.049,
         "confidence": "要確認",
+        "referenceUrl": "https://hts.usitc.gov/search?query=9506390080",
     }
 
 
@@ -174,6 +180,23 @@ def pick_domestic_source(row: dict) -> dict:
     return {"label": "未設定", "url": "", "imageUrl": ""}
 
 
+def build_makse_url(keyword: str, title: str) -> str:
+    query = keyword or title
+    return (
+        "https://www.ebay.com/sch/i.html"
+        f"?_ssn=makse2313&_nkw={quote(query)}&LH_Sold=1&LH_Complete=1&_sop=16"
+    )
+
+
+def build_ebay_keyword_research_url(keyword: str, title: str) -> str:
+    query = keyword or title
+    return (
+        "https://www.ebay.com/sh/research"
+        f"?marketplace=EBAY-US&keywords={quote(query)}&dayRange=90&categoryId=0"
+        "&offset=0&limit=50&tabName=SOLD&tz=Asia%2FTokyo"
+    )
+
+
 def build_self_listing_url(keyword: str, title: str) -> str:
     query = keyword or title
     return f"https://www.ebay.com/sch/i.html?_ssn=good-select-jp&_nkw={quote(query)}"
@@ -185,6 +208,80 @@ def build_sellerhacks_url(keyword: str, title: str) -> str:
         "https://sellerhacks.work/search/"
         f"?keyword={quote(query)}&form_radio=title_type&lowest=1&highest=10000&condition=ALL&sort=-price"
     )
+
+
+def build_specialist_source(domestic_keyword: str, title: str, existing_url: str) -> dict:
+    query = domestic_keyword or title
+    golf_partner = f"https://www.google.com/search?q={quote(query + ' site:golfpartner.co.jp')}"
+    golf_do = f"https://www.google.com/search?q={quote(query + ' site:golfdo.com')}"
+    return {
+        "label": "ゴルフ専門店候補",
+        "url": existing_url or golf_partner,
+        "imageUrl": "",
+        "links": [
+            {"label": "ゴルフパートナー", "url": golf_partner},
+            {"label": "ゴルフ・ドゥ", "url": golf_do},
+        ],
+    }
+
+
+def extract_product_specs(title: str) -> dict:
+    text = title.lower()
+    loft_match = re.search(r"(?<!\d)(\d{1,2}(?:\.\d)?)\s*(?:deg|degree|°)", text)
+    set_match = re.search(
+        r"\b([3-9](?:\s*[-/]\s*(?:[3-9])?)?(?:(?:pw|aw|sw|gw|lw|p|a|s)\s*){1,4})\b",
+        text,
+    )
+    pcs_match = re.search(r"(\d+)\s*(?:pc|pcs|piece)", text)
+    flex_match = re.search(r"(?:flex[- ]?)\s*(ladies|senior|regular|stiff|x-stiff|[lrsx])\b", text)
+    shaft_match = re.search(
+        r"\b((?:tour|tensei|fubuki|speeder|ventus|kbs|ns\.?pro|n\.s\.pro|zelos|diamana|chrome|graphite|steel)[a-z0-9 .+-]*?)(?:\s+flex|\s+right|\s+left|\s+rh|\s+lh|\s+used|\s+new|$)",
+        text,
+    )
+
+    if "head only" in text:
+        component = "ヘッドのみ"
+    elif "shaft" in text or "graphite" in text or "steel" in text:
+        component = "シャフト付き/セット"
+    elif "bag" in text:
+        component = "バッグ"
+    else:
+        component = "本体/構成未確定"
+
+    if re.search(r"\b(left hand|left-handed|lh)\b", text):
+        handedness = "左利き"
+    elif re.search(r"\b(right hand|right-handed|rh)\b", text):
+        handedness = "右利き"
+    else:
+        handedness = "未記載"
+
+    club_type = "その他"
+    club_patterns = [
+        ("shaft", "シャフト"),
+        ("driver", "ドライバー"),
+        ("fairway|\\bfw\\b|wood", "フェアウェイウッド"),
+        ("hybrid|utility|\\but\\b", "ユーティリティ"),
+        ("iron", "アイアン"),
+        ("wedge", "ウェッジ"),
+        ("putter", "パター"),
+        ("caddie|caddy|cart bag|stand bag|carry bag|golf bag", "キャディバッグ"),
+    ]
+    for pattern, label in club_patterns:
+        if re.search(pattern, text):
+            club_type = label
+            break
+
+    return {
+        "component": component,
+        "handedness": handedness,
+        "clubType": club_type,
+        "loft": f"{loft_match.group(1)}°" if loft_match else "未記載",
+        "setComposition": set_match.group(1).upper().replace(" ", "") if set_match else "未記載",
+        "pieceCount": f"{pcs_match.group(1)}pc" if pcs_match else "未記載",
+        "shaft": shaft_match.group(1).strip().upper() if shaft_match else "未記載",
+        "flex": flex_match.group(1).upper() if flex_match else "未記載",
+        "confidence": "タイトル推定",
+    }
 
 
 def safe_link(value: str) -> str:
@@ -203,7 +300,7 @@ def row_to_item(row: dict) -> dict:
     total_shipping_jpy = clean_int(row.get("送料予測(JPY)"))
     profit_jpy = clean_int(row.get("還付込利益(JPY)"))
     hts = estimate_hts(title, shipping_class)
-    duty_jpy = round(domestic_price_jpy * hts["dutyRate"]) if domestic_price_jpy else 0
+    duty_jpy = round(domestic_price_jpy * CUSTOMS_DUTY_RATE) if domestic_price_jpy else 0
     payout_jpy = round(ebay_total_usd * FX_JPY * PAYOUT_RATE)
     gross_sales_jpy = round(ebay_total_usd * FX_JPY)
     ebay_fee_jpy = round(gross_sales_jpy * EBAY_FEE_RATE)
@@ -215,11 +312,14 @@ def row_to_item(row: dict) -> dict:
     competitor_url = safe_link(row.get("競合出品URL")) or safe_link(row.get("eBay出品"))
     ebay_search_url = safe_link(row.get("eBay出品"))
     product_research_url = safe_link(row.get("eBayプロダクトリサーチ"))
+    specialist_source = build_specialist_source(domestic_kw, title, safe_link(row.get("専門・補助検索")))
 
     links = {
         "competitor": competitor_url,
         "ebaySearch": ebay_search_url,
-        "productResearch": product_research_url,
+        "productResearch": product_research_url or build_ebay_keyword_research_url(ebay_kw, title),
+        "makse": build_makse_url(ebay_kw, title),
+        "ebayKeywordResearchShipToUs": build_ebay_keyword_research_url(ebay_kw, title),
         "amazon": safe_link(row.get("Amazon")),
         "mercari": safe_link(row.get("メルカリ")),
         "surugaya": safe_link(row.get("駿河屋")),
@@ -259,6 +359,7 @@ def row_to_item(row: dict) -> dict:
             "ebayFeeJpy": ebay_fee_jpy,
             "orderEarningJpy": payout_jpy,
             "taxRefundJpy": refund_jpy,
+            "dutyRate": CUSTOMS_DUTY_RATE,
             "dutyJpy": duty_jpy,
             "profitJpy": profit_jpy,
             "profitRate": clean_number(row.get("還付込利益率")),
@@ -271,7 +372,48 @@ def row_to_item(row: dict) -> dict:
         },
         "packaging": packaging(title, shipping_class),
         "hts": hts,
+        "specs": extract_product_specs(title),
         "domesticSource": pick_domestic_source(row),
+        "specialistSource": specialist_source,
+        "previewSources": [
+            {
+                "key": "makse",
+                "label": "makse",
+                "title": "makse2313のSold/競合確認",
+                "url": build_makse_url(ebay_kw, title),
+                "imageUrl": "",
+                "emptyText": "makse画像URL未取得",
+                "note": "元リサーチ対象セラーのSold確認",
+            },
+            {
+                "key": "ebay-research-us",
+                "label": "eBay KW Research",
+                "title": "Ship to US / EBAY-US",
+                "url": product_research_url or build_ebay_keyword_research_url(ebay_kw, title),
+                "imageUrl": "",
+                "emptyText": "eBay画像URL未取得",
+                "note": "90日Soldのキーワード確認",
+            },
+            {
+                "key": "domestic",
+                "label": pick_domestic_source(row)["label"],
+                "title": domestic_kw or title,
+                "url": pick_domestic_source(row)["url"],
+                "imageUrl": pick_domestic_source(row)["imageUrl"],
+                "emptyText": "国内仕入画像URL未取得",
+                "note": "国内仕入先候補",
+            },
+            {
+                "key": "specialist",
+                "label": specialist_source["label"],
+                "title": "ゴルフパートナー / ゴルフ・ドゥ",
+                "url": specialist_source["url"],
+                "imageUrl": specialist_source["imageUrl"],
+                "emptyText": "専門店画像URL未取得",
+                "note": "該当ページは候補検索から確認",
+                "links": specialist_source["links"],
+            },
+        ],
         "links": links,
         "selfListing": {
             "seller": "good-select-jp",
@@ -310,14 +452,15 @@ def main() -> int:
             "generatedAt": datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00"),
             "fxJpy": FX_JPY,
             "ebayFeeRate": EBAY_FEE_RATE,
+            "customsDutyRate": CUSTOMS_DUTY_RATE,
             "payoutRate": PAYOUT_RATE,
             "seller": "good-select-jp",
             "listingSnapshotStatus": "未取得",
             "notes": [
                 "出品済み判定は未照合です。SellerHacksまたはeBayアクティブ出品のスナップショット投入で精密化できます。",
                 "競合出品URLが空の行はeBay検索リンクを競合確認リンクとして表示します。",
-                "HTSコードと関税はタイトルからの候補推定です。最終申告前に通関業者またはUSITCで確認してください。",
-                "写真URLは現時点のシートにないため、仕入先・競合リンク先で確認する前提です。",
+                "HTSコードはタイトルからの候補推定です。関税計算はユーザー指定により10%固定です。",
+                "写真URLは現時点のシートにないため、SellerHacks CSVや商品ページ由来の画像URLを入れると表示できます。",
             ],
             "sources": [
                 {

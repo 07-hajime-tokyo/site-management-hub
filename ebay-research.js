@@ -184,21 +184,24 @@ function renderPreview() {
           <h3>競合・仕入先プレビュー</h3>
         </div>
         <div class="visual-grid">
-          ${previewTile({
-            label: competitorLabel,
-            title: item.ebayKeyword || item.title,
-            url: item.links.competitor,
-            imageUrl: item.competitorImageUrl,
-            emptyText: "競合画像URL未取得",
-          })}
-          ${previewTile({
-            label: `国内: ${item.domesticSource.label}`,
-            title: item.domesticKeyword || item.title,
-            url: item.domesticSource.url,
-            imageUrl: item.domesticSource.imageUrl,
-            emptyText: "仕入先画像URL未取得",
-          })}
+          ${(item.previewSources || []).map((source) => previewTile(source)).join("")}
         </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title">
+          <i data-lucide="list-checks" aria-hidden="true"></i>
+          <h3>商品スペック</h3>
+        </div>
+        <dl class="detail-list">
+          ${detailRow("構成", item.specs.component)}
+          ${detailRow("クラブ種別", item.specs.clubType)}
+          ${detailRow("利き手", item.specs.handedness)}
+          ${detailRow("ロフト角", item.specs.loft)}
+          ${detailRow("番手構成", `${item.specs.setComposition} / ${item.specs.pieceCount}`)}
+          ${detailRow("シャフト", `${item.specs.shaft} / Flex ${item.specs.flex}`)}
+        </dl>
+        <p class="muted-note">${escapeHtml(item.specs.confidence)}</p>
       </div>
 
       <div class="info-card">
@@ -225,10 +228,10 @@ function renderPreview() {
           ${detailRow("国内仕入目安", formatYen(item.pricing.domesticPriceJpy))}
           ${detailRow("eBay手数料", `${formatYen(item.profit.ebayFeeJpy)} / ${formatPercent(item.profit.ebayFeeRate)}`)}
           ${detailRow("還付候補", formatYen(item.profit.taxRefundJpy))}
-          ${detailRow("関税候補", `${formatYen(item.profit.dutyJpy)} / ${formatPercent(item.hts.dutyRate)}`)}
+          ${detailRow("関税候補", `${formatYen(item.profit.dutyJpy)} / ${formatPercent(item.profit.dutyRate)}`)}
           ${detailRow("HTS", `${item.hts.code} (${item.hts.confidence})`)}
         </dl>
-        <p class="muted-note">${escapeHtml(item.hts.label)}</p>
+        <p class="muted-note">${escapeHtml(item.hts.label)} / 公式税率候補 ${formatPercent(item.hts.officialDutyRate)}</p>
       </div>
 
       <div class="info-card">
@@ -255,12 +258,15 @@ function renderPreview() {
       <div class="link-grid">
         ${actionLink("eBay競合", item.links.competitor, "external-link")}
         ${actionLink("Product Research", item.links.productResearch, "bar-chart-3")}
+        ${actionLink("makse", item.links.makse, "store")}
+        ${actionLink("eBay KW Ship to US", item.links.ebayKeywordResearchShipToUs, "ship")}
         ${actionLink("Yahooオークション", item.links.yahooAuction, "gavel")}
         ${actionLink("メルカリ", item.links.mercari, "shopping-bag")}
         ${actionLink("楽天", item.links.rakuten, "shopping-cart")}
         ${actionLink("Amazon", item.links.amazon, "package")}
         ${actionLink("Google", item.links.google, "search")}
         ${actionLink("専門検索", item.links.specialist, "scan-search")}
+        ${actionLink("HTS参照", item.hts.referenceUrl, "file-search")}
       </div>
     </section>
 
@@ -276,7 +282,7 @@ function renderPreview() {
     <footer class="source-foot">
       <span>データ元: ${escapeHtml(state.meta.sourceSheetName || "還付込利益判定")}</span>
       <a href="${escapeAttribute(state.meta.sourceSpreadsheetUrl || "#")}" target="_blank" rel="noreferrer">Google Sheets</a>
-      <a href="https://hts.usitc.gov/search?query=${escapeAttribute(item.hts.code.replaceAll(".", ""))}" target="_blank" rel="noreferrer">HTS確認</a>
+      <a href="${escapeAttribute(item.hts.referenceUrl || "#")}" target="_blank" rel="noreferrer">HTS確認</a>
     </footer>
   `;
 }
@@ -316,16 +322,23 @@ function metricCard(label, value, sub) {
   `;
 }
 
-function previewTile({ label, title, url, imageUrl, emptyText }) {
+function previewTile({ label, title, url, imageUrl, emptyText, note, links = [] }) {
   const image = imageUrl
     ? `<img src="${escapeAttribute(imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`
     : `<div class="image-placeholder"><i data-lucide="image-off" aria-hidden="true"></i><span>${escapeHtml(emptyText)}</span></div>`;
+  const subLinks = links.length
+    ? `<div class="preview-sub-links">${links.map((link) => `<a href="${escapeAttribute(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`).join("")}</div>`
+    : "";
   return `
-    <a class="preview-tile" href="${escapeAttribute(url || "#")}" target="_blank" rel="noreferrer" aria-disabled="${url ? "false" : "true"}">
-      ${image}
-      <span>${escapeHtml(label)}</span>
-      <strong>${escapeHtml(title)}</strong>
-    </a>
+    <div class="preview-tile">
+      <a class="preview-tile-main" href="${escapeAttribute(url || "#")}" target="_blank" rel="noreferrer" aria-disabled="${url ? "false" : "true"}">
+        ${image}
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(title)}</strong>
+        ${note ? `<small>${escapeHtml(note)}</small>` : ""}
+      </a>
+      ${subLinks}
+    </div>
   `;
 }
 
