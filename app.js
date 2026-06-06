@@ -33,6 +33,7 @@ const categoryAccents = [
 
 const changeHistoryCardId = "review-change-history";
 const communicationReportCardId = "communication-reports";
+const ebayResearchDashboardCardId = "ebay-research-dashboard";
 const changeHistoryTool = {
   id: changeHistoryCardId,
   title: "【要確認】変更履歴",
@@ -52,6 +53,26 @@ const changeHistoryTool = {
   openCount: 0,
   cardOrder: -1000,
   isChangeHistoryCard: true,
+};
+
+const ebayResearchDashboardTool = {
+  id: ebayResearchDashboardCardId,
+  title: "eBayリサーチ判定",
+  url: "./ebay-research.html",
+  repositoryUrl: "",
+  vercelUrl: "",
+  tidbUrl: "",
+  notionUrl: "",
+  category: "共有",
+  type: "site",
+  status: "review",
+  pinned: false,
+  description: "還付込利益判定シートを、商品一覧と詳細プレビューで確認できる2ペイン画面です。",
+  tags: ["eBay", "リサーチ", "利益判定", "出品可否", "SellerHacks"],
+  createdAt: "2026-06-06T14:09:00+09:00",
+  lastOpenedAt: "",
+  openCount: 0,
+  cardOrder: -875,
 };
 
 const communicationReportTool = {
@@ -76,6 +97,17 @@ const communicationReportTool = {
 };
 
 const changeHistoryItems = [
+  {
+    kind: "site",
+    date: "2026-06-06 14:09",
+    title: "eBayリサーチ判定ビューを追加",
+    summary: "還付込利益判定シートを、左の商品一覧と右の詳細プレビューで見られるWebアプリにしました。",
+    points: [
+      "`ebay-research.html` を新設",
+      "競合リンク、国内仕入確認リンク、Sold数、送料、HTS候補、関税、手数料、還付、利益率を1画面化",
+      "good-select-jpの出品済み判定は、SellerHacks CSVまたは出品スナップショット投入で精密化する形にしました",
+    ],
+  },
   {
     kind: "rule",
     date: "2026-06-06 11:58",
@@ -327,8 +359,10 @@ function getTools() {
     ? [
         changeHistoryTool,
         communicationReportTool,
+        ebayResearchDashboardTool,
         ...baseTools.filter(
-          (tool) => ![changeHistoryCardId, communicationReportCardId].includes(tool.id),
+          (tool) =>
+            ![changeHistoryCardId, communicationReportCardId, ebayResearchDashboardCardId].includes(tool.id),
         ),
       ]
     : baseTools;
