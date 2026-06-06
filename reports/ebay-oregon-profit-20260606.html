@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>eBay利益計算ルール | コミュニケーションレポート</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f7f1e6;
+        --paper: #fffaf3;
+        --ink: #302922;
+        --muted: #776b5d;
+        --line: #ddcfb7;
+        --line-strong: #c8b89c;
+        --blue: #497c94;
+        --blue-soft: #e2f0f4;
+        --green: #5f7f55;
+        --green-soft: #e7f1df;
+        --rose: #b96573;
+        --rose-soft: #f7e3e6;
+        --amber: #c27637;
+        --amber-soft: #fff0d2;
+        --violet: #866aa1;
+        --violet-soft: #eadff0;
+        --shadow: 0 18px 45px rgba(70, 56, 36, 0.13);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(180deg, rgba(255, 250, 243, 0.82), rgba(247, 241, 230, 0.92)),
+          var(--bg);
+        color: var(--ink);
+        font-family: "Zen Maru Gothic", "Inter", system-ui, sans-serif;
+        letter-spacing: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        display: grid;
+        gap: 18px;
+        width: min(1180px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 22px 0 36px;
+      }
+
+      .topbar,
+      .panel,
+      .summary-item,
+      .source-link {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 250, 243, 0.92);
+        box-shadow: var(--shadow);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+      }
+
+      .topbar-title {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        gap: 12px;
+      }
+
+      .topbar-title img {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+      }
+
+      .topbar h1 {
+        margin: 0;
+        font-size: clamp(1.3rem, 3vw, 2rem);
+        line-height: 1.25;
+      }
+
+      .topbar p,
+      .meta {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .topbar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .button-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--ink);
+        padding: 6px 11px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .button-link.primary {
+        border-color: transparent;
+        background: var(--amber);
+        color: #fffaf3;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .summary-item {
+        min-height: 104px;
+        padding: 14px;
+      }
+
+      .summary-item span {
+        display: inline-flex;
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .summary-item strong {
+        display: block;
+        margin-top: 10px;
+        font-size: 1.05rem;
+        line-height: 1.35;
+      }
+
+      .summary-item p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 700;
+        line-height: 1.45;
+      }
+
+      .blue span {
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+
+      .green span {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+
+      .rose span {
+        background: var(--rose-soft);
+        color: var(--rose);
+      }
+
+      .amber span {
+        background: var(--amber-soft);
+        color: var(--amber);
+      }
+
+      .panel {
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .panel h2 {
+        margin: 0;
+        font-size: 1.08rem;
+        line-height: 1.35;
+      }
+
+      .panel > p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.94rem;
+        font-weight: 700;
+        line-height: 1.7;
+      }
+
+      .formula {
+        display: grid;
+        gap: 8px;
+        border-left: 4px solid var(--amber);
+        border-radius: 8px;
+        background: #fff;
+        padding: 14px;
+      }
+
+      .formula code {
+        display: block;
+        overflow-wrap: anywhere;
+        color: var(--ink);
+        font-family: Inter, ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: clamp(0.86rem, 1.8vw, 1rem);
+        font-weight: 800;
+        line-height: 1.6;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .flow-step {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 12px;
+      }
+
+      .flow-step b {
+        display: block;
+        color: var(--ink);
+        font-size: 0.9rem;
+      }
+
+      .flow-step small {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+        line-height: 1.45;
+      }
+
+      .two-column {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+        gap: 14px;
+      }
+
+      .table-scroll {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 760px;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px 11px;
+        text-align: left;
+        vertical-align: top;
+        font-size: 0.87rem;
+        line-height: 1.5;
+      }
+
+      th {
+        background: #fbf5eb;
+        color: var(--muted);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.74rem;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .number {
+        font-family: Inter, system-ui, sans-serif;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .good {
+        color: var(--green);
+      }
+
+      .warn {
+        color: var(--amber);
+      }
+
+      .bad {
+        color: var(--rose);
+      }
+
+      .tag {
+        display: inline-flex;
+        border-radius: 999px;
+        padding: 3px 8px;
+        background: var(--violet-soft);
+        color: var(--violet);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.72rem;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .checklist li {
+        display: grid;
+        grid-template-columns: 26px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        color: var(--muted);
+        font-weight: 700;
+        line-height: 1.55;
+      }
+
+      .checklist span {
+        display: grid;
+        width: 24px;
+        height: 24px;
+        place-items: center;
+        border-radius: 999px;
+        background: var(--green-soft);
+        color: var(--green);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .source-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .source-link {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        text-decoration: none;
+        box-shadow: none;
+      }
+
+      .source-link img,
+      .source-link .source-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+      }
+
+      .source-link .source-icon {
+        display: grid;
+        place-items: center;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+
+      .source-link strong {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.9rem;
+      }
+
+      .source-link small {
+        color: var(--muted);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .note {
+        border-left: 4px solid var(--rose);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--muted);
+        padding: 12px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        line-height: 1.7;
+      }
+
+      @media (max-width: 900px) {
+        .topbar,
+        .two-column {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          display: grid;
+        }
+
+        .topbar-actions {
+          justify-content: flex-start;
+        }
+
+        .summary-grid,
+        .flow,
+        .source-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .page {
+          width: min(100% - 18px, 1180px);
+          padding-top: 10px;
+        }
+
+        .summary-grid,
+        .flow,
+        .source-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .panel {
+          padding: 14px;
+        }
+
+        .topbar h1 {
+          font-size: 1.22rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar" aria-label="レポート概要">
+        <div class="topbar-title">
+          <img src="../assets/ninja-express-icon.png" alt="" />
+          <div>
+            <h1>eBay利益計算ルール</h1>
+            <p>Oregon倉庫 / Ninja Express / ゴルフクラブのシャフト回収</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <a class="button-link" href="../index.html">業務ハブへ戻る</a>
+          <a class="button-link" href="../ebay-workflow.html">eBay手順</a>
+          <a class="button-link primary" href="https://invoice-site-bycodex.vercel.app/inventory/purchases" target="_blank" rel="noreferrer">入庫管理</a>
+        </div>
+      </header>
+
+      <section class="summary-grid" aria-label="重要ポイント">
+        <div class="summary-item blue">
+          <span>基準</span>
+          <strong>eBayの入金額を使う</strong>
+          <p>売上総額ではなく、手数料控除後の入金額から計算します。</p>
+        </div>
+        <div class="summary-item green">
+          <span>結合</span>
+          <strong>受注番号 N = ebay_N</strong>
+          <p>入庫管理の管理番号とセールスレコード番号を対応させます。</p>
+        </div>
+        <div class="summary-item rose">
+          <span>注意</span>
+          <strong>シャフト原価を二重計上しない</strong>
+          <p>枝番は回収在庫として扱い、別原価かどうかを確認します。</p>
+        </div>
+        <div class="summary-item amber">
+          <span>加点</span>
+          <strong>還付候補と回収益を加える</strong>
+          <p>消費税還付候補とYahoo売却見込みを利益へ反映します。</p>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="計算式">
+        <h2>今回固定した計算式</h2>
+        <p>まずeBayの実入金で本体の損益を出し、ゴルフクラブから外したシャフトは国内回収益としてあとから足します。</p>
+        <div class="formula">
+          <code>純利益 = eBay入金額 - 仕入額 - Oregon物流費 - 関税 + 消費税還付候補 + シャフト回収益</code>
+          <code>シャフト回収益 = Yahoo落札価格 - Yahoo手数料 - 出品者負担送料 - 梱包費</code>
+          <code>消費税還付候補 = 税込仕入額 x 10 / 110</code>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="データの流れ">
+        <h2>データの見方</h2>
+        <div class="flow">
+          <div class="flow-step">
+            <b>1. eBay受注</b>
+            <small>セールスレコード番号、商品名、売上USD、入金USDを確認。</small>
+          </div>
+          <div class="flow-step">
+            <b>2. 入庫管理</b>
+            <small>管理番号 `ebay_N` で仕入額を取得。枝番は部品在庫を確認。</small>
+          </div>
+          <div class="flow-step">
+            <b>3. Oregon物流</b>
+            <small>米国内送料、Ninja配賦、倉庫手数料、その他実費を反映。</small>
+          </div>
+          <div class="flow-step">
+            <b>4. 関税・還付</b>
+            <small>HTS確定前は暫定率。還付は証憑がある場合の候補額。</small>
+          </div>
+          <div class="flow-step">
+            <b>5. Yahoo回収</b>
+            <small>終了相場と自分の販売履歴からシャフト回収益を見積もり。</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="two-column">
+        <section class="panel" aria-label="今回の判定">
+          <h2>今回の利益目安</h2>
+          <p>2026-06-06時点の会話・確認結果をもとにした目安です。送料負担と実費が確定すると変わります。</p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>受注</th>
+                  <th>シャフト</th>
+                  <th>シャフト前</th>
+                  <th>回収益目安</th>
+                  <th>補正後</th>
+                  <th>判断</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="number">1665</td>
+                  <td>PING TOUR 173-55 S 1W</td>
+                  <td class="number bad">-6,014円</td>
+                  <td>出品者送料負担: 約8,900円<br />購入者送料負担: 約10,300円</td>
+                  <td class="number good">約2,900円から4,300円</td>
+                  <td><span class="tag">条件次第</span></td>
+                </tr>
+                <tr>
+                  <td class="number">1666</td>
+                  <td>TM1-114 S</td>
+                  <td class="number good">766円</td>
+                  <td>弱い。0円から990円程度</td>
+                  <td class="number warn">約766円から1,756円</td>
+                  <td><span class="tag">小幅黒字</span></td>
+                </tr>
+                <tr>
+                  <td class="number">1659</td>
+                  <td>FUBUKI alpha 60 S</td>
+                  <td class="number bad">-3,724円</td>
+                  <td>自社4,800円送料無料で落札なし。保守的に約200円</td>
+                  <td class="number bad">約-3,500円</td>
+                  <td><span class="tag">赤字</span></td>
+                </tr>
+                <tr>
+                  <td class="number">1655</td>
+                  <td>Speeder 661 Evolution TS S</td>
+                  <td class="number bad">-4,559円</td>
+                  <td>自社販売5,000円送料無料を基準に約3,100円</td>
+                  <td class="number bad">約-1,459円</td>
+                  <td><span class="tag">要改善</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" aria-label="スタッフ確認ポイント">
+          <h2>スタッフ確認ポイント</h2>
+          <ul class="checklist">
+            <li><span>1</span><div>`ebay_N_2` などの枝番が、同じ仕入額の重複記録か、別仕入れかを確認。</div></li>
+            <li><span>2</span><div>シャフト出品は送料無料か、購入者送料負担かを必ず記録。</div></li>
+            <li><span>3</span><div>Ninja Express、倉庫手数料、米国内送料は見積もりから実費へ置換。</div></li>
+            <li><span>4</span><div>還付候補は、輸出証憑と仕入税額控除の条件がそろう場合だけ採用。</div></li>
+            <li><span>5</span><div>HTS分類と原産国が未確定の関税は、最終判定前に再確認。</div></li>
+          </ul>
+          <div class="note">
+            還付額は会計・税務上の最終判断ではありません。社内の証憑保存ルールと税理士確認を前提に、利益判定用の候補額として扱います。
+          </div>
+        </section>
+      </section>
+
+      <section class="panel" aria-label="標準前提">
+        <h2>標準前提</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>項目</th>
+                <th>暫定値</th>
+                <th>扱い</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Yahooオークション手数料</td>
+                <td class="number">10%</td>
+                <td>実際のプラン・キャンペーンが分かる場合は上書き。</td>
+              </tr>
+              <tr>
+                <td>長尺シャフトの出品者負担送料</td>
+                <td class="number">1,400円</td>
+                <td>送料無料出品の保守的な見積もり。</td>
+              </tr>
+              <tr>
+                <td>Oregon米国内送料</td>
+                <td class="number">9.5 USD</td>
+                <td>実ラベルが分かるまではゴルフヘッドの標準値。</td>
+              </tr>
+              <tr>
+                <td>Ninja配賦</td>
+                <td class="number">900円</td>
+                <td>混載時は重量・容積・明細単位で調整。</td>
+              </tr>
+              <tr>
+                <td>倉庫手数料</td>
+                <td class="number">700円</td>
+                <td>実費が分かる場合は実費優先。</td>
+              </tr>
+              <tr>
+                <td>ゴルフヘッド関税</td>
+                <td class="number">5.6%</td>
+                <td>HTS確定前の暫定率。最終判断前に再確認。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="参考リンク">
+        <h2>参考リンク</h2>
+        <div class="source-grid">
+          <a class="source-link" href="https://www.ebay.com/help/selling/fees/selling-fees?id=4822" target="_blank" rel="noreferrer">
+            <img src="https://www.ebay.com/favicon.ico" alt="" />
+            <span><strong>eBay selling fees</strong><small>手数料確認</small></span>
+          </a>
+          <a class="source-link" href="https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=5224" target="_blank" rel="noreferrer">
+            <img src="https://www.ebay.com/favicon.ico" alt="" />
+            <span><strong>eBay international fees</strong><small>海外販売手数料</small></span>
+          </a>
+          <a class="source-link" href="https://auctions.yahoo.co.jp/guide/guide/fee.html" target="_blank" rel="noreferrer">
+            <span class="source-icon">Y!</span>
+            <span><strong>Yahoo!オークション利用料</strong><small>国内回収の手数料</small></span>
+          </a>
+          <a class="source-link" href="https://auctions.yahoo.co.jp/guide/deliver/index.html" target="_blank" rel="noreferrer">
+            <span class="source-icon">Y!</span>
+            <span><strong>Yahoo!配送ガイド</strong><small>送料確認</small></span>
+          </a>
+          <a class="source-link" href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6451.htm" target="_blank" rel="noreferrer">
+            <span class="source-icon">税</span>
+            <span><strong>仕入税額控除</strong><small>国税庁</small></span>
+          </a>
+          <a class="source-link" href="https://www.jetro.go.jp/world/qa/04J-120102.html" target="_blank" rel="noreferrer">
+            <span class="source-icon">J</span>
+            <span><strong>輸出と消費税</strong><small>JETRO</small></span>
+          </a>
+        </div>
+        <p class="meta">更新日時: 2026-06-06 11:58 JST / 作成: Codexコミュニケーションレポート</p>
+      </section>
+    </main>
+  </body>
+</html>

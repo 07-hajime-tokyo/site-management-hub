@@ -32,6 +32,7 @@ const categoryAccents = [
 ];
 
 const changeHistoryCardId = "review-change-history";
+const communicationReportCardId = "communication-reports";
 const changeHistoryTool = {
   id: changeHistoryCardId,
   title: "【要確認】変更履歴",
@@ -53,7 +54,39 @@ const changeHistoryTool = {
   isChangeHistoryCard: true,
 };
 
+const communicationReportTool = {
+  id: communicationReportCardId,
+  title: "コミュニケーションレポート",
+  url: "./reports/ebay-oregon-profit-20260606.html",
+  repositoryUrl: "",
+  vercelUrl: "",
+  tidbUrl: "",
+  notionUrl: "",
+  category: "共有",
+  type: "report",
+  status: "review",
+  pinned: false,
+  description: "スタッフ共有用の説明レポートをまとめます。作成したレポートはこのカード内に追加します。",
+  tags: ["レポート", "共有", "eBay", "利益計算", "コミュニケーション"],
+  createdAt: "2026-06-06T11:58:00+09:00",
+  lastOpenedAt: "",
+  openCount: 0,
+  cardOrder: -900,
+  isCommunicationReportCard: true,
+};
+
 const changeHistoryItems = [
+  {
+    kind: "rule",
+    date: "2026-06-06 11:58",
+    title: "eBay利益計算ルールをコミュニケーションレポートへ追加",
+    summary: "Oregon倉庫、Ninja Express、関税、消費税還付候補、シャフト回収を含めた利益計算の共有ページを追加しました。",
+    points: [
+      "`reports/ebay-oregon-profit-20260606.html` を新設",
+      "レポート欄に「コミュニケーションレポート」カードを追加",
+      "サイト変更と実務ルール変更を色分けして確認できる形にしました",
+    ],
+  },
   {
     kind: "site",
     date: "2026-06-06 03:27",
@@ -96,6 +129,22 @@ const changeHistoryItems = [
       "概要、変更点、理由、影響範囲、確認依頼を整理",
       "mainへ直接反映せず、PRでレビュー待ち",
       "Vercel preview はチーム設定により外部閲覧不可",
+    ],
+  },
+];
+
+const communicationReportItems = [
+  {
+    kind: "rule",
+    date: "2026-06-06 11:58",
+    title: "eBay利益計算ルールと今回の判定",
+    href: "./reports/ebay-oregon-profit-20260606.html",
+    summary:
+      "eBay入金額、仕入れ、Oregon物流、Ninja Express、関税、消費税還付候補、Yahooシャフト回収をまとめて利益判定するルールです。",
+    points: [
+      "セールスレコード番号 `N` と入庫管理 `ebay_N` を結合",
+      "ゴルフクラブのシャフトは原価二重計上せず、Yahoo回収益として加算",
+      "今回の判定例とスタッフ確認ポイントを一覧化",
     ],
   },
 ];
@@ -277,7 +326,10 @@ function getTools() {
   const tools = isSharedMode()
     ? [
         changeHistoryTool,
-        ...baseTools.filter((tool) => tool.id !== changeHistoryCardId),
+        communicationReportTool,
+        ...baseTools.filter(
+          (tool) => ![changeHistoryCardId, communicationReportCardId].includes(tool.id),
+        ),
       ]
     : baseTools;
   return tools.map(applyPinOverride);
@@ -705,6 +757,7 @@ function createSheetGroupCards(tools) {
 
 function createToolCard(tool, compact = false) {
   if (tool.isChangeHistoryCard) return createChangeHistoryCard(tool);
+  if (tool.isCommunicationReportCard) return createCommunicationReportCard(tool);
   const accent = getAccentClass(tool.category);
   const platformLinks = createPlatformLinks(tool);
   return `
@@ -734,6 +787,62 @@ function createToolCard(tool, compact = false) {
           <i data-lucide="pencil" aria-hidden="true"></i>
         </button>
       </div>
+    </article>
+  `;
+}
+
+function createCommunicationReportCard(tool) {
+  const ruleCount = communicationReportItems.filter((item) => item.kind === "rule").length;
+  const siteCount = communicationReportItems.filter((item) => item.kind === "site").length;
+  const items = communicationReportItems
+    .map((item) => `
+      <details class="report-card-toggle report-kind-${escapeAttribute(item.kind)}">
+        <summary>
+          <span class="report-card-row-meta">
+            <span class="report-kind-badge report-kind-${escapeAttribute(item.kind)}">${escapeHtml(getReportKindLabel(item.kind))}</span>
+            <span class="report-card-date">${escapeHtml(item.date)}</span>
+          </span>
+          <strong>${escapeHtml(item.title)}</strong>
+          <i data-lucide="chevron-down" aria-hidden="true"></i>
+        </summary>
+        <div class="report-card-detail">
+          <p>${escapeHtml(item.summary)}</p>
+          <ul>
+            ${item.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}
+          </ul>
+          <a class="report-card-link" href="${escapeAttribute(item.href)}" target="_blank" rel="noreferrer">
+            レポートを開く
+            <i data-lucide="external-link" aria-hidden="true"></i>
+          </a>
+        </div>
+      </details>
+    `)
+    .join("");
+
+  return `
+    <article class="tool-card report-hub-card accent-amber" data-id="${tool.id}" data-card-type="${escapeAttribute(tool.type)}">
+      <details class="report-card-shell">
+        <summary class="report-card-main">
+          <span class="card-icon" aria-hidden="true">
+            <i data-lucide="message-square-text" aria-hidden="true"></i>
+          </span>
+          <span class="report-card-main-text">
+            <h4>${escapeHtml(tool.title)}</h4>
+            <span class="report-card-summary-line">
+              <span class="platform-label">共有</span>
+              <span class="report-kind-badge report-kind-site">サイト ${siteCount}</span>
+              <span class="report-kind-badge report-kind-rule">実務 ${ruleCount}</span>
+            </span>
+          </span>
+          <i data-lucide="chevron-down" aria-hidden="true"></i>
+        </summary>
+        <div class="report-card-body">
+          <p class="report-card-lead">${escapeHtml(tool.description)}</p>
+          <div class="report-card-list">
+            ${items}
+          </div>
+        </div>
+      </details>
     </article>
   `;
 }
@@ -798,6 +907,10 @@ function createChangeHistoryCard(tool) {
       </details>
     </article>
   `;
+}
+
+function getReportKindLabel(kind) {
+  return kind === "site" ? "サイト共有" : "実務レポート";
 }
 
 function getChangeKindLabel(kind) {
