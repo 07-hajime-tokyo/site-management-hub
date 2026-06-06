@@ -1,8 +1,11 @@
 const DATA_URL = "./data/ebay-research-dashboard.json?v=20260606-2";
+const REVIEW_STORAGE_KEY = "ebayResearchManualReviews:v1";
+const HUMAN_DECISIONS = ["未判断", "◯", "△", "✗"];
 
 const state = {
   items: [],
   meta: {},
+  reviews: {},
   selectedId: "",
   query: "",
   decision: "all",
@@ -18,6 +21,7 @@ const el = {
   productSearch: document.querySelector("#productSearch"),
   classFilter: document.querySelector("#classFilter"),
   sortSelect: document.querySelector("#sortSelect"),
+  reviewEditor: document.querySelector("#reviewEditor"),
   resultLine: document.querySelector("#resultLine"),
   productList: document.querySelector("#productList"),
   loadingState: document.querySelector("#loadingState"),
@@ -27,6 +31,7 @@ const el = {
 init();
 
 async function init() {
+  state.reviews = loadReviews();
   bindEvents();
   try {
     const response = await fetch(DATA_URL);
@@ -71,6 +76,8 @@ function bindEvents() {
     syncSelection();
     render();
   });
+
+  document.addEventListener("keydown", handleKeyboardNavigation);
 }
 
 function syncSelection() {
@@ -82,10 +89,12 @@ function syncSelection() {
 
 function render() {
   renderSummary();
+  renderReviewEditor();
   renderList();
   renderPreview();
   renderFilterButtons();
   renderIcons();
+  scrollSelectedRowIntoView();
 }
 
 function renderSummary() {
@@ -114,15 +123,17 @@ function renderList() {
     .map((item) => {
       const active = item.id === state.selectedId ? " is-active" : "";
       const listed = getListingLabel(item.selfListing.status);
+      const review = getReview(item.id);
       return `
         <button class="product-row${active}" type="button" data-id="${escapeAttribute(item.id)}">
-          <span class="decision-badge decision-${decisionClass(item.decision)}">${escapeHtml(item.decision)}</span>
+          <span class="decision-badge decision-${decisionClass(item.decision)}" aria-label="AI判断 ${escapeAttribute(item.decision)}">${escapeHtml(item.decision)}</span>
           <span class="product-row-main">
             <strong>${escapeHtml(item.title)}</strong>
             <span>
               Sold ${formatNumber(item.sold30)}・${escapeHtml(item.logistics.shippingClass)}・利益 ${formatYen(item.profit.profitAfterDutyJpy)}
             </span>
           </span>
+          <span class="decision-badge manual-badge decision-${decisionClass(review.decision)}" aria-label="目視判断 ${escapeAttribute(review.decision)}">${escapeHtml(shortDecision(review.decision))}</span>
           <span class="listed-badge">${listed}</span>
         </button>
       `;
@@ -131,9 +142,51 @@ function renderList() {
 
   el.productList.querySelectorAll("[data-id]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.selectedId = button.dataset.id || "";
-      render();
+      selectItem(button.dataset.id || "");
     });
+  });
+}
+
+function renderReviewEditor() {
+  const item = state.items.find((entry) => entry.id === state.selectedId);
+  if (!item) {
+    el.reviewEditor.innerHTML = "";
+    return;
+  }
+
+  const review = getReview(item.id);
+  el.reviewEditor.innerHTML = `
+    <div class="review-editor-head">
+      <div>
+        <span>目視判断</span>
+        <strong>#${formatNumber(item.no)}</strong>
+      </div>
+      <span class="review-updated">${escapeHtml(formatReviewUpdated(review.updatedAt))}</span>
+    </div>
+    <div class="manual-decision-controls" role="group" aria-label="目視判断">
+      ${HUMAN_DECISIONS.map(
+        (decision) => `
+          <button class="manual-choice decision-${decisionClass(decision)}${review.decision === decision ? " is-active" : ""}" type="button" data-review-decision="${escapeAttribute(decision)}">
+            ${escapeHtml(shortDecision(decision))}
+          </button>
+        `,
+      ).join("")}
+    </div>
+    <label class="review-field">
+      <span>目視メモ</span>
+      <textarea id="manualReviewMemo" rows="3" placeholder="状態、仕入条件、出品時の注意点">${escapeHtml(review.memo)}</textarea>
+    </label>
+  `;
+
+  el.reviewEditor.querySelectorAll("[data-review-decision]").forEach((button) => {
+    button.addEventListener("click", () => {
+      updateReview(item.id, { decision: button.dataset.reviewDecision || "未判断" });
+    });
+  });
+
+  el.reviewEditor.querySelector("#manualReviewMemo").addEventListener("input", (event) => {
+    updateReview(item.id, { memo: event.target.value }, { rerender: false });
+    renderPreview();
   });
 }
 
@@ -152,6 +205,7 @@ function renderPreview() {
   el.loadingState.hidden = true;
   el.productPreview.hidden = false;
   const competitorLabel = item.links.competitor === item.links.ebaySearch ? "競合検索" : "競合ページ";
+  const review = getReview(item.id);
   el.productPreview.innerHTML = `
     <header class="preview-head">
       <div class="title-block">
@@ -159,9 +213,15 @@ function renderPreview() {
         <h2>${escapeHtml(item.title)}</h2>
         <p>${escapeHtml(item.category || "カテゴリ未設定")}</p>
       </div>
-      <div class="decision-large decision-${decisionClass(item.decision)}">
-        <span>出品可否</span>
-        <strong>${escapeHtml(item.decision)}</strong>
+      <div class="decision-stack">
+        <div class="decision-large decision-${decisionClass(item.decision)}">
+          <span>出品可否AI判断</span>
+          <strong>${escapeHtml(item.decision)}</strong>
+        </div>
+        <div class="decision-large decision-${decisionClass(review.decision)}">
+          <span>目視判断</span>
+          <strong>${escapeHtml(shortDecision(review.decision))}</strong>
+        </div>
       </div>
     </header>
 
@@ -276,7 +336,7 @@ function renderPreview() {
         <h3>メモ</h3>
       </div>
       <p>${escapeHtml(item.aiNote || "AI考察は未入力です")}</p>
-      <p>${escapeHtml(item.reviewMemo || item.manualMemo || item.improvementMemo || "目視メモはまだありません")}</p>
+      <p>${escapeHtml(review.memo || item.reviewMemo || item.manualMemo || item.improvementMemo || "目視メモはまだありません")}</p>
     </section>
 
     <footer class="source-foot">
@@ -285,6 +345,100 @@ function renderPreview() {
       <a href="${escapeAttribute(item.hts.referenceUrl || "#")}" target="_blank" rel="noreferrer">HTS確認</a>
     </footer>
   `;
+}
+
+function selectItem(itemId) {
+  if (!itemId || state.selectedId === itemId) return;
+  state.selectedId = itemId;
+  render();
+}
+
+function handleKeyboardNavigation(event) {
+  if (isTextEntryActive()) return;
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    moveSelection(1);
+    return;
+  }
+  if (event.key === "ArrowUp") {
+    event.preventDefault();
+    moveSelection(-1);
+    return;
+  }
+  if (event.key === "ArrowRight") {
+    event.preventDefault();
+    cycleReviewDecision(1);
+    return;
+  }
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    cycleReviewDecision(-1);
+  }
+}
+
+function isTextEntryActive() {
+  const tag = document.activeElement?.tagName?.toLowerCase();
+  return tag === "input" || tag === "textarea" || tag === "select" || document.activeElement?.isContentEditable;
+}
+
+function moveSelection(delta) {
+  const items = getVisibleItems();
+  if (!items.length) return;
+  const currentIndex = Math.max(0, items.findIndex((item) => item.id === state.selectedId));
+  const nextIndex = Math.min(Math.max(currentIndex + delta, 0), items.length - 1);
+  selectItem(items[nextIndex].id);
+}
+
+function cycleReviewDecision(direction) {
+  const item = state.items.find((entry) => entry.id === state.selectedId);
+  if (!item) return;
+  const review = getReview(item.id);
+  const currentIndex = HUMAN_DECISIONS.indexOf(review.decision);
+  const baseIndex = currentIndex >= 0 ? currentIndex : 0;
+  const nextIndex = (baseIndex + direction + HUMAN_DECISIONS.length) % HUMAN_DECISIONS.length;
+  updateReview(item.id, { decision: HUMAN_DECISIONS[nextIndex] });
+}
+
+function scrollSelectedRowIntoView() {
+  window.requestAnimationFrame(() => {
+    el.productList.querySelector(".product-row.is-active")?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+    });
+  });
+}
+
+function loadReviews() {
+  try {
+    const payload = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || "{}");
+    return payload && typeof payload === "object" ? payload : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveReviews() {
+  localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(state.reviews));
+}
+
+function getReview(itemId) {
+  const review = state.reviews[itemId] || {};
+  return {
+    decision: HUMAN_DECISIONS.includes(review.decision) ? review.decision : "未判断",
+    memo: String(review.memo || ""),
+    updatedAt: review.updatedAt || "",
+  };
+}
+
+function updateReview(itemId, patch, options = {}) {
+  const current = getReview(itemId);
+  state.reviews[itemId] = {
+    ...current,
+    ...patch,
+    updatedAt: new Date().toISOString(),
+  };
+  saveReviews();
+  if (options.rerender !== false) render();
 }
 
 function getVisibleItems() {
@@ -376,6 +530,10 @@ function decisionClass(value) {
   return "hold";
 }
 
+function shortDecision(value) {
+  return value === "未判断" ? "未" : value;
+}
+
 function formatNumber(value) {
   return new Intl.NumberFormat("ja-JP").format(Number(value || 0));
 }
@@ -403,6 +561,11 @@ function formatDateTime(value) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+}
+
+function formatReviewUpdated(value) {
+  if (!value) return "未入力";
+  return formatDateTime(value);
 }
 
 function renderIcons() {
