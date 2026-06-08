@@ -429,7 +429,7 @@ select {
   min-width: 0;
   min-height: 0;
   overflow-y: auto;
-  padding: 30px 30px 56px;
+  padding: 0 30px 56px;
 }
 
 .topbar {
@@ -441,9 +441,9 @@ select {
   align-items: start;
   gap: 24px;
   min-height: 78px;
-  margin: -30px -30px 0;
+  margin: 0 -30px;
   border-bottom: 1px solid var(--border);
-  background: rgba(244, 237, 224, 0.92);
+  background: var(--bg);
   backdrop-filter: blur(14px);
   padding: 8px 30px 12px;
 }
@@ -2162,11 +2162,11 @@ svg {
 
   .workspace {
     overflow: visible;
-    padding: 22px 18px 40px;
+    padding: 0 18px 40px;
   }
 
   .topbar {
-    margin: -22px -18px 0;
+    margin: 0 -18px;
     padding: 8px 18px 14px;
   }
 
