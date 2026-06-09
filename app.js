@@ -341,6 +341,7 @@ const el = {
   siteCount: document.querySelector("#siteCount"),
   sheetCount: document.querySelector("#sheetCount"),
   reviewCount: document.querySelector("#reviewCount"),
+  workspace: document.querySelector(".workspace"),
   searchInput: document.querySelector("#searchInput"),
   exchangeRate: document.querySelector("#exchangeRate"),
   exchangeRateDate: document.querySelector("#exchangeRateDate"),
@@ -367,6 +368,7 @@ const el = {
   deleteButton: document.querySelector("#deleteButton"),
   customCategoryField: document.querySelector("#customCategoryField"),
   toast: document.querySelector("#toast"),
+  backToTopButton: document.querySelector("#backToTopButton"),
 };
 
 const formFields = {
@@ -530,6 +532,11 @@ function bindEvents() {
 
   formFields.category.addEventListener("change", () => updateCustomCategoryField(true));
   formFields.type.addEventListener("change", applyDefaultCategoryForType);
+
+  el.workspace?.addEventListener("scroll", updateBackToTopButton, { passive: true });
+  window.addEventListener("scroll", updateBackToTopButton, { passive: true });
+  el.backToTopButton?.addEventListener("click", scrollToTop);
+  updateBackToTopButton();
 }
 
 function render() {
@@ -542,6 +549,24 @@ function render() {
   renderQuickAccess();
   renderLibrary();
   renderIcons();
+  updateBackToTopButton();
+}
+
+function getCurrentScrollTop() {
+  const workspaceTop = el.workspace?.scrollTop || 0;
+  const pageTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+  return Math.max(workspaceTop, pageTop);
+}
+
+function updateBackToTopButton() {
+  if (!el.backToTopButton) return;
+  const visible = getCurrentScrollTop() > 280;
+  el.backToTopButton.hidden = !visible;
+}
+
+function scrollToTop() {
+  el.workspace?.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function updateSourceControls() {
