@@ -10,9 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260609-3" />
+    <link rel="stylesheet" href="./styles.css?v=20260609-4" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
-    <script src="./app.js?v=20260609-scrolltop" defer></script>
+    <script src="./app.js?v=20260609-hide-backup" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -144,12 +144,12 @@
                 <i data-lucide="list" aria-hidden="true"></i>
               </button>
             </div>
-            <button class="icon-text ghost" type="button" id="importButton">
+            <button class="icon-text ghost" type="button" id="importButton" hidden>
               <i data-lucide="upload" aria-hidden="true"></i>
               取込
             </button>
             <input id="importFile" type="file" accept="application/json,.json" hidden />
-            <button class="icon-text ghost" type="button" id="exportButton">
+            <button class="icon-text ghost" type="button" id="exportButton" hidden>
               <i data-lucide="download" aria-hidden="true"></i>
               保存
             </button>
