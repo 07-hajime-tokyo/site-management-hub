@@ -432,16 +432,21 @@ select {
   padding: 0 30px 56px;
 }
 
-.topbar {
+.sticky-region {
   position: sticky;
   top: 0;
   z-index: 12;
+  margin: 0 -30px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.topbar {
   display: grid;
   grid-template-columns: minmax(260px, 1fr) auto;
   align-items: start;
   gap: 24px;
   min-height: 78px;
-  margin: 0 -30px;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
   backdrop-filter: blur(14px);
@@ -743,6 +748,11 @@ select:disabled {
 .quick-access,
 .library {
   margin-top: 32px;
+}
+
+.sticky-region .quick-access {
+  margin-top: 0;
+  padding: 14px 30px 18px;
 }
 
 .section-heading {
@@ -2165,9 +2175,16 @@ svg {
     padding: 0 18px 40px;
   }
 
-  .topbar {
+  .sticky-region {
     margin: 0 -18px;
+  }
+
+  .topbar {
     padding: 8px 18px 14px;
+  }
+
+  .sticky-region .quick-access {
+    padding: 12px 18px 16px;
   }
 
   .page-title {
