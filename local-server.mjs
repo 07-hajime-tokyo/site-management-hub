@@ -12,6 +12,11 @@ const apiHandlers = {
   "/api/progress": require("./api/progress.js"),
   "/api/memos": require("./api/memos.js"),
   "/api/rebuild": require("./api/rebuild.js"),
+  "/api/listing-sources": require("./api/listing-sources.js"),
+  "/api/listing-import": require("./api/listing-import.js"),
+  "/api/listing-queue": require("./api/listing-queue.js"),
+  "/api/listing-status": require("./api/listing-status.js"),
+  "/api/listing-duplicates": require("./api/listing-duplicates.js"),
 };
 
 const mimeTypes = {

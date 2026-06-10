@@ -6,6 +6,8 @@
 
 - `/` / `index.html`: 入口管理ハブ
 - `/progress.html`: GitHub、Vercel、Notion、Codex作業要点をまとめた進捗ダッシュボード
+- `/ebay-research.html`: eBayリサーチ判定ビュー。Sheets接続時は既存Activeマスターとの重複チェックも表示
+- `/ebay-listing-prep.html`: 目視判断◯の商品を出品準備キュー化し、Sellsta下書き保存まで進める作業ビュー
 
 ## Data
 
@@ -32,6 +34,19 @@ PROGRESS_MEMO_REPOSITORY=07-hajime-tokyo/site-management-hub
 ```
 
 `GITHUB_TOKEN` が未設定でも、進捗メモフォームはGitHub Issue作成URLを返します。
+
+eBay出品準備ビューでGoogle Sheetsを読み書きする場合は、Vercel側にサービスアカウントの認証情報を設定します。認証情報JSON、Cookie、APIキー、注文やバイヤー個人情報はGitHubに保存しません。
+
+```txt
+GOOGLE_SERVICE_ACCOUNT_EMAIL=...
+GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY=...
+LISTING_QUEUE_SPREADSHEET_ID=1qUnfHVKsyYtUCpnXfHGX-H5RSehFVL-_JDvH0CfLBWU
+LISTING_QUEUE_SHEET_NAME=出品前チェック
+LISTING_SOURCES_SHEET_NAME=出品ソース管理
+LISTING_ACTIVE_SHEET_NAME=既存Activeマスター
+```
+
+`GOOGLE_SERVICE_ACCOUNT_JSON` または `GOOGLE_SERVICE_ACCOUNT_JSON_B64` でも設定できます。サービスアカウントには対象Google Sheetsの編集権限を付与してください。
 
 ## Local Preview
 
