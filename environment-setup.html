@@ -166,6 +166,12 @@
         gap: 12px;
       }
 
+      .section-lead {
+        max-width: 850px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
       .section-head h2 {
         color: var(--ink);
         font-size: 1.35rem;
@@ -193,6 +199,10 @@
         font-size: 1rem;
       }
 
+      .prompt-block.is-wide {
+        grid-column: 1 / -1;
+      }
+
       .prompt-box {
         min-height: 220px;
         border: 1px solid #d9d0c0;
@@ -204,6 +214,10 @@
         font-family:
           "Zen Maru Gothic", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
         font-size: 0.94rem;
+      }
+
+      .prompt-box.is-compact {
+        min-height: 0;
       }
 
       .copy-button {
@@ -230,6 +244,40 @@
       .note-block h3 {
         color: var(--ink);
         font-size: 1rem;
+      }
+
+      .manifest-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .manifest-block {
+        display: grid;
+        gap: 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 16px;
+      }
+
+      .manifest-block h3 {
+        color: var(--ink);
+        font-size: 1rem;
+      }
+
+      .manifest-block ul {
+        margin: 0;
+        padding-left: 1.1rem;
+      }
+
+      .manifest-block li {
+        margin: 5px 0;
+      }
+
+      .safe-note {
+        border-left: 5px solid var(--honey);
+        background: #fff9ea;
       }
 
       .toast {
@@ -259,7 +307,8 @@
 
         .summary-grid,
         .prompt-grid,
-        .note-grid {
+        .note-grid,
+        .manifest-grid {
           grid-template-columns: 1fr;
         }
 
@@ -289,8 +338,8 @@
         <p class="eyebrow">MULTI PC SETUP</p>
         <h1>他PCでも同じ作業環境を使う</h1>
         <p>
-          GitHubに手順とプロンプト、Google Drive/Sheetsに実データ、Notionに運用知識を置きます。
-          他PCではCodexに依頼して、clone、確認、ログイン案内、同期まで進めてもらいます。
+          GitHubに手順・コード・プロンプト・スキル、Google Drive/Sheetsに実データ、Notionに運用知識を置きます。
+          他PCではCodexまたはClaude Codeにこのページを読ませて、clone、確認、ログイン案内、同期まで進めてもらいます。
         </p>
         <div class="summary-grid" aria-label="役割分担">
           <div class="summary-item">
@@ -313,6 +362,76 @@
             <strong>Local PC</strong>
             <span>ログイン・秘密情報・作業実行</span>
           </div>
+        </div>
+      </section>
+
+      <section class="section" id="claude-code">
+        <div class="section-head">
+          <h2>Claude CodeにこのURLを読ませる</h2>
+        </div>
+        <p class="section-lead">
+          Claude CodeではCodexのプラグイン接続を自動では引き継げないため、GitHub CLI、MCP/コネクタ、Chromeログイン、ローカルスキルを確認しながら同じ作業環境に寄せます。
+        </p>
+        <div class="prompt-grid">
+          <article class="prompt-block is-wide">
+            <h3>Claude Code 初回共有プロンプト</h3>
+            <pre class="prompt-box" id="promptClaudeCode">このURLを読んで、このPCでeBay輸出/back-office作業環境をClaude Codeでも使えるようにセットアップして。
+URL: https://site-management-hub.vercel.app/environment-setup.html
+
+やってほしいこと:
+- このページの「Claude CodeにこのURLを読ませる」「他PCで人間がすること」「守ること」を前提にする
+- GitHub CLI の認証状態を `gh auth status` で確認し、07-hajime-tokyo の private repo を clone/pull できるか確認する
+- 作業対象 repo の README、setup/new-pc-checklist.md、setup/sync-runbook.md、CLAUDE.md、AGENTS.md、.codex/skills、.claude/skills を探して読む
+- CodexスキルをClaude Codeで使える形に同期する。既存の .claude/skills があれば上書きせず差分を確認する
+- GitHub、Chrome/Browser、Google Drive/Sheets、Notion、Vercel、Spreadsheets に相当する接続やMCPが使えるか確認する
+- 接続、ログイン、権限不足だけを私に短く確認し、秘密情報は表示・保存しない
+- .env が必要な場合は .env.example から作り、APIキー、Cookie、パスワード、注文の個人情報はGitHub、Drive、Notionに保存しない
+
+不足があれば「私がやること」と「Claude Codeが続けてできること」に分けて教えて。</pre>
+            <button class="copy-button" type="button" data-copy-target="promptClaudeCode">
+              <i data-lucide="copy" aria-hidden="true"></i>
+              コピー
+            </button>
+          </article>
+        </div>
+        <div class="manifest-grid" aria-label="Claude Code共有パック">
+          <article class="manifest-block">
+            <h3>GitHubで共有するもの</h3>
+            <ul>
+              <li>手順、コード、プロンプト、テンプレート、スキル定義</li>
+              <li>主な管理repo: 07-hajime-tokyo/site-management-hub</li>
+              <li>業務repo候補: ebay-research-hub、ebay-research-handbook、ebay-portal、exporthub-ebay、csv-data-site、ninja-express-section2-manual</li>
+              <li>Claude Code側では `gh auth status`、`gh repo clone`、`git pull`、`git remote -v` を確認する</li>
+            </ul>
+          </article>
+          <article class="manifest-block">
+            <h3>同期したいスキル</h3>
+            <ul>
+              <li>ebay-seller-research-sheet-v2: eBay競合リサーチ表作成</li>
+              <li>sellsta-ebay-listing: Sellsta下書き、出品前確認、シート更新</li>
+              <li>meal-calorie-log: Gantt/Notion食事ログのPFC・カロリー再計算</li>
+              <li>旧版/バックアップは参照用。最新版を優先し、同名ファイルは差分確認してから同期する</li>
+            </ul>
+          </article>
+          <article class="manifest-block">
+            <h3>接続を確認するもの</h3>
+            <ul>
+              <li>GitHub: CLI、MCP/コネクタ、private repo権限</li>
+              <li>Chrome/Browser: eBay、Sellsta、Ninja Express、Google Sheets、Notionのログイン状態</li>
+              <li>Google Drive/Sheets: 実データ、素材、台帳の読み書き</li>
+              <li>Notion: 判断ログ、運用wiki、Gantt/食事ログ</li>
+              <li>Vercel: サイト管理、デプロイ確認、環境変数は値を表示しない</li>
+            </ul>
+          </article>
+          <article class="manifest-block safe-note">
+            <h3>共有しないもの</h3>
+            <ul>
+              <li>.env、APIキー、Cookie、パスワード、Chromeプロファイル、認証トークン</li>
+              <li>注文者の住所、氏名、電話番号、メールアドレスなどの個人情報</li>
+              <li>tmp、ダウンロード済み大容量ファイル、未整理のCSV/HTML/JSON</li>
+              <li>秘密情報が必要な場合は、人間がローカルで入力し、GitHub/Drive/Notionへ保存しない</li>
+            </ul>
+          </article>
         </div>
       </section>
 
@@ -415,12 +534,11 @@ push前に、何をGitHubへ反映するか短く確認してください。</pr
             </ul>
           </article>
           <article class="note-block">
-            <h3>Codex接続</h3>
+            <h3>AIエージェント接続</h3>
             <ul>
-              <li>Chromeプラグイン</li>
-              <li>Google Driveプラグイン</li>
-              <li>GitHubプラグイン</li>
-              <li>Notion、Spreadsheetsプラグイン</li>
+              <li>Codex: Chrome、Google Drive、GitHub、Notion、Spreadsheetsプラグイン</li>
+              <li>Claude Code: GitHub CLI、必要なMCP/コネクタ、Chrome/Browser連携</li>
+              <li>Claude Codeの .claude/skills に業務スキルを同期</li>
             </ul>
           </article>
           <article class="note-block">
@@ -444,7 +562,20 @@ push前に、何をGitHubへ反映するか短く確認してください。</pr
           button.addEventListener("click", async () => {
             const target = document.querySelector(`#${button.dataset.copyTarget}`);
             if (!target) return;
-            await navigator.clipboard.writeText(target.textContent.trim());
+            const text = target.textContent.trim();
+            try {
+              await navigator.clipboard.writeText(text);
+            } catch {
+              const textarea = document.createElement("textarea");
+              textarea.value = text;
+              textarea.setAttribute("readonly", "");
+              textarea.style.position = "fixed";
+              textarea.style.top = "-1000px";
+              document.body.appendChild(textarea);
+              textarea.select();
+              document.execCommand("copy");
+              textarea.remove();
+            }
             toast.classList.add("is-visible");
             clearTimeout(timer);
             timer = setTimeout(() => toast.classList.remove("is-visible"), 1400);
