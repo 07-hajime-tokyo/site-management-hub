@@ -1,4 +1,5 @@
 const DATA_URL = "./data/ebay-research-dashboard.json?v=20260607-1";
+const DUPLICATE_CHECK_URL = "./api/listing-duplicates";
 const REVIEW_STORAGE_KEY = "ebayResearchManualReviews:v1";
 const HUMAN_DECISIONS = ["未判断", "◯", "△", "✗"];
 
@@ -41,12 +42,35 @@ async function init() {
     state.meta = data.meta || {};
     state.selectedId = state.items[0]?.id || "";
     render();
+    loadDuplicateChecks();
   } catch (error) {
     el.loadingState.innerHTML = `
       <i data-lucide="circle-alert" aria-hidden="true"></i>
       <p>データを読み込めませんでした</p>
     `;
     renderIcons();
+  }
+}
+
+async function loadDuplicateChecks() {
+  try {
+    const payload = await postJson(DUPLICATE_CHECK_URL, {
+      items: state.items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        normalizedTitle: item.normalizedTitle,
+        keyword: item.ebayKeyword || item.domesticKeyword,
+        ebayReference: item.links?.competitor || item.selfListing?.matchedUrl || "",
+      })),
+    });
+    if (!payload.configured || !payload.results) return;
+    state.items = state.items.map((item) => ({
+      ...item,
+      duplicateCheck: payload.results[item.id] || item.duplicateCheck,
+    }));
+    render();
+  } catch {
+    // The static research view remains usable if the Sheets-backed duplicate check is unavailable.
   }
 }
 
@@ -206,6 +230,7 @@ function renderPreview() {
   el.productPreview.hidden = false;
   const competitorLabel = item.links.competitor === item.links.ebaySearch ? "競合検索" : "競合ページ";
   const review = getReview(item.id);
+  const duplicate = getDuplicateCheck(item);
   el.productPreview.innerHTML = `
     <header class="preview-head">
       <div class="title-block">
@@ -221,6 +246,11 @@ function renderPreview() {
         <div class="decision-large decision-${decisionClass(review.decision)}">
           <span>目視判断</span>
           <strong>${escapeHtml(shortDecision(review.decision))}</strong>
+        </div>
+        <div class="decision-large duplicate-large decision-${duplicateClass(duplicate.status)}">
+          <span>重複チェック</span>
+          <strong>${escapeHtml(shortDuplicateStatus(duplicate.status))}</strong>
+          <small>${escapeHtml(duplicate.matchType || duplicate.note || "Active照合")}</small>
         </div>
       </div>
     </header>
@@ -302,6 +332,11 @@ function renderPreview() {
         <div class="status-box">
           <span class="listed-status">${escapeHtml(item.selfListing.status)}</span>
           <p>${escapeHtml(item.selfListing.confidence)}</p>
+        </div>
+        <div class="status-box duplicate-status-box">
+          <span class="listed-status duplicate-${duplicateClass(duplicate.status)}">${escapeHtml(duplicate.status)}</span>
+          <p>${escapeHtml(duplicate.title || duplicate.note || "既存Activeマスターとの照合結果を表示します。")}</p>
+          ${duplicate.url ? `<a href="${escapeAttribute(duplicate.url)}" target="_blank" rel="noreferrer">${escapeHtml(duplicate.url)}</a>` : ""}
         </div>
         <div class="button-row">
           ${actionLink("good-select-jpで検索", item.selfListing.searchUrl, "search")}
@@ -517,6 +552,35 @@ function actionLink(label, url, icon) {
   `;
 }
 
+function getDuplicateCheck(item) {
+  if (item.duplicateCheck?.status) return item.duplicateCheck;
+  if (item.selfListing?.status === "出品済み") {
+    return {
+      status: "重複あり",
+      matchType: "既存出品ステータス",
+      title: item.selfListing.matchedTitle || "",
+      url: item.selfListing.matchedUrl || "",
+      note: "既存出品として照合されています。",
+    };
+  }
+  if (item.selfListing?.status === "候補一致") {
+    return {
+      status: "類似あり",
+      matchType: "候補一致",
+      title: item.selfListing.matchedTitle || "",
+      url: item.selfListing.matchedUrl || "",
+      note: "類似候補があります。",
+    };
+  }
+  return {
+    status: "未照合",
+    matchType: "",
+    title: "",
+    url: "",
+    note: "Sheets接続後、既存Activeマスターと自動照合します。",
+  };
+}
+
 function getListingLabel(status) {
   if (status === "出品済み") return "出品済";
   if (status === "候補一致") return "候補";
@@ -528,6 +592,20 @@ function decisionClass(value) {
   if (value === "△") return "warn";
   if (value === "✗") return "ng";
   return "hold";
+}
+
+function duplicateClass(status) {
+  if (status === "重複なし") return "ok";
+  if (status === "類似あり") return "warn";
+  if (status === "重複あり") return "ng";
+  return "hold";
+}
+
+function shortDuplicateStatus(status) {
+  if (status === "重複なし") return "なし";
+  if (status === "類似あり") return "類似";
+  if (status === "重複あり") return "重複";
+  return "未照合";
 }
 
 function shortDecision(value) {
@@ -570,6 +648,17 @@ function formatReviewUpdated(value) {
 
 function renderIcons() {
   if (window.lucide) window.lucide.createIcons();
+}
+
+async function postJson(url, body) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || `HTTP ${response.status}`);
+  return payload;
 }
 
 function escapeHtml(value) {

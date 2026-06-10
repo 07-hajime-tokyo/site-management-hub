@@ -494,7 +494,7 @@ h1 {
 
 .preview-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(196px, 248px);
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
   align-items: start;
   gap: 16px;
 }
@@ -538,7 +538,7 @@ h1 {
 
 .decision-stack {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -552,6 +552,23 @@ h1 {
   font-family: Inter, system-ui, sans-serif;
   font-size: 2rem;
   line-height: 1;
+}
+
+.decision-large small {
+  max-width: 100%;
+  color: currentColor;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.25;
+  opacity: 0.76;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duplicate-large strong {
+  font-size: 1.28rem;
 }
 
 .alert-line,
@@ -790,6 +807,34 @@ h1 {
   font-weight: 800;
 }
 
+.listed-status.duplicate-ok {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.listed-status.duplicate-warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.listed-status.duplicate-ng {
+  background: var(--ng-soft);
+  color: var(--ng);
+}
+
+.listed-status.duplicate-hold {
+  background: var(--hold-soft);
+  color: var(--hold);
+}
+
+.duplicate-status-box a {
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
 .button-row,
 .link-grid {
   display: flex;
@@ -871,7 +916,7 @@ h1 {
   }
 
   .decision-stack {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .visual-grid {

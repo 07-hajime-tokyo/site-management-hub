@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>eBay出品準備ビュー</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./ebay-listing-prep.css?v=20260610-1" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <script src="./ebay-listing-prep.js?v=20260610-1" defer></script>
+  </head>
+  <body>
+    <main class="prep-shell">
+      <aside class="queue-panel" aria-label="出品準備キュー">
+        <header class="panel-head">
+          <a class="nav-link" href="./index.html">
+            <i data-lucide="arrow-left" aria-hidden="true"></i>
+            業務ハブ
+          </a>
+          <a class="nav-link" href="./ebay-research.html">
+            <i data-lucide="chart-no-axes-column-increasing" aria-hidden="true"></i>
+            出品判定ビュー
+          </a>
+          <div>
+            <p class="eyebrow">EBAY LISTING PREP</p>
+            <h1>出品準備ビュー</h1>
+          </div>
+        </header>
+
+        <section class="source-box" id="sourceBox">
+          <span>Sources</span>
+          <strong id="sourceSummary">読み込み中</strong>
+        </section>
+
+        <div class="button-grid">
+          <button class="primary-button" id="importButton" type="button">
+            <i data-lucide="download-cloud" aria-hidden="true"></i>
+            取り込み
+          </button>
+          <button class="secondary-button" id="refreshButton" type="button">
+            <i data-lucide="refresh-cw" aria-hidden="true"></i>
+            更新
+          </button>
+        </div>
+
+        <label class="search-field" for="queueSearch">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <input id="queueSearch" type="search" autocomplete="off" placeholder="タイトル・型番・セラー" />
+        </label>
+
+        <label class="select-field">
+          <span>ステータス</span>
+          <select id="statusFilter">
+            <option value="all">すべて</option>
+            <option value="未着手">未着手</option>
+            <option value="下書き準備中">下書き準備中</option>
+            <option value="下書き作成済み">下書き作成済み</option>
+            <option value="要確認">要確認</option>
+          </select>
+        </label>
+
+        <p class="result-line" id="resultLine">読み込み中</p>
+        <div class="queue-list" id="queueList"></div>
+      </aside>
+
+      <section class="detail-panel" aria-live="polite">
+        <div class="empty-state" id="emptyState">
+          <i data-lucide="clipboard-list" aria-hidden="true"></i>
+          <p>出品準備キューを読み込んでいます</p>
+        </div>
+        <article class="item-workspace" id="itemWorkspace" hidden></article>
+      </section>
+    </main>
+  </body>
+</html>
