@@ -220,12 +220,38 @@ async function ensureHeaders(spreadsheetId, sheetName, requiredHeaders) {
 
   const startIndex = headers.length;
   const endIndex = startIndex + missing.length - 1;
-  await updateValues(
-    spreadsheetId,
-    `${quoteSheetName(sheetName)}!${columnLetter(startIndex)}1:${columnLetter(endIndex)}1`,
-    [missing],
-  );
+  const range = `${quoteSheetName(sheetName)}!${columnLetter(startIndex)}1:${columnLetter(endIndex)}1`;
+  try {
+    await updateValues(spreadsheetId, range, [missing]);
+  } catch (error) {
+    if (!/exceeds grid limits/i.test(String(error?.message || ""))) throw error;
+    await ensureColumnCapacity(spreadsheetId, sheetName, endIndex + 1);
+    await updateValues(spreadsheetId, range, [missing]);
+  }
   return [...headers, ...missing];
+}
+
+async function ensureColumnCapacity(spreadsheetId, sheetName, minColumnCount) {
+  const payload = await sheetsFetch(
+    `/${spreadsheetId}?fields=${encodeURIComponent("sheets.properties")}`,
+  );
+  const sheet = (payload.sheets || []).find(
+    (entry) => entry.properties?.title === sheetName,
+  );
+  if (!sheet) {
+    throw new Error(`Sheet "${sheetName}" was not found in spreadsheet.`);
+  }
+  const columnCount = sheet.properties?.gridProperties?.columnCount || 0;
+  if (columnCount >= minColumnCount) return;
+  await batchUpdateSpreadsheet(spreadsheetId, [
+    {
+      appendDimension: {
+        sheetId: sheet.properties.sheetId,
+        dimension: "COLUMNS",
+        length: minColumnCount - columnCount,
+      },
+    },
+  ]);
 }
 
 function quoteSheetName(name) {
