@@ -34,6 +34,7 @@ const QUEUE_HEADERS = [
   "Sellsta listing ID",
   "Sellsta URL",
   "下書き保存日時",
+  "eBay厳密検索URL",
 ];
 const SOURCE_HEADERS = [
   "sourceId",
@@ -87,7 +88,7 @@ async function ensureQueueHeaders(config = getListingConfig()) {
 
 async function readQueue(config = getListingConfig()) {
   await ensureQueueHeaders(config);
-  const { rows } = await readSheetRows(config.queueSpreadsheetId, config.queueSheetName, "A:Z");
+  const { rows } = await readSheetRows(config.queueSpreadsheetId, config.queueSheetName, "A:AB");
   return rows.filter((row) => stringValue(row["候補タイトル"]) || stringValue(row.sourceId));
 }
 
@@ -129,7 +130,47 @@ function mapQueueRow(row) {
     sellstaListingId: stringValue(row["Sellsta listing ID"]),
     sellstaUrl: stringValue(row["Sellsta URL"]),
     draftSavedAt: stringValue(row["下書き保存日時"]),
+    exactSearchUrl: stringValue(row["eBay厳密検索URL"]),
   };
+}
+
+// ゴルフ用品: 表記ゆれの激しいスペック語（番手構成・本数・シャフト名・フレックス・利き手など）を
+// 落とした「市場全体」検索キーワードを作る。ゴルフ以外の商品はそのまま返す。
+const GOLF_INDICATORS = /\b(golf|irons?|driver|wedge|putter|fairway|hybrid|utility|wood)\b/i;
+const GOLF_NOISE_TOKENS = new Set([
+  "flex", "stiff", "regular", "senior", "ladies",
+  "s", "r", "sr", "x", "l", "a",
+  "right", "left", "hand", "handed", "rh", "lh",
+  "used", "new", "mint",
+  "japan", "japanese", "genuine",
+  "graphite", "steel", "carbon", "shaft", "shafts",
+  "fubuki", "tensei", "diamana", "speeder", "attas", "ventus",
+  "modus", "zelos", "kbs", "nspro", "recoil", "tm6", "tm5",
+]);
+
+function buildEbayMarketKeyword(keyword) {
+  const text = String(keyword || "").trim();
+  if (!text || !GOLF_INDICATORS.test(text)) return text;
+  const kept = text.split(/\s+/).filter((token) => {
+    const plain = token.toLowerCase().replace(/[^a-z0-9+.-]/g, "");
+    if (!plain) return false;
+    if (GOLF_NOISE_TOKENS.has(plain.replace(/[+.-]/g, ""))) return false;
+    if (/^\d{1,2}pcs?$/i.test(plain)) return false;
+    if (/^\d{1,2}[-+]\d{0,2}(pw|aw|sw|gw|lw|uw|i|irons?)?$/i.test(plain)) return false;
+    if (/^(pw|aw|sw|gw|lw)$/i.test(plain)) return false;
+    return true;
+  });
+  return kept.join(" ") || text;
+}
+
+function ebaySearchUrl(keyword, condition) {
+  const text = String(keyword || "").trim();
+  if (!text) return "";
+  const params = new URLSearchParams({ _nkw: text, LH_BIN: "1" });
+  const conditionText = String(condition || "");
+  if (/中古|used/i.test(conditionText)) params.set("LH_ItemCondition", "3000");
+  else if (/新品|未使用|new/i.test(conditionText)) params.set("LH_ItemCondition", "1000|1500");
+  return `https://www.ebay.com/sch/i.html?${params.toString()}`;
 }
 
 function sourceRowToQueuePatch(source, sourceRow) {
@@ -155,13 +196,19 @@ function sourceRowToQueuePatch(source, sourceRow) {
     "priceUSD",
     "売価USD",
   ]);
-  const ebayReference = pick(sourceRow, [
+  const condition = pick(sourceRow, ["状態", "condition"]) || "未確認";
+  const sheetEbayUrl = pick(sourceRow, [
     "競合出品URL",
     "eBay出品",
     "eBay URL",
     "eBayURL",
     "eBayリンク",
   ]);
+  // 参考eBayは「市場全体」検索（ブランド+モデル+種別、状態フィルタ付き）。
+  // 元の完全一致KW/シートのURLは日本スペック確認用として別列に残す。
+  const ebayReference =
+    ebaySearchUrl(buildEbayMarketKeyword(keyword || title), condition) || sheetEbayUrl;
+  const exactSearchUrl = sheetEbayUrl || ebaySearchUrl(keyword, condition);
   const supplierUrl = firstUrl(
     [
       sourceRow["仕入URL"],
@@ -185,10 +232,11 @@ function sourceRowToQueuePatch(source, sourceRow) {
     checkedAt: todayJst(),
     title,
     ebayReference,
+    exactSearchUrl,
     supplierUrl,
     brand: pick(sourceRow, ["ブランド", "Brand", "brand"]),
     keyword,
-    condition: pick(sourceRow, ["状態", "condition"]) || "未確認",
+    condition,
     priceUsd,
     workStatus: "未着手",
     memo: memoBits.join(" / "),
@@ -236,6 +284,10 @@ async function upsertQueueRow(config, source, sourceRow) {
     {
       range: `${quoteSheetName(config.queueSheetName)}!U${rowNumber}:W${rowNumber}`,
       values: [[patch.sourceId, patch.sourceRow, patch.sellerName]],
+    },
+    {
+      range: `${quoteSheetName(config.queueSheetName)}!AA${rowNumber}`,
+      values: [[patch.exactSearchUrl]],
     },
   ]);
 
@@ -438,8 +490,10 @@ function parseSpreadsheetId(value) {
 module.exports = {
   QUEUE_HEADERS,
   SOURCE_HEADERS,
+  buildEbayMarketKeyword,
   computeDuplicateCheck,
   ebayItemUrl,
+  ebaySearchUrl,
   ensureQueueHeaders,
   extractItemId,
   extractFirstUrl,

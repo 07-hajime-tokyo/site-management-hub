@@ -211,6 +211,7 @@ function renderWorkspace() {
         </a>
         ${linkButton("仕入URL", item.supplierUrl, "shopping-cart")}
         ${linkButton("参考eBay", item.ebayReference || item.existingUrl, "badge-dollar-sign")}
+        ${linkButton("日本スペック", item.exactSearchUrl, "search")}
       </div>
     </header>
 
@@ -255,7 +256,8 @@ function renderWorkspace() {
           </div>
           <div class="link-row">
             ${linkButton("仕入先写真", item.supplierUrl, "image")}
-            ${linkButton("競合写真", item.ebayReference || item.existingUrl, "images")}
+            ${linkButton("競合写真", item.exactSearchUrl || item.ebayReference || item.existingUrl, "images")}
+            ${linkButton("市場一覧で被り確認", item.ebayReference, "images")}
             ${linkButton("Product Research", productResearchUrl(item), "bar-chart-3")}
           </div>
         </div>
