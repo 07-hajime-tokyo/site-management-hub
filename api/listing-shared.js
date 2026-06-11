@@ -136,7 +136,7 @@ function mapQueueRow(row) {
 
 // ゴルフ用品: 表記ゆれの激しいスペック語（番手構成・本数・シャフト名・フレックス・利き手など）を
 // 落とした「市場全体」検索キーワードを作る。ゴルフ以外の商品はそのまま返す。
-const GOLF_INDICATORS = /\b(golf|irons?|driver|wedge|putter|fairway|hybrid|utility|wood)\b/i;
+const GOLF_INDICATORS = /\b(golf|ironsets?|irons?|driver|wedge|putter|fairway|hybrid|utility|wood)\b/i;
 const GOLF_NOISE_TOKENS = new Set([
   "flex", "stiff", "regular", "senior", "ladies",
   "s", "r", "sr", "x", "l", "a",
@@ -151,15 +151,17 @@ const GOLF_NOISE_TOKENS = new Set([
 function buildEbayMarketKeyword(keyword) {
   const text = String(keyword || "").trim();
   if (!text || !GOLF_INDICATORS.test(text)) return text;
-  const kept = text.split(/\s+/).filter((token) => {
-    const plain = token.toLowerCase().replace(/[^a-z0-9+.-]/g, "");
-    if (!plain) return false;
-    if (GOLF_NOISE_TOKENS.has(plain.replace(/[+.-]/g, ""))) return false;
-    if (/^\d{1,2}pcs?$/i.test(plain)) return false;
-    if (/^\d{1,2}[-+]\d{0,2}(pw|aw|sw|gw|lw|uw|i|irons?)?$/i.test(plain)) return false;
-    if (/^(pw|aw|sw|gw|lw)$/i.test(plain)) return false;
-    return true;
-  });
+  const kept = [];
+  for (const token of text.split(/\s+/)) {
+    const plain = token.toLowerCase().replace(/[^a-z0-9+./-]/g, "");
+    if (!plain) continue;
+    if (plain === "with" || plain === "w/") break; // 付属品句（with Head Cover 等）以降は捨てる
+    if (GOLF_NOISE_TOKENS.has(plain.replace(/[+./-]/g, ""))) continue;
+    if (/^\d{1,2}pcs?$/i.test(plain)) continue;
+    if (/^\d{1,2}[-+]\d{0,2}(pw|aw|sw|gw|lw|uw|i|irons?)?$/i.test(plain)) continue;
+    if (/^(pw|aw|sw|gw|lw)$/i.test(plain)) continue;
+    kept.push(token);
+  }
   return kept.join(" ") || text;
 }
 
