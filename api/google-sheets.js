@@ -150,6 +150,19 @@ async function getValues(spreadsheetId, range, valueRenderOption = "FORMATTED_VA
   return payload.values || [];
 }
 
+async function getSpreadsheet(spreadsheetId, params = {}) {
+  const query = new URLSearchParams();
+  if (params.includeGridData !== undefined) {
+    query.set("includeGridData", String(params.includeGridData));
+  }
+  if (params.fields) query.set("fields", params.fields);
+  for (const range of params.ranges || []) {
+    query.append("ranges", range);
+  }
+  const suffix = query.toString() ? `?${query}` : "";
+  return sheetsFetch(`/${spreadsheetId}${suffix}`);
+}
+
 async function updateValues(
   spreadsheetId,
   range,
@@ -285,6 +298,7 @@ module.exports = {
   columnLetter,
   ensureHeaders,
   extractSpreadsheetId,
+  getSpreadsheet,
   getValues,
   isSheetsConfigured,
   quoteSheetName,

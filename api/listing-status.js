@@ -2,6 +2,7 @@ const {
   batchUpdateValues,
   columnLetter,
   ensureHeaders,
+  getSpreadsheet,
   isSheetsConfigured,
   quoteSheetName,
   readSheetRows,
@@ -111,6 +112,7 @@ async function handleResearchLinkLoad(res, body) {
   }
 
   const { rows } = await readSheetRows(spreadsheetId, sheetName, "A:ZZ");
+  const linkCandidatesByRow = await readSheetLinkCandidates(spreadsheetId, sheetName);
   const links = {};
   for (const row of rows) {
     const itemNo = stringValue(row["#"] || row["No"] || row.no || row.itemNo);
@@ -124,6 +126,7 @@ async function handleResearchLinkLoad(res, body) {
       row["eBayリンク"],
       row["eBay Item ID/URL"],
       ...(Array.isArray(row.__cells) ? row.__cells : []),
+      ...(linkCandidatesByRow.get(row.__rowNumber) || []),
     ]);
     if (!itemId || !competitorItemUrl) continue;
     links[itemId] = {
@@ -181,6 +184,41 @@ async function handleResearchReviewLoad(res, body) {
     reviewCount: Object.keys(reviews).length,
     reviews,
   });
+}
+
+async function readSheetLinkCandidates(spreadsheetId, sheetName) {
+  const payload = await getSpreadsheet(spreadsheetId, {
+    includeGridData: true,
+    ranges: [`${quoteSheetName(sheetName)}!A:ZZ`],
+    fields: "sheets(properties(title),data(rowData(values(formattedValue,hyperlink,userEnteredValue,textFormatRuns))))",
+  });
+  const sheet = (payload.sheets || []).find((entry) => entry.properties?.title === sheetName);
+  const rowData = sheet?.data?.[0]?.rowData || [];
+  const byRow = new Map();
+  rowData.forEach((row, rowIndex) => {
+    const candidates = [];
+    for (const cell of row.values || []) {
+      pushCellLinkCandidates(candidates, cell);
+    }
+    if (candidates.length) byRow.set(rowIndex + 1, candidates);
+  });
+  return byRow;
+}
+
+function pushCellLinkCandidates(candidates, cell) {
+  if (!cell) return;
+  if (cell.hyperlink) candidates.push(cell.hyperlink);
+  if (cell.formattedValue) candidates.push(cell.formattedValue);
+  const entered = cell.userEnteredValue || {};
+  for (const key of ["formulaValue", "stringValue", "numberValue"]) {
+    if (entered[key] !== undefined && entered[key] !== null) {
+      candidates.push(String(entered[key]));
+    }
+  }
+  for (const run of cell.textFormatRuns || []) {
+    const uri = run?.format?.link?.uri;
+    if (uri) candidates.push(uri);
+  }
 }
 
 async function handleResearchReviewBatch(res, body) {
