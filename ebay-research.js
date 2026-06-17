@@ -1,4 +1,4 @@
-const DATA_URL = "./data/ebay-research-dashboard.json?v=20260617-review-sync-v2";
+const DATA_URL = "./data/ebay-research-dashboard.json?v=20260617-review-sync-v3";
 const DUPLICATE_CHECK_URL = "./api/listing-duplicates";
 const REVIEW_SAVE_URL = "./api/listing-status";
 const REVIEW_STORAGE_KEY = "ebayResearchManualReviews:v1";
@@ -26,6 +26,7 @@ const state = {
   sort: "sheet",
   reviewSync: {},
   reviewDirty: new Set(),
+  sheetLinkCount: 0,
 };
 
 const el = {
@@ -67,6 +68,7 @@ async function init() {
     state.items = data.items || [];
     state.meta = data.meta || {};
     state.selectedId = state.items[0]?.id || "";
+    await loadSharedItemLinksFromSheet();
     await loadSharedReviewsFromSheet();
     initializeDirtyReviews();
     render();
@@ -909,11 +911,80 @@ async function reloadSharedReviewsFromSheet() {
   });
 
   try {
-    await loadSharedReviewsFromSheet({ showStatus: true });
+    const linkResult = await loadSharedItemLinksFromSheet({ showStatus: true });
+    const reviewResult = await loadSharedReviewsFromSheet({ showStatus: true });
     initializeDirtyReviews();
+    const failedParts = [
+      linkResult.loaded ? "" : "商品URL",
+      reviewResult.loaded ? "" : "目視",
+    ].filter(Boolean);
+    setReviewSync(state.selectedId, {
+      type: failedParts.length ? "error" : "saved",
+      label: failedParts.length
+        ? `スプシ再読込失敗 ${failedParts.join(" / ")}`
+        : `スプシ再読込済み 商品URL ${formatNumber(linkResult.applied)}件 / 目視 ${formatNumber(reviewResult.applied)}件`,
+      icon: failedParts.length ? "cloud-alert" : "cloud-check",
+    });
     render();
   } finally {
     setReviewReloadButtonLoading(false);
+  }
+}
+
+async function loadSharedItemLinksFromSheet(options = {}) {
+  const showStatus = Boolean(options.showStatus);
+  if (!state.meta.sourceSpreadsheetId || !state.meta.sourceSheetName) {
+    return { loaded: false, applied: 0 };
+  }
+
+  try {
+    const payload = await postJson(REVIEW_SAVE_URL, {
+      mode: "research-link-load",
+      sourceSpreadsheetId: state.meta.sourceSpreadsheetId,
+      sourceSheetName: state.meta.sourceSheetName,
+    });
+    if (!payload.configured) throw new Error(payload.message || "スプシ接続未設定");
+    if (!payload.loaded || !payload.links) throw new Error(payload.error || "商品URL読込失敗");
+
+    const incoming = Array.isArray(payload.links)
+      ? payload.links
+      : Object.values(payload.links);
+    let applied = 0;
+    const linkById = new Map(
+      incoming
+        .map((entry) => [String(entry?.itemId || ""), normalizeEbayItemUrl(entry?.competitorItemUrl)])
+        .filter(([itemId, url]) => itemId && url),
+    );
+    state.items = state.items.map((item) => {
+      const competitorItem = linkById.get(item.id);
+      if (!competitorItem) return item;
+      applied += 1;
+      return {
+        ...item,
+        links: {
+          ...(item.links || {}),
+          competitorItem,
+        },
+      };
+    });
+    state.sheetLinkCount = applied;
+    if (showStatus) {
+      setReviewSync(state.selectedId, {
+        type: applied ? "saved" : "idle",
+        label: applied ? `商品URL読込済み ${formatNumber(applied)}件` : "商品URL更新なし",
+        icon: "cloud-check",
+      });
+    }
+    return { loaded: true, applied };
+  } catch (error) {
+    if (showStatus) {
+      setReviewSync(state.selectedId, {
+        type: "error",
+        label: error.message || "商品URL再読込失敗",
+        icon: "cloud-alert",
+      });
+    }
+    return { loaded: false, applied: 0 };
   }
 }
 
@@ -1390,8 +1461,7 @@ function getPreviewSources(item) {
     return {
       ...source,
       url: exactItemUrl,
-      title: "eBay item page",
-      note: "検索結果ではなく商品ページを開きます",
+      note: "Opens exact eBay item page",
     };
   });
 }

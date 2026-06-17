@@ -44,6 +44,10 @@ module.exports = async function handler(req, res) {
       await handleResearchReviewLoad(res, body);
       return;
     }
+    if (body.mode === "research-link-load") {
+      await handleResearchLinkLoad(res, body);
+      return;
+    }
     if (body.mode === "research-review-batch") {
       await handleResearchReviewBatch(res, body);
       return;
@@ -93,6 +97,51 @@ module.exports = async function handler(req, res) {
     });
   }
 };
+
+async function handleResearchLinkLoad(res, body) {
+  const spreadsheetId = stringValue(body.sourceSpreadsheetId);
+  const sheetName = stringValue(body.sourceSheetName);
+  if (!spreadsheetId || !sheetName) {
+    res.status(400).json({
+      configured: true,
+      loaded: false,
+      error: "sourceSpreadsheetId and sourceSheetName are required.",
+    });
+    return;
+  }
+
+  const { rows } = await readSheetRows(spreadsheetId, sheetName, "A:ZZ");
+  const links = {};
+  for (const row of rows) {
+    const itemNo = stringValue(row["#"] || row["No"] || row.no || row.itemNo);
+    const itemId = stringValue(row["Codex Item ID"] || row.itemId) || (itemNo ? `item-${itemNo}` : "");
+    const title = stringValue(row["商品名"] || row["タイトル"] || row["Codex Title"] || row.title);
+    const competitorItemUrl = findEbayItemUrl([
+      row["競合出品URL"],
+      row["eBay出品"],
+      row["eBay URL"],
+      row.eBayURL,
+      row["eBayリンク"],
+      row["eBay Item ID/URL"],
+      ...(Array.isArray(row.__cells) ? row.__cells : []),
+    ]);
+    if (!itemId || !competitorItemUrl) continue;
+    links[itemId] = {
+      itemId,
+      itemNo,
+      title,
+      competitorItemUrl,
+      rowNumber: row.__rowNumber,
+    };
+  }
+
+  res.status(200).json({
+    configured: true,
+    loaded: true,
+    linkCount: Object.keys(links).length,
+    links,
+  });
+}
 
 async function handleResearchReviewLoad(res, body) {
   const spreadsheetId = stringValue(body.sourceSpreadsheetId);
@@ -269,4 +318,21 @@ function booleanValue(value) {
   if (value === true) return true;
   const text = stringValue(value).toLowerCase();
   return ["1", "true", "yes", "y", "on", "checked", "ok", "◯", "○", "〇"].includes(text);
+}
+
+function findEbayItemUrl(values) {
+  for (const value of values) {
+    const url = normalizeEbayItemUrl(value);
+    if (url) return url;
+  }
+  return "";
+}
+
+function normalizeEbayItemUrl(value) {
+  const text = stringValue(value);
+  if (!text) return "";
+  const itemUrlMatch = text.match(/\/itm\/(?:[^/?#]+\/)?(\d{10,15})/i);
+  if (itemUrlMatch) return `https://www.ebay.com/itm/${itemUrlMatch[1]}`;
+  if (/^\d{10,15}$/.test(text)) return `https://www.ebay.com/itm/${text}`;
+  return "";
 }
