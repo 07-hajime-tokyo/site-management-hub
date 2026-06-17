@@ -1,5 +1,2600 @@
 {
+  "item-1": {
+    "competitorItem": "https://www.ebay.com/itm/403919241944"
+  },
+  "item-3": {
+    "competitorItem": "https://www.ebay.com/itm/403768044582"
+  },
+  "item-4": {
+    "competitorItem": "https://www.ebay.com/itm/404273379516"
+  },
   "item-5": {
     "competitorItem": "https://www.ebay.com/itm/404010077159"
+  },
+  "item-6": {
+    "competitorItem": "https://www.ebay.com/itm/406676846184"
+  },
+  "item-7": {
+    "competitorItem": "https://www.ebay.com/itm/403979258844"
+  },
+  "item-8": {
+    "competitorItem": "https://www.ebay.com/itm/406407917888"
+  },
+  "item-9": {
+    "competitorItem": "https://www.ebay.com/itm/405353717584"
+  },
+  "item-10": {
+    "competitorItem": "https://www.ebay.com/itm/405404527937"
+  },
+  "item-11": {
+    "competitorItem": "https://www.ebay.com/itm/405687830000"
+  },
+  "item-12": {
+    "competitorItem": "https://www.ebay.com/itm/404234645383"
+  },
+  "item-13": {
+    "competitorItem": "https://www.ebay.com/itm/403841442987"
+  },
+  "item-15": {
+    "competitorItem": "https://www.ebay.com/itm/403749633113"
+  },
+  "item-16": {
+    "competitorItem": "https://www.ebay.com/itm/403749641592"
+  },
+  "item-17": {
+    "competitorItem": "https://www.ebay.com/itm/404143134427"
+  },
+  "item-18": {
+    "competitorItem": "https://www.ebay.com/itm/404336537248"
+  },
+  "item-19": {
+    "competitorItem": "https://www.ebay.com/itm/405280221839"
+  },
+  "item-21": {
+    "competitorItem": "https://www.ebay.com/itm/405783383911"
+  },
+  "item-22": {
+    "competitorItem": "https://www.ebay.com/itm/406683083454"
+  },
+  "item-23": {
+    "competitorItem": "https://www.ebay.com/itm/404234645383"
+  },
+  "item-24": {
+    "competitorItem": "https://www.ebay.com/itm/406366586516"
+  },
+  "item-25": {
+    "competitorItem": "https://www.ebay.com/itm/406366586559"
+  },
+  "item-26": {
+    "competitorItem": "https://www.ebay.com/itm/406065831549"
+  },
+  "item-27": {
+    "competitorItem": "https://www.ebay.com/itm/406611270079"
+  },
+  "item-28": {
+    "competitorItem": "https://www.ebay.com/itm/406664136064"
+  },
+  "item-29": {
+    "competitorItem": "https://www.ebay.com/itm/406557982961"
+  },
+  "item-30": {
+    "competitorItem": "https://www.ebay.com/itm/406309470013"
+  },
+  "item-32": {
+    "competitorItem": "https://www.ebay.com/itm/404939380904"
+  },
+  "item-33": {
+    "competitorItem": "https://www.ebay.com/itm/405827401015"
+  },
+  "item-34": {
+    "competitorItem": "https://www.ebay.com/itm/405945492583"
+  },
+  "item-37": {
+    "competitorItem": "https://www.ebay.com/itm/404139114696"
+  },
+  "item-38": {
+    "competitorItem": "https://www.ebay.com/itm/403663577979"
+  },
+  "item-39": {
+    "competitorItem": "https://www.ebay.com/itm/405715880792"
+  },
+  "item-42": {
+    "competitorItem": "https://www.ebay.com/itm/404460645203"
+  },
+  "item-44": {
+    "competitorItem": "https://www.ebay.com/itm/406733533060"
+  },
+  "item-45": {
+    "competitorItem": "https://www.ebay.com/itm/405108604697"
+  },
+  "item-47": {
+    "competitorItem": "https://www.ebay.com/itm/404786575757"
+  },
+  "item-50": {
+    "competitorItem": "https://www.ebay.com/itm/403915501033"
+  },
+  "item-51": {
+    "competitorItem": "https://www.ebay.com/itm/405565264954"
+  },
+  "item-52": {
+    "competitorItem": "https://www.ebay.com/itm/405603978672"
+  },
+  "item-53": {
+    "competitorItem": "https://www.ebay.com/itm/406551286925"
+  },
+  "item-54": {
+    "competitorItem": "https://www.ebay.com/itm/404089817913"
+  },
+  "item-55": {
+    "competitorItem": "https://www.ebay.com/itm/404067485095"
+  },
+  "item-59": {
+    "competitorItem": "https://www.ebay.com/itm/404143134427"
+  },
+  "item-60": {
+    "competitorItem": "https://www.ebay.com/itm/405668070845"
+  },
+  "item-61": {
+    "competitorItem": "https://www.ebay.com/itm/405692007670"
+  },
+  "item-62": {
+    "competitorItem": "https://www.ebay.com/itm/406129081399"
+  },
+  "item-63": {
+    "competitorItem": "https://www.ebay.com/itm/406811979576"
+  },
+  "item-64": {
+    "competitorItem": "https://www.ebay.com/itm/406895420748"
+  },
+  "item-65": {
+    "competitorItem": "https://www.ebay.com/itm/406366586728"
+  },
+  "item-66": {
+    "competitorItem": "https://www.ebay.com/itm/404026105370"
+  },
+  "item-67": {
+    "competitorItem": "https://www.ebay.com/itm/406863534610"
+  },
+  "item-68": {
+    "competitorItem": "https://www.ebay.com/itm/403818904138"
+  },
+  "item-69": {
+    "competitorItem": "https://www.ebay.com/itm/406738286942"
+  },
+  "item-71": {
+    "competitorItem": "https://www.ebay.com/itm/405833121584"
+  },
+  "item-74": {
+    "competitorItem": "https://www.ebay.com/itm/406735994415"
+  },
+  "item-75": {
+    "competitorItem": "https://www.ebay.com/itm/406333733918"
+  },
+  "item-76": {
+    "competitorItem": "https://www.ebay.com/itm/404460645872"
+  },
+  "item-77": {
+    "competitorItem": "https://www.ebay.com/itm/404789095218"
+  },
+  "item-78": {
+    "competitorItem": "https://www.ebay.com/itm/404792576883"
+  },
+  "item-79": {
+    "competitorItem": "https://www.ebay.com/itm/404967670085"
+  },
+  "item-80": {
+    "competitorItem": "https://www.ebay.com/itm/405051726206"
+  },
+  "item-81": {
+    "competitorItem": "https://www.ebay.com/itm/405891079110"
+  },
+  "item-82": {
+    "competitorItem": "https://www.ebay.com/itm/405895769823"
+  },
+  "item-84": {
+    "competitorItem": "https://www.ebay.com/itm/405680751870"
+  },
+  "item-85": {
+    "competitorItem": "https://www.ebay.com/itm/405945407700"
+  },
+  "item-86": {
+    "competitorItem": "https://www.ebay.com/itm/406144684466"
+  },
+  "item-87": {
+    "competitorItem": "https://www.ebay.com/itm/406264086158"
+  },
+  "item-88": {
+    "competitorItem": "https://www.ebay.com/itm/406710072897"
+  },
+  "item-89": {
+    "competitorItem": "https://www.ebay.com/itm/406309470013"
+  },
+  "item-90": {
+    "competitorItem": "https://www.ebay.com/itm/406654803735"
+  },
+  "item-91": {
+    "competitorItem": "https://www.ebay.com/itm/405315137931"
+  },
+  "item-92": {
+    "competitorItem": "https://www.ebay.com/itm/406676919576"
+  },
+  "item-93": {
+    "competitorItem": "https://www.ebay.com/itm/405848014353"
+  },
+  "item-94": {
+    "competitorItem": "https://www.ebay.com/itm/406676919576"
+  },
+  "item-95": {
+    "competitorItem": "https://www.ebay.com/itm/405067803888"
+  },
+  "item-96": {
+    "competitorItem": "https://www.ebay.com/itm/406056087323"
+  },
+  "item-97": {
+    "competitorItem": "https://www.ebay.com/itm/406811979576"
+  },
+  "item-98": {
+    "competitorItem": "https://www.ebay.com/itm/406833854053"
+  },
+  "item-99": {
+    "competitorItem": "https://www.ebay.com/itm/406129081399"
+  },
+  "item-100": {
+    "competitorItem": "https://www.ebay.com/itm/405404122384"
+  },
+  "item-101": {
+    "competitorItem": "https://www.ebay.com/itm/404701629432"
+  },
+  "item-103": {
+    "competitorItem": "https://www.ebay.com/itm/405833122092"
+  },
+  "item-104": {
+    "competitorItem": "https://www.ebay.com/itm/406787841682"
+  },
+  "item-105": {
+    "competitorItem": "https://www.ebay.com/itm/404875689358"
+  },
+  "item-106": {
+    "competitorItem": "https://www.ebay.com/itm/404086375755"
+  },
+  "item-107": {
+    "competitorItem": "https://www.ebay.com/itm/405725441964"
+  },
+  "item-108": {
+    "competitorItem": "https://www.ebay.com/itm/405868811206"
+  },
+  "item-109": {
+    "competitorItem": "https://www.ebay.com/itm/406682028543"
+  },
+  "item-111": {
+    "competitorItem": "https://www.ebay.com/itm/403914064200"
+  },
+  "item-112": {
+    "competitorItem": "https://www.ebay.com/itm/406008573773"
+  },
+  "item-115": {
+    "competitorItem": "https://www.ebay.com/itm/405815170019"
+  },
+  "item-116": {
+    "competitorItem": "https://www.ebay.com/itm/406917666046"
+  },
+  "item-118": {
+    "competitorItem": "https://www.ebay.com/itm/405353717584"
+  },
+  "item-119": {
+    "competitorItem": "https://www.ebay.com/itm/404891309614"
+  },
+  "item-120": {
+    "competitorItem": "https://www.ebay.com/itm/405559596547"
+  },
+  "item-121": {
+    "competitorItem": "https://www.ebay.com/itm/405604003099"
+  },
+  "item-122": {
+    "competitorItem": "https://www.ebay.com/itm/406475391331"
+  },
+  "item-123": {
+    "competitorItem": "https://www.ebay.com/itm/406491837639"
+  },
+  "item-126": {
+    "competitorItem": "https://www.ebay.com/itm/404062847586"
+  },
+  "item-128": {
+    "competitorItem": "https://www.ebay.com/itm/405268114789"
+  },
+  "item-129": {
+    "competitorItem": "https://www.ebay.com/itm/405314115024"
+  },
+  "item-132": {
+    "competitorItem": "https://www.ebay.com/itm/406591314503"
+  },
+  "item-133": {
+    "competitorItem": "https://www.ebay.com/itm/406863534610"
+  },
+  "item-134": {
+    "competitorItem": "https://www.ebay.com/itm/406799002434"
+  },
+  "item-136": {
+    "competitorItem": "https://www.ebay.com/itm/406855129192"
+  },
+  "item-137": {
+    "competitorItem": "https://www.ebay.com/itm/406870449978"
+  },
+  "item-138": {
+    "competitorItem": "https://www.ebay.com/itm/406663328317"
+  },
+  "item-139": {
+    "competitorItem": "https://www.ebay.com/itm/404393329128"
+  },
+  "item-140": {
+    "competitorItem": "https://www.ebay.com/itm/405528605208"
+  },
+  "item-141": {
+    "competitorItem": "https://www.ebay.com/itm/406491837639"
+  },
+  "item-142": {
+    "competitorItem": "https://www.ebay.com/itm/405953172885"
+  },
+  "item-143": {
+    "competitorItem": "https://www.ebay.com/itm/406131957771"
+  },
+  "item-144": {
+    "competitorItem": "https://www.ebay.com/itm/406131960057"
+  },
+  "item-145": {
+    "competitorItem": "https://www.ebay.com/itm/406679144739"
+  },
+  "item-146": {
+    "competitorItem": "https://www.ebay.com/itm/406695535198"
+  },
+  "item-147": {
+    "competitorItem": "https://www.ebay.com/itm/406237248110"
+  },
+  "item-148": {
+    "competitorItem": "https://www.ebay.com/itm/406811979576"
+  },
+  "item-149": {
+    "competitorItem": "https://www.ebay.com/itm/406264086868"
+  },
+  "item-150": {
+    "competitorItem": "https://www.ebay.com/itm/406282779136"
+  },
+  "item-152": {
+    "competitorItem": "https://www.ebay.com/itm/406711712834"
+  },
+  "item-153": {
+    "competitorItem": "https://www.ebay.com/itm/406312924934"
+  },
+  "item-156": {
+    "competitorItem": "https://www.ebay.com/itm/406852794274"
+  },
+  "item-157": {
+    "competitorItem": "https://www.ebay.com/itm/406746463175"
+  },
+  "item-158": {
+    "competitorItem": "https://www.ebay.com/itm/406746463899"
+  },
+  "item-160": {
+    "competitorItem": "https://www.ebay.com/itm/406811979576"
+  },
+  "item-162": {
+    "competitorItem": "https://www.ebay.com/itm/406086408784"
+  },
+  "item-163": {
+    "competitorItem": "https://www.ebay.com/itm/406126670311"
+  },
+  "item-164": {
+    "competitorItem": "https://www.ebay.com/itm/406625764126"
+  },
+  "item-165": {
+    "competitorItem": "https://www.ebay.com/itm/406811968476"
+  },
+  "item-166": {
+    "competitorItem": "https://www.ebay.com/itm/403979266428"
+  },
+  "item-167": {
+    "competitorItem": "https://www.ebay.com/itm/403962598789"
+  },
+  "item-168": {
+    "competitorItem": "https://www.ebay.com/itm/404022608355"
+  },
+  "item-169": {
+    "competitorItem": "https://www.ebay.com/itm/405215029293"
+  },
+  "item-170": {
+    "competitorItem": "https://www.ebay.com/itm/406945579870"
+  },
+  "item-171": {
+    "competitorItem": "https://www.ebay.com/itm/406676926453"
+  },
+  "item-172": {
+    "competitorItem": "https://www.ebay.com/itm/406862240741"
+  },
+  "item-174": {
+    "competitorItem": "https://www.ebay.com/itm/404701622507"
+  },
+  "item-176": {
+    "competitorItem": "https://www.ebay.com/itm/406519617818"
+  },
+  "item-177": {
+    "competitorItem": "https://www.ebay.com/itm/406663346476"
+  },
+  "item-178": {
+    "competitorItem": "https://www.ebay.com/itm/403818896160"
+  },
+  "item-179": {
+    "competitorItem": "https://www.ebay.com/itm/406735983918"
+  },
+  "item-180": {
+    "competitorItem": "https://www.ebay.com/itm/406735994415"
+  },
+  "item-181": {
+    "competitorItem": "https://www.ebay.com/itm/406738261453"
+  },
+  "item-182": {
+    "competitorItem": "https://www.ebay.com/itm/405845932167"
+  },
+  "item-183": {
+    "competitorItem": "https://www.ebay.com/itm/405848016931"
+  },
+  "item-184": {
+    "competitorItem": "https://www.ebay.com/itm/405848017170"
+  },
+  "item-185": {
+    "competitorItem": "https://www.ebay.com/itm/405848017262"
+  },
+  "item-187": {
+    "competitorItem": "https://www.ebay.com/itm/403922392977"
+  },
+  "item-189": {
+    "competitorItem": "https://www.ebay.com/itm/406657142856"
+  },
+  "item-192": {
+    "competitorItem": "https://www.ebay.com/itm/406679144739"
+  },
+  "item-193": {
+    "competitorItem": "https://www.ebay.com/itm/405848017309"
+  },
+  "item-194": {
+    "competitorItem": "https://www.ebay.com/itm/405848017471"
+  },
+  "item-195": {
+    "competitorItem": "https://www.ebay.com/itm/405857368631"
+  },
+  "item-196": {
+    "competitorItem": "https://www.ebay.com/itm/405860167345"
+  },
+  "item-197": {
+    "competitorItem": "https://www.ebay.com/itm/405862883570"
+  },
+  "item-198": {
+    "competitorItem": "https://www.ebay.com/itm/405694126966"
+  },
+  "item-199": {
+    "competitorItem": "https://www.ebay.com/itm/406881312918"
+  },
+  "item-200": {
+    "competitorItem": "https://www.ebay.com/itm/406895420748"
+  },
+  "item-202": {
+    "competitorItem": "https://www.ebay.com/itm/404653855563"
+  },
+  "item-203": {
+    "competitorItem": "https://www.ebay.com/itm/403914073164"
+  },
+  "item-204": {
+    "competitorItem": "https://www.ebay.com/itm/406738261453"
+  },
+  "item-205": {
+    "competitorItem": "https://www.ebay.com/itm/406812351053"
+  },
+  "item-207": {
+    "competitorItem": "https://www.ebay.com/itm/405815169500"
+  },
+  "item-208": {
+    "competitorItem": "https://www.ebay.com/itm/406807614662"
+  },
+  "item-209": {
+    "competitorItem": "https://www.ebay.com/itm/406326600312"
+  },
+  "item-210": {
+    "competitorItem": "https://www.ebay.com/itm/406841388319"
+  },
+  "item-211": {
+    "competitorItem": "https://www.ebay.com/itm/406841387252"
+  },
+  "item-212": {
+    "competitorItem": "https://www.ebay.com/itm/406694236968"
+  },
+  "item-213": {
+    "competitorItem": "https://www.ebay.com/itm/406796224951"
+  },
+  "item-214": {
+    "competitorItem": "https://www.ebay.com/itm/406881311424"
+  },
+  "item-215": {
+    "competitorItem": "https://www.ebay.com/itm/406324103551"
+  },
+  "item-218": {
+    "competitorItem": "https://www.ebay.com/itm/405714376688"
+  },
+  "item-220": {
+    "competitorItem": "https://www.ebay.com/itm/404181670825"
+  },
+  "item-221": {
+    "competitorItem": "https://www.ebay.com/itm/404269231205"
+  },
+  "item-222": {
+    "competitorItem": "https://www.ebay.com/itm/406926948626"
+  },
+  "item-225": {
+    "competitorItem": "https://www.ebay.com/itm/406888501392"
+  },
+  "item-233": {
+    "competitorItem": "https://www.ebay.com/itm/404893605471"
+  },
+  "item-234": {
+    "competitorItem": "https://www.ebay.com/itm/404893647346"
+  },
+  "item-235": {
+    "competitorItem": "https://www.ebay.com/itm/404898486081"
+  },
+  "item-236": {
+    "competitorItem": "https://www.ebay.com/itm/404899616339"
+  },
+  "item-237": {
+    "competitorItem": "https://www.ebay.com/itm/406663328317"
+  },
+  "item-243": {
+    "competitorItem": "https://www.ebay.com/itm/406917666046"
+  },
+  "item-244": {
+    "competitorItem": "https://www.ebay.com/itm/406919876454"
+  },
+  "item-246": {
+    "competitorItem": "https://www.ebay.com/itm/406926948626"
+  },
+  "item-247": {
+    "competitorItem": "https://www.ebay.com/itm/406455497884"
+  },
+  "item-248": {
+    "competitorItem": "https://www.ebay.com/itm/406463083141"
+  },
+  "item-249": {
+    "competitorItem": "https://www.ebay.com/itm/406463094032"
+  },
+  "item-250": {
+    "competitorItem": "https://www.ebay.com/itm/406463100908"
+  },
+  "item-251": {
+    "competitorItem": "https://www.ebay.com/itm/406463106414"
+  },
+  "item-252": {
+    "competitorItem": "https://www.ebay.com/itm/406464976318"
+  },
+  "item-253": {
+    "competitorItem": "https://www.ebay.com/itm/406477984732"
+  },
+  "item-254": {
+    "competitorItem": "https://www.ebay.com/itm/406477991757"
+  },
+  "item-255": {
+    "competitorItem": "https://www.ebay.com/itm/406491839849"
+  },
+  "item-256": {
+    "competitorItem": "https://www.ebay.com/itm/405692007670"
+  },
+  "item-257": {
+    "competitorItem": "https://www.ebay.com/itm/406491851982"
+  },
+  "item-258": {
+    "competitorItem": "https://www.ebay.com/itm/406491858254"
+  },
+  "item-260": {
+    "competitorItem": "https://www.ebay.com/itm/406494360435"
+  },
+  "item-261": {
+    "competitorItem": "https://www.ebay.com/itm/406495804387"
+  },
+  "item-263": {
+    "competitorItem": "https://www.ebay.com/itm/406551286925"
+  },
+  "item-264": {
+    "competitorItem": "https://www.ebay.com/itm/406553152932"
+  },
+  "item-265": {
+    "competitorItem": "https://www.ebay.com/itm/406553152978"
+  },
+  "item-266": {
+    "competitorItem": "https://www.ebay.com/itm/406553153042"
+  },
+  "item-267": {
+    "competitorItem": "https://www.ebay.com/itm/406676955407"
+  },
+  "item-268": {
+    "competitorItem": "https://www.ebay.com/itm/406926948626"
+  },
+  "item-270": {
+    "competitorItem": "https://www.ebay.com/itm/406689831624"
+  },
+  "item-279": {
+    "competitorItem": "https://www.ebay.com/itm/406871500974"
+  },
+  "item-280": {
+    "competitorItem": "https://www.ebay.com/itm/406871501800"
+  },
+  "item-281": {
+    "competitorItem": "https://www.ebay.com/itm/406871504336"
+  },
+  "item-282": {
+    "competitorItem": "https://www.ebay.com/itm/406871509874"
+  },
+  "item-283": {
+    "competitorItem": "https://www.ebay.com/itm/406871513516"
+  },
+  "item-284": {
+    "competitorItem": "https://www.ebay.com/itm/406873327992"
+  },
+  "item-285": {
+    "competitorItem": "https://www.ebay.com/itm/406873328051"
+  },
+  "item-286": {
+    "competitorItem": "https://www.ebay.com/itm/406873328106"
+  },
+  "item-287": {
+    "competitorItem": "https://www.ebay.com/itm/406873328186"
+  },
+  "item-288": {
+    "competitorItem": "https://www.ebay.com/itm/406873328259"
+  },
+  "item-289": {
+    "competitorItem": "https://www.ebay.com/itm/406873328344"
+  },
+  "item-290": {
+    "competitorItem": "https://www.ebay.com/itm/406873328404"
+  },
+  "item-291": {
+    "competitorItem": "https://www.ebay.com/itm/406875501384"
+  },
+  "item-292": {
+    "competitorItem": "https://www.ebay.com/itm/406875504393"
+  },
+  "item-294": {
+    "competitorItem": "https://www.ebay.com/itm/406876046476"
+  },
+  "item-296": {
+    "competitorItem": "https://www.ebay.com/itm/406876047118"
+  },
+  "item-297": {
+    "competitorItem": "https://www.ebay.com/itm/406876047201"
+  },
+  "item-298": {
+    "competitorItem": "https://www.ebay.com/itm/406876725062"
+  },
+  "item-299": {
+    "competitorItem": "https://www.ebay.com/itm/404028184375"
+  },
+  "item-300": {
+    "competitorItem": "https://www.ebay.com/itm/404028185561"
+  },
+  "item-306": {
+    "competitorItem": "https://www.ebay.com/itm/404062768549"
+  },
+  "item-307": {
+    "competitorItem": "https://www.ebay.com/itm/404062824401"
+  },
+  "item-308": {
+    "competitorItem": "https://www.ebay.com/itm/404062848180"
+  },
+  "item-309": {
+    "competitorItem": "https://www.ebay.com/itm/404062864538"
+  },
+  "item-310": {
+    "competitorItem": "https://www.ebay.com/itm/405291676946"
+  },
+  "item-311": {
+    "competitorItem": "https://www.ebay.com/itm/406942449058"
+  },
+  "item-312": {
+    "competitorItem": "https://www.ebay.com/itm/406942449096"
+  },
+  "item-313": {
+    "competitorItem": "https://www.ebay.com/itm/406942449152"
+  },
+  "item-314": {
+    "competitorItem": "https://www.ebay.com/itm/406946963458"
+  },
+  "item-315": {
+    "competitorItem": "https://www.ebay.com/itm/406951089556"
+  },
+  "item-316": {
+    "competitorItem": "https://www.ebay.com/itm/406566473675"
+  },
+  "item-317": {
+    "competitorItem": "https://www.ebay.com/itm/406566480962"
+  },
+  "item-318": {
+    "competitorItem": "https://www.ebay.com/itm/406566482396"
+  },
+  "item-319": {
+    "competitorItem": "https://www.ebay.com/itm/406570375949"
+  },
+  "item-320": {
+    "competitorItem": "https://www.ebay.com/itm/406570377364"
+  },
+  "item-321": {
+    "competitorItem": "https://www.ebay.com/itm/406594889121"
+  },
+  "item-322": {
+    "competitorItem": "https://www.ebay.com/itm/406594890347"
+  },
+  "item-323": {
+    "competitorItem": "https://www.ebay.com/itm/406594895171"
+  },
+  "item-324": {
+    "competitorItem": "https://www.ebay.com/itm/406778623391"
+  },
+  "item-329": {
+    "competitorItem": "https://www.ebay.com/itm/406833847101"
+  },
+  "item-336": {
+    "competitorItem": "https://www.ebay.com/itm/406796227968"
+  },
+  "item-338": {
+    "competitorItem": "https://www.ebay.com/itm/406799006139"
+  },
+  "item-339": {
+    "competitorItem": "https://www.ebay.com/itm/406799009285"
+  },
+  "item-340": {
+    "competitorItem": "https://www.ebay.com/itm/406841448233"
+  },
+  "item-344": {
+    "competitorItem": "https://www.ebay.com/itm/406847206147"
+  },
+  "item-345": {
+    "competitorItem": "https://www.ebay.com/itm/406847482873"
+  },
+  "item-346": {
+    "competitorItem": "https://www.ebay.com/itm/406847486494"
+  },
+  "item-347": {
+    "competitorItem": "https://www.ebay.com/itm/406847487100"
+  },
+  "item-348": {
+    "competitorItem": "https://www.ebay.com/itm/406847495933"
+  },
+  "item-349": {
+    "competitorItem": "https://www.ebay.com/itm/406847496194"
+  },
+  "item-350": {
+    "competitorItem": "https://www.ebay.com/itm/406853906122"
+  },
+  "item-351": {
+    "competitorItem": "https://www.ebay.com/itm/406853906238"
+  },
+  "item-352": {
+    "competitorItem": "https://www.ebay.com/itm/406853906261"
+  },
+  "item-353": {
+    "competitorItem": "https://www.ebay.com/itm/406837029648"
+  },
+  "item-354": {
+    "competitorItem": "https://www.ebay.com/itm/406657145427"
+  },
+  "item-356": {
+    "competitorItem": "https://www.ebay.com/itm/406860616060"
+  },
+  "item-357": {
+    "competitorItem": "https://www.ebay.com/itm/406860616576"
+  },
+  "item-363": {
+    "competitorItem": "https://www.ebay.com/itm/406870449894"
+  },
+  "item-364": {
+    "competitorItem": "https://www.ebay.com/itm/406920814891"
+  },
+  "item-365": {
+    "competitorItem": "https://www.ebay.com/itm/406920814891"
+  },
+  "item-366": {
+    "competitorItem": "https://www.ebay.com/itm/406871499926"
+  },
+  "item-367": {
+    "competitorItem": "https://www.ebay.com/itm/406909087361"
+  },
+  "item-368": {
+    "competitorItem": "https://www.ebay.com/itm/406911247215"
+  },
+  "item-369": {
+    "competitorItem": "https://www.ebay.com/itm/406911247275"
+  },
+  "item-370": {
+    "competitorItem": "https://www.ebay.com/itm/406694236968"
+  },
+  "item-371": {
+    "competitorItem": "https://www.ebay.com/itm/405677989820"
+  },
+  "item-372": {
+    "competitorItem": "https://www.ebay.com/itm/406911247498"
+  },
+  "item-373": {
+    "competitorItem": "https://www.ebay.com/itm/406911247533"
+  },
+  "item-376": {
+    "competitorItem": "https://www.ebay.com/itm/404008062692"
+  },
+  "item-377": {
+    "competitorItem": "https://www.ebay.com/itm/404008064627"
+  },
+  "item-378": {
+    "competitorItem": "https://www.ebay.com/itm/406657142856"
+  },
+  "item-380": {
+    "competitorItem": "https://www.ebay.com/itm/406660606196"
+  },
+  "item-381": {
+    "competitorItem": "https://www.ebay.com/itm/406660607623"
+  },
+  "item-382": {
+    "competitorItem": "https://www.ebay.com/itm/406660608798"
+  },
+  "item-383": {
+    "competitorItem": "https://www.ebay.com/itm/406660609617"
+  },
+  "item-384": {
+    "competitorItem": "https://www.ebay.com/itm/406663338318"
+  },
+  "item-386": {
+    "competitorItem": "https://www.ebay.com/itm/406878760978"
+  },
+  "item-387": {
+    "competitorItem": "https://www.ebay.com/itm/406880072356"
+  },
+  "item-388": {
+    "competitorItem": "https://www.ebay.com/itm/406768485764"
+  },
+  "item-389": {
+    "competitorItem": "https://www.ebay.com/itm/406768492379"
+  },
+  "item-391": {
+    "competitorItem": "https://www.ebay.com/itm/406881311594"
+  },
+  "item-392": {
+    "competitorItem": "https://www.ebay.com/itm/404011898472"
+  },
+  "item-394": {
+    "competitorItem": "https://www.ebay.com/itm/405625558114"
+  },
+  "item-395": {
+    "competitorItem": "https://www.ebay.com/itm/405678007310"
+  },
+  "item-396": {
+    "competitorItem": "https://www.ebay.com/itm/405710534608"
+  },
+  "item-397": {
+    "competitorItem": "https://www.ebay.com/itm/403981080337"
+  },
+  "item-398": {
+    "competitorItem": "https://www.ebay.com/itm/403981090241"
+  },
+  "item-399": {
+    "competitorItem": "https://www.ebay.com/itm/403981093896"
+  },
+  "item-400": {
+    "competitorItem": "https://www.ebay.com/itm/403981118463"
+  },
+  "item-401": {
+    "competitorItem": "https://www.ebay.com/itm/406000133934"
+  },
+  "item-404": {
+    "competitorItem": "https://www.ebay.com/itm/404064213115"
+  },
+  "item-405": {
+    "competitorItem": "https://www.ebay.com/itm/404064219741"
+  },
+  "item-406": {
+    "competitorItem": "https://www.ebay.com/itm/404064223026"
+  },
+  "item-407": {
+    "competitorItem": "https://www.ebay.com/itm/406133651656"
+  },
+  "item-409": {
+    "competitorItem": "https://www.ebay.com/itm/406232234834"
+  },
+  "item-411": {
+    "competitorItem": "https://www.ebay.com/itm/406694314177"
+  },
+  "item-412": {
+    "competitorItem": "https://www.ebay.com/itm/406326600312"
+  },
+  "item-413": {
+    "competitorItem": "https://www.ebay.com/itm/406694330089"
+  },
+  "item-414": {
+    "competitorItem": "https://www.ebay.com/itm/406695535329"
+  },
+  "item-415": {
+    "competitorItem": "https://www.ebay.com/itm/406700311932"
+  },
+  "item-417": {
+    "competitorItem": "https://www.ebay.com/itm/406237295716"
+  },
+  "item-418": {
+    "competitorItem": "https://www.ebay.com/itm/405810960455"
+  },
+  "item-419": {
+    "competitorItem": "https://www.ebay.com/itm/406309470013"
+  },
+  "item-420": {
+    "competitorItem": "https://www.ebay.com/itm/406242327969"
+  },
+  "item-424": {
+    "competitorItem": "https://www.ebay.com/itm/406704847844"
+  },
+  "item-425": {
+    "competitorItem": "https://www.ebay.com/itm/406710241667"
+  },
+  "item-426": {
+    "competitorItem": "https://www.ebay.com/itm/406710254747"
+  },
+  "item-428": {
+    "competitorItem": "https://www.ebay.com/itm/406711710447"
+  },
+  "item-429": {
+    "competitorItem": "https://www.ebay.com/itm/406713863668"
+  },
+  "item-430": {
+    "competitorItem": "https://www.ebay.com/itm/406713866097"
+  },
+  "item-431": {
+    "competitorItem": "https://www.ebay.com/itm/406713892954"
+  },
+  "item-433": {
+    "competitorItem": "https://www.ebay.com/itm/406648476312"
+  },
+  "item-434": {
+    "competitorItem": "https://www.ebay.com/itm/406852758992"
+  },
+  "item-435": {
+    "competitorItem": "https://www.ebay.com/itm/406654791611"
+  },
+  "item-436": {
+    "competitorItem": "https://www.ebay.com/itm/406654794751"
+  },
+  "item-437": {
+    "competitorItem": "https://www.ebay.com/itm/406366586728"
+  },
+  "item-438": {
+    "competitorItem": "https://www.ebay.com/itm/406654795355"
+  },
+  "item-439": {
+    "competitorItem": "https://www.ebay.com/itm/406733540682"
+  },
+  "item-441": {
+    "competitorItem": "https://www.ebay.com/itm/406811979576"
+  },
+  "item-443": {
+    "competitorItem": "https://www.ebay.com/itm/406715811441"
+  },
+  "item-444": {
+    "competitorItem": "https://www.ebay.com/itm/406853905782"
+  },
+  "item-445": {
+    "competitorItem": "https://www.ebay.com/itm/406715811945"
+  },
+  "item-446": {
+    "competitorItem": "https://www.ebay.com/itm/406853905926"
+  },
+  "item-447": {
+    "competitorItem": "https://www.ebay.com/itm/406717768061"
+  },
+  "item-448": {
+    "competitorItem": "https://www.ebay.com/itm/406884079594"
+  },
+  "item-450": {
+    "competitorItem": "https://www.ebay.com/itm/406884091548"
+  },
+  "item-452": {
+    "competitorItem": "https://www.ebay.com/itm/406884095382"
+  },
+  "item-454": {
+    "competitorItem": "https://www.ebay.com/itm/406884096134"
+  },
+  "item-456": {
+    "competitorItem": "https://www.ebay.com/itm/406884114194"
+  },
+  "item-458": {
+    "competitorItem": "https://www.ebay.com/itm/406884115417"
+  },
+  "item-459": {
+    "competitorItem": "https://www.ebay.com/itm/406884117059"
+  },
+  "item-460": {
+    "competitorItem": "https://www.ebay.com/itm/406884123075"
+  },
+  "item-462": {
+    "competitorItem": "https://www.ebay.com/itm/406732671678"
+  },
+  "item-464": {
+    "competitorItem": "https://www.ebay.com/itm/406732671720"
+  },
+  "item-465": {
+    "competitorItem": "https://www.ebay.com/itm/406904115452"
+  },
+  "item-466": {
+    "competitorItem": "https://www.ebay.com/itm/406732671837"
+  },
+  "item-467": {
+    "competitorItem": "https://www.ebay.com/itm/406904115608"
+  },
+  "item-468": {
+    "competitorItem": "https://www.ebay.com/itm/406904115744"
+  },
+  "item-469": {
+    "competitorItem": "https://www.ebay.com/itm/406733506659"
+  },
+  "item-470": {
+    "competitorItem": "https://www.ebay.com/itm/406904984092"
+  },
+  "item-471": {
+    "competitorItem": "https://www.ebay.com/itm/406904984751"
+  },
+  "item-472": {
+    "competitorItem": "https://www.ebay.com/itm/405945407700"
+  },
+  "item-474": {
+    "competitorItem": "https://www.ebay.com/itm/406746462637"
+  },
+  "item-478": {
+    "competitorItem": "https://www.ebay.com/itm/406746464204"
+  },
+  "item-480": {
+    "competitorItem": "https://www.ebay.com/itm/406746465373"
+  },
+  "item-481": {
+    "competitorItem": "https://www.ebay.com/itm/406746465882"
+  },
+  "item-482": {
+    "competitorItem": "https://www.ebay.com/itm/406746469189"
+  },
+  "item-483": {
+    "competitorItem": "https://www.ebay.com/itm/406746479677"
+  },
+  "item-484": {
+    "competitorItem": "https://www.ebay.com/itm/406746480579"
+  },
+  "item-485": {
+    "competitorItem": "https://www.ebay.com/itm/406746481849"
+  },
+  "item-486": {
+    "competitorItem": "https://www.ebay.com/itm/406881313256"
+  },
+  "item-489": {
+    "competitorItem": "https://www.ebay.com/itm/406882014882"
+  },
+  "item-490": {
+    "competitorItem": "https://www.ebay.com/itm/406882015840"
+  },
+  "item-492": {
+    "competitorItem": "https://www.ebay.com/itm/406710254747"
+  },
+  "item-494": {
+    "competitorItem": "https://www.ebay.com/itm/406366586728"
+  },
+  "item-495": {
+    "competitorItem": "https://www.ebay.com/itm/406884079179"
+  },
+  "item-496": {
+    "competitorItem": "https://www.ebay.com/itm/406893998707"
+  },
+  "item-497": {
+    "competitorItem": "https://www.ebay.com/itm/406895420686"
+  },
+  "item-499": {
+    "competitorItem": "https://www.ebay.com/itm/406897069347"
+  },
+  "item-501": {
+    "competitorItem": "https://www.ebay.com/itm/406897086730"
+  },
+  "item-502": {
+    "competitorItem": "https://www.ebay.com/itm/406897103424"
+  },
+  "item-503": {
+    "competitorItem": "https://www.ebay.com/itm/406897106681"
+  },
+  "item-504": {
+    "competitorItem": "https://www.ebay.com/itm/406897581151"
+  },
+  "item-505": {
+    "competitorItem": "https://www.ebay.com/itm/406897581218"
+  },
+  "item-506": {
+    "competitorItem": "https://www.ebay.com/itm/406897581283"
+  },
+  "item-507": {
+    "competitorItem": "https://www.ebay.com/itm/406897581333"
+  },
+  "item-508": {
+    "competitorItem": "https://www.ebay.com/itm/406897581583"
+  },
+  "item-509": {
+    "competitorItem": "https://www.ebay.com/itm/406897581642"
+  },
+  "item-510": {
+    "competitorItem": "https://www.ebay.com/itm/406897581696"
+  },
+  "item-511": {
+    "competitorItem": "https://www.ebay.com/itm/406897582032"
+  },
+  "item-513": {
+    "competitorItem": "https://www.ebay.com/itm/406899687620"
+  },
+  "item-514": {
+    "competitorItem": "https://www.ebay.com/itm/403962600835"
+  },
+  "item-515": {
+    "competitorItem": "https://www.ebay.com/itm/404002698400"
+  },
+  "item-517": {
+    "competitorItem": "https://www.ebay.com/itm/406566426442"
+  },
+  "item-518": {
+    "competitorItem": "https://www.ebay.com/itm/406566430066"
+  },
+  "item-519": {
+    "competitorItem": "https://www.ebay.com/itm/406566436133"
+  },
+  "item-520": {
+    "competitorItem": "https://www.ebay.com/itm/406566440160"
+  },
+  "item-521": {
+    "competitorItem": "https://www.ebay.com/itm/406566448333"
+  },
+  "item-522": {
+    "competitorItem": "https://www.ebay.com/itm/406566452857"
+  },
+  "item-523": {
+    "competitorItem": "https://www.ebay.com/itm/406566464490"
+  },
+  "item-524": {
+    "competitorItem": "https://www.ebay.com/itm/406566468259"
+  },
+  "item-525": {
+    "competitorItem": "https://www.ebay.com/itm/406566470994"
+  },
+  "item-526": {
+    "competitorItem": "https://www.ebay.com/itm/406626042986"
+  },
+  "item-527": {
+    "competitorItem": "https://www.ebay.com/itm/406630344476"
+  },
+  "item-528": {
+    "competitorItem": "https://www.ebay.com/itm/406636723722"
+  },
+  "item-529": {
+    "competitorItem": "https://www.ebay.com/itm/406636748450"
+  },
+  "item-530": {
+    "competitorItem": "https://www.ebay.com/itm/406636759475"
+  },
+  "item-531": {
+    "competitorItem": "https://www.ebay.com/itm/406640892606"
+  },
+  "item-532": {
+    "competitorItem": "https://www.ebay.com/itm/406640893171"
+  },
+  "item-533": {
+    "competitorItem": "https://www.ebay.com/itm/406641292953"
+  },
+  "item-534": {
+    "competitorItem": "https://www.ebay.com/itm/406876729297"
+  },
+  "item-535": {
+    "competitorItem": "https://www.ebay.com/itm/406876729766"
+  },
+  "item-536": {
+    "competitorItem": "https://www.ebay.com/itm/406876731101"
+  },
+  "item-537": {
+    "competitorItem": "https://www.ebay.com/itm/406876733460"
+  },
+  "item-538": {
+    "competitorItem": "https://www.ebay.com/itm/406876735167"
+  },
+  "item-539": {
+    "competitorItem": "https://www.ebay.com/itm/406876741700"
+  },
+  "item-540": {
+    "competitorItem": "https://www.ebay.com/itm/406876742447"
+  },
+  "item-541": {
+    "competitorItem": "https://www.ebay.com/itm/406876749560"
+  },
+  "item-542": {
+    "competitorItem": "https://www.ebay.com/itm/406876750814"
+  },
+  "item-545": {
+    "competitorItem": "https://www.ebay.com/itm/406887127362"
+  },
+  "item-546": {
+    "competitorItem": "https://www.ebay.com/itm/406264086158"
+  },
+  "item-552": {
+    "competitorItem": "https://www.ebay.com/itm/406891985661"
+  },
+  "item-553": {
+    "competitorItem": "https://www.ebay.com/itm/406893312703"
+  },
+  "item-554": {
+    "competitorItem": "https://www.ebay.com/itm/406893312771"
+  },
+  "item-555": {
+    "competitorItem": "https://www.ebay.com/itm/404004856291"
+  },
+  "item-556": {
+    "competitorItem": "https://www.ebay.com/itm/404004900100"
+  },
+  "item-557": {
+    "competitorItem": "https://www.ebay.com/itm/404004910537"
+  },
+  "item-558": {
+    "competitorItem": "https://www.ebay.com/itm/404004919310"
+  },
+  "item-559": {
+    "competitorItem": "https://www.ebay.com/itm/404004942079"
+  },
+  "item-561": {
+    "competitorItem": "https://www.ebay.com/itm/404546319430"
+  },
+  "item-562": {
+    "competitorItem": "https://www.ebay.com/itm/406114983437"
+  },
+  "item-563": {
+    "competitorItem": "https://www.ebay.com/itm/406594911681"
+  },
+  "item-568": {
+    "competitorItem": "https://www.ebay.com/itm/406626037157"
+  },
+  "item-569": {
+    "competitorItem": "https://www.ebay.com/itm/406626039020"
+  },
+  "item-570": {
+    "competitorItem": "https://www.ebay.com/itm/406747980394"
+  },
+  "item-571": {
+    "competitorItem": "https://www.ebay.com/itm/406748897955"
+  },
+  "item-572": {
+    "competitorItem": "https://www.ebay.com/itm/406749177324"
+  },
+  "item-573": {
+    "competitorItem": "https://www.ebay.com/itm/406749193848"
+  },
+  "item-574": {
+    "competitorItem": "https://www.ebay.com/itm/406749195559"
+  },
+  "item-575": {
+    "competitorItem": "https://www.ebay.com/itm/406749202620"
+  },
+  "item-576": {
+    "competitorItem": "https://www.ebay.com/itm/406749235854"
+  },
+  "item-577": {
+    "competitorItem": "https://www.ebay.com/itm/406749238709"
+  },
+  "item-578": {
+    "competitorItem": "https://www.ebay.com/itm/406749239658"
+  },
+  "item-579": {
+    "competitorItem": "https://www.ebay.com/itm/406749244541"
+  },
+  "item-580": {
+    "competitorItem": "https://www.ebay.com/itm/406811983916"
+  },
+  "item-581": {
+    "competitorItem": "https://www.ebay.com/itm/406835811146"
+  },
+  "item-582": {
+    "competitorItem": "https://www.ebay.com/itm/406837029648"
+  },
+  "item-583": {
+    "competitorItem": "https://www.ebay.com/itm/406918353996"
+  },
+  "item-585": {
+    "competitorItem": "https://www.ebay.com/itm/406840366402"
+  },
+  "item-587": {
+    "competitorItem": "https://www.ebay.com/itm/403944468186"
+  },
+  "item-593": {
+    "competitorItem": "https://www.ebay.com/itm/404022624809"
+  },
+  "item-594": {
+    "competitorItem": "https://www.ebay.com/itm/404028154336"
+  },
+  "item-596": {
+    "competitorItem": "https://www.ebay.com/itm/405387479163"
+  },
+  "item-598": {
+    "competitorItem": "https://www.ebay.com/itm/406676955407"
+  },
+  "item-600": {
+    "competitorItem": "https://www.ebay.com/itm/406933053439"
+  },
+  "item-601": {
+    "competitorItem": "https://www.ebay.com/itm/406933053795"
+  },
+  "item-602": {
+    "competitorItem": "https://www.ebay.com/itm/406942448888"
+  },
+  "item-603": {
+    "competitorItem": "https://www.ebay.com/itm/406942448946"
+  },
+  "item-604": {
+    "competitorItem": "https://www.ebay.com/itm/406942448990"
+  },
+  "item-605": {
+    "competitorItem": "https://www.ebay.com/itm/406942449033"
+  },
+  "item-606": {
+    "competitorItem": "https://www.ebay.com/itm/406676880569"
+  },
+  "item-607": {
+    "competitorItem": "https://www.ebay.com/itm/406676955407"
+  },
+  "item-608": {
+    "competitorItem": "https://www.ebay.com/itm/406682028512"
+  },
+  "item-609": {
+    "competitorItem": "https://www.ebay.com/itm/406682028622"
+  },
+  "item-610": {
+    "competitorItem": "https://www.ebay.com/itm/406682028660"
+  },
+  "item-613": {
+    "competitorItem": "https://www.ebay.com/itm/406689825309"
+  },
+  "item-614": {
+    "competitorItem": "https://www.ebay.com/itm/406689826760"
+  },
+  "item-615": {
+    "competitorItem": "https://www.ebay.com/itm/406689828188"
+  },
+  "item-616": {
+    "competitorItem": "https://www.ebay.com/itm/406689830689"
+  },
+  "item-617": {
+    "competitorItem": "https://www.ebay.com/itm/406820804769"
+  },
+  "item-618": {
+    "competitorItem": "https://www.ebay.com/itm/406821872224"
+  },
+  "item-619": {
+    "competitorItem": "https://www.ebay.com/itm/406821875019"
+  },
+  "item-620": {
+    "competitorItem": "https://www.ebay.com/itm/406826308246"
+  },
+  "item-621": {
+    "competitorItem": "https://www.ebay.com/itm/406826311817"
+  },
+  "item-622": {
+    "competitorItem": "https://www.ebay.com/itm/406826319988"
+  },
+  "item-623": {
+    "competitorItem": "https://www.ebay.com/itm/406826325087"
+  },
+  "item-624": {
+    "competitorItem": "https://www.ebay.com/itm/406830929664"
+  },
+  "item-625": {
+    "competitorItem": "https://www.ebay.com/itm/406830930693"
+  },
+  "item-626": {
+    "competitorItem": "https://www.ebay.com/itm/406830931133"
+  },
+  "item-627": {
+    "competitorItem": "https://www.ebay.com/itm/406830936194"
+  },
+  "item-628": {
+    "competitorItem": "https://www.ebay.com/itm/406830937667"
+  },
+  "item-629": {
+    "competitorItem": "https://www.ebay.com/itm/406830938607"
+  },
+  "item-630": {
+    "competitorItem": "https://www.ebay.com/itm/406830938998"
+  },
+  "item-631": {
+    "competitorItem": "https://www.ebay.com/itm/406860617027"
+  },
+  "item-632": {
+    "competitorItem": "https://www.ebay.com/itm/406860626625"
+  },
+  "item-633": {
+    "competitorItem": "https://www.ebay.com/itm/406860630884"
+  },
+  "item-635": {
+    "competitorItem": "https://www.ebay.com/itm/406863540603"
+  },
+  "item-636": {
+    "competitorItem": "https://www.ebay.com/itm/405768664152"
+  },
+  "item-637": {
+    "competitorItem": "https://www.ebay.com/itm/406837029648"
+  },
+  "item-638": {
+    "competitorItem": "https://www.ebay.com/itm/406870449189"
+  },
+  "item-640": {
+    "competitorItem": "https://www.ebay.com/itm/406519057745"
+  },
+  "item-643": {
+    "competitorItem": "https://www.ebay.com/itm/406519617609"
+  },
+  "item-644": {
+    "competitorItem": "https://www.ebay.com/itm/406522197091"
+  },
+  "item-646": {
+    "competitorItem": "https://www.ebay.com/itm/406625983406"
+  },
+  "item-647": {
+    "competitorItem": "https://www.ebay.com/itm/405768664152"
+  },
+  "item-648": {
+    "competitorItem": "https://www.ebay.com/itm/406710254747"
+  },
+  "item-650": {
+    "competitorItem": "https://www.ebay.com/itm/406663360990"
+  },
+  "item-651": {
+    "competitorItem": "https://www.ebay.com/itm/406663366582"
+  },
+  "item-652": {
+    "competitorItem": "https://www.ebay.com/itm/406663375926"
+  },
+  "item-654": {
+    "competitorItem": "https://www.ebay.com/itm/406663379415"
+  },
+  "item-656": {
+    "competitorItem": "https://www.ebay.com/itm/406666902755"
+  },
+  "item-657": {
+    "competitorItem": "https://www.ebay.com/itm/405117528003"
+  },
+  "item-659": {
+    "competitorItem": "https://www.ebay.com/itm/406746462246"
+  },
+  "item-660": {
+    "competitorItem": "https://www.ebay.com/itm/406801159292"
+  },
+  "item-661": {
+    "competitorItem": "https://www.ebay.com/itm/406801159377"
+  },
+  "item-662": {
+    "competitorItem": "https://www.ebay.com/itm/405181978658"
+  },
+  "item-663": {
+    "competitorItem": "https://www.ebay.com/itm/406801159500"
+  },
+  "item-664": {
+    "competitorItem": "https://www.ebay.com/itm/406801159639"
+  },
+  "item-665": {
+    "competitorItem": "https://www.ebay.com/itm/406801159804"
+  },
+  "item-666": {
+    "competitorItem": "https://www.ebay.com/itm/406801160094"
+  },
+  "item-668": {
+    "competitorItem": "https://www.ebay.com/itm/406803087796"
+  },
+  "item-669": {
+    "competitorItem": "https://www.ebay.com/itm/406803134324"
+  },
+  "item-670": {
+    "competitorItem": "https://www.ebay.com/itm/406803143294"
+  },
+  "item-671": {
+    "competitorItem": "https://www.ebay.com/itm/406841381914"
+  },
+  "item-672": {
+    "competitorItem": "https://www.ebay.com/itm/406841392293"
+  },
+  "item-673": {
+    "competitorItem": "https://www.ebay.com/itm/406841398242"
+  },
+  "item-674": {
+    "competitorItem": "https://www.ebay.com/itm/406841401251"
+  },
+  "item-675": {
+    "competitorItem": "https://www.ebay.com/itm/406841403593"
+  },
+  "item-677": {
+    "competitorItem": "https://www.ebay.com/itm/406841406726"
+  },
+  "item-678": {
+    "competitorItem": "https://www.ebay.com/itm/406366586559"
+  },
+  "item-679": {
+    "competitorItem": "https://www.ebay.com/itm/406841446263"
+  },
+  "item-680": {
+    "competitorItem": "https://www.ebay.com/itm/406449605497"
+  },
+  "item-681": {
+    "competitorItem": "https://www.ebay.com/itm/406366586702"
+  },
+  "item-682": {
+    "competitorItem": "https://www.ebay.com/itm/406841447674"
+  },
+  "item-684": {
+    "competitorItem": "https://www.ebay.com/itm/406901771710"
+  },
+  "item-685": {
+    "competitorItem": "https://www.ebay.com/itm/406449605841"
+  },
+  "item-686": {
+    "competitorItem": "https://www.ebay.com/itm/406902840638"
+  },
+  "item-689": {
+    "competitorItem": "https://www.ebay.com/itm/406902843031"
+  },
+  "item-690": {
+    "competitorItem": "https://www.ebay.com/itm/406455496653"
+  },
+  "item-691": {
+    "competitorItem": "https://www.ebay.com/itm/406902844197"
+  },
+  "item-697": {
+    "competitorItem": "https://www.ebay.com/itm/406904115070"
+  },
+  "item-700": {
+    "competitorItem": "https://www.ebay.com/itm/406904115194"
+  },
+  "item-702": {
+    "competitorItem": "https://www.ebay.com/itm/406904115329"
+  },
+  "item-703": {
+    "competitorItem": "https://www.ebay.com/itm/406785514884"
+  },
+  "item-705": {
+    "competitorItem": "https://www.ebay.com/itm/406785626485"
+  },
+  "item-706": {
+    "competitorItem": "https://www.ebay.com/itm/406909085544"
+  },
+  "item-707": {
+    "competitorItem": "https://www.ebay.com/itm/406909085770"
+  },
+  "item-709": {
+    "competitorItem": "https://www.ebay.com/itm/406909086004"
+  },
+  "item-710": {
+    "competitorItem": "https://www.ebay.com/itm/406847497300"
+  },
+  "item-711": {
+    "competitorItem": "https://www.ebay.com/itm/406909086204"
+  },
+  "item-712": {
+    "competitorItem": "https://www.ebay.com/itm/406847498963"
+  },
+  "item-715": {
+    "competitorItem": "https://www.ebay.com/itm/406909086621"
+  },
+  "item-717": {
+    "competitorItem": "https://www.ebay.com/itm/406909086846"
+  },
+  "item-719": {
+    "competitorItem": "https://www.ebay.com/itm/406909087062"
+  },
+  "item-721": {
+    "competitorItem": "https://www.ebay.com/itm/406909087288"
+  },
+  "item-722": {
+    "competitorItem": "https://www.ebay.com/itm/406663328317"
+  },
+  "item-723": {
+    "competitorItem": "https://www.ebay.com/itm/406852757517"
+  },
+  "item-724": {
+    "competitorItem": "https://www.ebay.com/itm/406897110598"
+  },
+  "item-725": {
+    "competitorItem": "https://www.ebay.com/itm/406897114484"
+  },
+  "item-726": {
+    "competitorItem": "https://www.ebay.com/itm/406897115854"
+  },
+  "item-727": {
+    "competitorItem": "https://www.ebay.com/itm/406897116743"
+  },
+  "item-730": {
+    "competitorItem": "https://www.ebay.com/itm/406897580506"
+  },
+  "item-731": {
+    "competitorItem": "https://www.ebay.com/itm/406897580605"
+  },
+  "item-732": {
+    "competitorItem": "https://www.ebay.com/itm/406897580721"
+  },
+  "item-733": {
+    "competitorItem": "https://www.ebay.com/itm/406897580817"
+  },
+  "item-734": {
+    "competitorItem": "https://www.ebay.com/itm/403929780848"
+  },
+  "item-742": {
+    "competitorItem": "https://www.ebay.com/itm/404015324655"
+  },
+  "item-743": {
+    "competitorItem": "https://www.ebay.com/itm/404015541486"
+  },
+  "item-746": {
+    "competitorItem": "https://www.ebay.com/itm/404015582175"
+  },
+  "item-747": {
+    "competitorItem": "https://www.ebay.com/itm/404848911216"
+  },
+  "item-748": {
+    "competitorItem": "https://www.ebay.com/itm/404848950870"
+  },
+  "item-759": {
+    "competitorItem": "https://www.ebay.com/itm/406768485764"
+  },
+  "item-760": {
+    "competitorItem": "https://www.ebay.com/itm/406768490909"
+  },
+  "item-761": {
+    "competitorItem": "https://www.ebay.com/itm/406768491586"
+  },
+  "item-762": {
+    "competitorItem": "https://www.ebay.com/itm/406768492036"
+  },
+  "item-763": {
+    "competitorItem": "https://www.ebay.com/itm/406768492379"
+  },
+  "item-765": {
+    "competitorItem": "https://www.ebay.com/itm/406775043032"
+  },
+  "item-766": {
+    "competitorItem": "https://www.ebay.com/itm/406676955407"
+  },
+  "item-767": {
+    "competitorItem": "https://www.ebay.com/itm/406804583507"
+  },
+  "item-768": {
+    "competitorItem": "https://www.ebay.com/itm/406804583562"
+  },
+  "item-769": {
+    "competitorItem": "https://www.ebay.com/itm/406804583689"
+  },
+  "item-770": {
+    "competitorItem": "https://www.ebay.com/itm/406804583772"
+  },
+  "item-771": {
+    "competitorItem": "https://www.ebay.com/itm/403829349020"
+  },
+  "item-772": {
+    "competitorItem": "https://www.ebay.com/itm/403896771983"
+  },
+  "item-773": {
+    "competitorItem": "https://www.ebay.com/itm/404089907396"
+  },
+  "item-774": {
+    "competitorItem": "https://www.ebay.com/itm/406641293178"
+  },
+  "item-776": {
+    "competitorItem": "https://www.ebay.com/itm/406641293627"
+  },
+  "item-777": {
+    "competitorItem": "https://www.ebay.com/itm/406641293857"
+  },
+  "item-778": {
+    "competitorItem": "https://www.ebay.com/itm/406881311796"
+  },
+  "item-779": {
+    "competitorItem": "https://www.ebay.com/itm/406881312010"
+  },
+  "item-780": {
+    "competitorItem": "https://www.ebay.com/itm/406881312172"
+  },
+  "item-781": {
+    "competitorItem": "https://www.ebay.com/itm/406881312350"
+  },
+  "item-782": {
+    "competitorItem": "https://www.ebay.com/itm/406881312555"
+  },
+  "item-783": {
+    "competitorItem": "https://www.ebay.com/itm/406881312627"
+  },
+  "item-784": {
+    "competitorItem": "https://www.ebay.com/itm/406881312662"
+  },
+  "item-785": {
+    "competitorItem": "https://www.ebay.com/itm/406881312696"
+  },
+  "item-786": {
+    "competitorItem": "https://www.ebay.com/itm/406881312725"
+  },
+  "item-787": {
+    "competitorItem": "https://www.ebay.com/itm/406881312756"
+  },
+  "item-788": {
+    "competitorItem": "https://www.ebay.com/itm/406881312793"
+  },
+  "item-789": {
+    "competitorItem": "https://www.ebay.com/itm/406881312831"
+  },
+  "item-790": {
+    "competitorItem": "https://www.ebay.com/itm/406881312867"
+  },
+  "item-791": {
+    "competitorItem": "https://www.ebay.com/itm/406881312986"
+  },
+  "item-792": {
+    "competitorItem": "https://www.ebay.com/itm/406881313057"
+  },
+  "item-793": {
+    "competitorItem": "https://www.ebay.com/itm/406881313107"
+  },
+  "item-794": {
+    "competitorItem": "https://www.ebay.com/itm/406881313149"
+  },
+  "item-795": {
+    "competitorItem": "https://www.ebay.com/itm/406881313182"
+  },
+  "item-796": {
+    "competitorItem": "https://www.ebay.com/itm/406881313220"
+  },
+  "item-797": {
+    "competitorItem": "https://www.ebay.com/itm/406893312844"
+  },
+  "item-798": {
+    "competitorItem": "https://www.ebay.com/itm/406893312940"
+  },
+  "item-799": {
+    "competitorItem": "https://www.ebay.com/itm/406893313004"
+  },
+  "item-800": {
+    "competitorItem": "https://www.ebay.com/itm/406893313265"
+  },
+  "item-801": {
+    "competitorItem": "https://www.ebay.com/itm/406893313344"
+  },
+  "item-802": {
+    "competitorItem": "https://www.ebay.com/itm/406893988661"
+  },
+  "item-805": {
+    "competitorItem": "https://www.ebay.com/itm/406893996926"
+  },
+  "item-806": {
+    "competitorItem": "https://www.ebay.com/itm/406893997761"
+  },
+  "item-807": {
+    "competitorItem": "https://www.ebay.com/itm/406899687676"
+  },
+  "item-808": {
+    "competitorItem": "https://www.ebay.com/itm/406899687740"
+  },
+  "item-815": {
+    "competitorItem": "https://www.ebay.com/itm/406901771348"
+  },
+  "item-816": {
+    "competitorItem": "https://www.ebay.com/itm/406901771517"
+  },
+  "item-827": {
+    "competitorItem": "https://www.ebay.com/itm/406679144739"
+  },
+  "item-828": {
+    "competitorItem": "https://www.ebay.com/itm/406710254747"
+  },
+  "item-829": {
+    "competitorItem": "https://www.ebay.com/itm/406910209600"
+  },
+  "item-830": {
+    "competitorItem": "https://www.ebay.com/itm/406910202349"
+  },
+  "item-832": {
+    "competitorItem": "https://www.ebay.com/itm/406785482037"
+  },
+  "item-833": {
+    "competitorItem": "https://www.ebay.com/itm/406833847101"
+  },
+  "item-836": {
+    "competitorItem": "https://www.ebay.com/itm/405692007670"
+  },
+  "item-838": {
+    "competitorItem": "https://www.ebay.com/itm/406813799347"
+  },
+  "item-839": {
+    "competitorItem": "https://www.ebay.com/itm/406813799723"
+  },
+  "item-840": {
+    "competitorItem": "https://www.ebay.com/itm/406813799347"
+  },
+  "item-843": {
+    "competitorItem": "https://www.ebay.com/itm/406816477220"
+  },
+  "item-844": {
+    "competitorItem": "https://www.ebay.com/itm/406172655453"
+  },
+  "item-845": {
+    "competitorItem": "https://www.ebay.com/itm/406695535476"
+  },
+  "item-846": {
+    "competitorItem": "https://www.ebay.com/itm/406812351749"
+  },
+  "item-847": {
+    "competitorItem": "https://www.ebay.com/itm/406812351450"
+  },
+  "item-848": {
+    "competitorItem": "https://www.ebay.com/itm/406812351053"
+  },
+  "item-849": {
+    "competitorItem": "https://www.ebay.com/itm/406956013827"
+  },
+  "item-850": {
+    "competitorItem": "https://www.ebay.com/itm/406956014022"
+  },
+  "item-851": {
+    "competitorItem": "https://www.ebay.com/itm/403965932040"
+  },
+  "item-852": {
+    "competitorItem": "https://www.ebay.com/itm/403965923944"
+  },
+  "item-853": {
+    "competitorItem": "https://www.ebay.com/itm/403965920841"
+  },
+  "item-854": {
+    "competitorItem": "https://www.ebay.com/itm/403965916218"
+  },
+  "item-856": {
+    "competitorItem": "https://www.ebay.com/itm/406810049810"
+  },
+  "item-860": {
+    "competitorItem": "https://www.ebay.com/itm/406878760799"
+  },
+  "item-861": {
+    "competitorItem": "https://www.ebay.com/itm/406878761139"
+  },
+  "item-862": {
+    "competitorItem": "https://www.ebay.com/itm/405812439781"
+  },
+  "item-863": {
+    "competitorItem": "https://www.ebay.com/itm/406723959207"
+  },
+  "item-864": {
+    "competitorItem": "https://www.ebay.com/itm/406890044374"
+  },
+  "item-865": {
+    "competitorItem": "https://www.ebay.com/itm/406890034872"
+  },
+  "item-866": {
+    "competitorItem": "https://www.ebay.com/itm/405589924500"
+  },
+  "item-868": {
+    "competitorItem": "https://www.ebay.com/itm/406888768087"
+  },
+  "item-870": {
+    "competitorItem": "https://www.ebay.com/itm/406264086868"
+  },
+  "item-871": {
+    "competitorItem": "https://www.ebay.com/itm/406264086868"
+  },
+  "item-872": {
+    "competitorItem": "https://www.ebay.com/itm/406723959111"
+  },
+  "item-874": {
+    "competitorItem": "https://www.ebay.com/itm/406641292917"
+  },
+  "item-875": {
+    "competitorItem": "https://www.ebay.com/itm/406804583618"
+  },
+  "item-878": {
+    "competitorItem": "https://www.ebay.com/itm/406807615461"
+  },
+  "item-879": {
+    "competitorItem": "https://www.ebay.com/itm/406807615195"
+  },
+  "item-880": {
+    "competitorItem": "https://www.ebay.com/itm/406807615023"
+  },
+  "item-881": {
+    "competitorItem": "https://www.ebay.com/itm/406807614857"
+  },
+  "item-882": {
+    "competitorItem": "https://www.ebay.com/itm/406888478928"
+  },
+  "item-883": {
+    "competitorItem": "https://www.ebay.com/itm/406888501392"
+  },
+  "item-885": {
+    "competitorItem": "https://www.ebay.com/itm/406888478928"
+  },
+  "item-887": {
+    "competitorItem": "https://www.ebay.com/itm/406806122702"
+  },
+  "item-888": {
+    "competitorItem": "https://www.ebay.com/itm/406811968476"
+  },
+  "item-889": {
+    "competitorItem": "https://www.ebay.com/itm/406806118959"
+  },
+  "item-890": {
+    "competitorItem": "https://www.ebay.com/itm/406806087102"
+  },
+  "item-892": {
+    "competitorItem": "https://www.ebay.com/itm/406806081839"
+  },
+  "item-895": {
+    "competitorItem": "https://www.ebay.com/itm/404576784898"
+  },
+  "item-896": {
+    "competitorItem": "https://www.ebay.com/itm/406643021453"
+  },
+  "item-897": {
+    "competitorItem": "https://www.ebay.com/itm/406643019833"
+  },
+  "item-898": {
+    "competitorItem": "https://www.ebay.com/itm/406643018117"
+  },
+  "item-899": {
+    "competitorItem": "https://www.ebay.com/itm/406642954763"
+  },
+  "item-900": {
+    "competitorItem": "https://www.ebay.com/itm/406643033408"
+  },
+  "item-901": {
+    "competitorItem": "https://www.ebay.com/itm/406643027402"
+  },
+  "item-902": {
+    "competitorItem": "https://www.ebay.com/itm/406643025485"
+  },
+  "item-903": {
+    "competitorItem": "https://www.ebay.com/itm/406285480472"
+  },
+  "item-904": {
+    "competitorItem": "https://www.ebay.com/itm/406796226888"
+  },
+  "item-906": {
+    "competitorItem": "https://www.ebay.com/itm/406852813190"
+  },
+  "item-907": {
+    "competitorItem": "https://www.ebay.com/itm/406710254747"
+  },
+  "item-908": {
+    "competitorItem": "https://www.ebay.com/itm/406813799723"
+  },
+  "item-909": {
+    "competitorItem": "https://www.ebay.com/itm/406676919576"
+  },
+  "item-911": {
+    "competitorItem": "https://www.ebay.com/itm/405173848455"
+  },
+  "item-912": {
+    "competitorItem": "https://www.ebay.com/itm/403981181751"
+  },
+  "item-913": {
+    "competitorItem": "https://www.ebay.com/itm/406869287977"
+  },
+  "item-914": {
+    "competitorItem": "https://www.ebay.com/itm/405905241473"
+  },
+  "item-915": {
+    "competitorItem": "https://www.ebay.com/itm/406733498406"
+  },
+  "item-918": {
+    "competitorItem": "https://www.ebay.com/itm/406689832224"
+  },
+  "item-919": {
+    "competitorItem": "https://www.ebay.com/itm/403993012601"
+  },
+  "item-920": {
+    "competitorItem": "https://www.ebay.com/itm/403993023887"
+  },
+  "item-921": {
+    "competitorItem": "https://www.ebay.com/itm/403993021058"
+  },
+  "item-922": {
+    "competitorItem": "https://www.ebay.com/itm/403993043044"
+  },
+  "item-923": {
+    "competitorItem": "https://www.ebay.com/itm/403993006740"
+  },
+  "item-924": {
+    "competitorItem": "https://www.ebay.com/itm/403981165446"
+  },
+  "item-925": {
+    "competitorItem": "https://www.ebay.com/itm/403981162644"
+  },
+  "item-926": {
+    "competitorItem": "https://www.ebay.com/itm/406495801951"
+  },
+  "item-927": {
+    "competitorItem": "https://www.ebay.com/itm/406951089607"
+  },
+  "item-928": {
+    "competitorItem": "https://www.ebay.com/itm/403901677758"
+  },
+  "item-929": {
+    "competitorItem": "https://www.ebay.com/itm/406710089143"
+  },
+  "item-930": {
+    "competitorItem": "https://www.ebay.com/itm/406682028601"
+  },
+  "item-933": {
+    "competitorItem": "https://www.ebay.com/itm/406591310604"
+  },
+  "item-934": {
+    "competitorItem": "https://www.ebay.com/itm/406627244718"
+  },
+  "item-935": {
+    "competitorItem": "https://www.ebay.com/itm/403749656372"
+  },
+  "item-937": {
+    "competitorItem": "https://www.ebay.com/itm/406644838294"
+  },
+  "item-938": {
+    "competitorItem": "https://www.ebay.com/itm/406951089607"
+  },
+  "item-939": {
+    "competitorItem": "https://www.ebay.com/itm/405694126966"
+  },
+  "item-943": {
+    "competitorItem": "https://www.ebay.com/itm/404086333021"
+  },
+  "item-944": {
+    "competitorItem": "https://www.ebay.com/itm/406917665991"
+  },
+  "item-945": {
+    "competitorItem": "https://www.ebay.com/itm/405828712153"
+  },
+  "item-946": {
+    "competitorItem": "https://www.ebay.com/itm/404220350130"
+  },
+  "item-947": {
+    "competitorItem": "https://www.ebay.com/itm/406664144827"
+  },
+  "item-948": {
+    "competitorItem": "https://www.ebay.com/itm/406660610422"
+  },
+  "item-951": {
+    "competitorItem": "https://www.ebay.com/itm/406264085720"
+  },
+  "item-952": {
+    "competitorItem": "https://www.ebay.com/itm/405824528020"
+  },
+  "item-954": {
+    "competitorItem": "https://www.ebay.com/itm/406652736510"
+  },
+  "item-955": {
+    "competitorItem": "https://www.ebay.com/itm/406366586371"
+  },
+  "item-956": {
+    "competitorItem": "https://www.ebay.com/itm/406366586702"
+  },
+  "item-957": {
+    "competitorItem": "https://www.ebay.com/itm/406956013926"
+  },
+  "item-960": {
+    "competitorItem": "https://www.ebay.com/itm/406519617609"
+  },
+  "item-963": {
+    "competitorItem": "https://www.ebay.com/itm/405602915654"
+  },
+  "item-964": {
+    "competitorItem": "https://www.ebay.com/itm/404086376627"
+  },
+  "item-965": {
+    "competitorItem": "https://www.ebay.com/itm/403811378673"
+  },
+  "item-966": {
+    "competitorItem": "https://www.ebay.com/itm/403811378000"
+  },
+  "item-967": {
+    "competitorItem": "https://www.ebay.com/itm/404089829940"
+  },
+  "item-969": {
+    "competitorItem": "https://www.ebay.com/itm/406131959057"
+  },
+  "item-970": {
+    "competitorItem": "https://www.ebay.com/itm/404017017537"
+  },
+  "item-971": {
+    "competitorItem": "https://www.ebay.com/itm/405802484265"
+  },
+  "item-972": {
+    "competitorItem": "https://www.ebay.com/itm/406051201625"
+  },
+  "item-974": {
+    "competitorItem": "https://www.ebay.com/itm/403896757647"
+  },
+  "item-975": {
+    "competitorItem": "https://www.ebay.com/itm/404499655362"
+  },
+  "item-976": {
+    "competitorItem": "https://www.ebay.com/itm/405680750958"
+  },
+  "item-977": {
+    "competitorItem": "https://www.ebay.com/itm/405790426487"
+  },
+  "item-978": {
+    "competitorItem": "https://www.ebay.com/itm/403993040371"
+  },
+  "item-979": {
+    "competitorItem": "https://www.ebay.com/itm/404452675064"
+  },
+  "item-980": {
+    "competitorItem": "https://www.ebay.com/itm/404008114389"
+  },
+  "item-981": {
+    "competitorItem": "https://www.ebay.com/itm/405953166677"
+  },
+  "item-983": {
+    "competitorItem": "https://www.ebay.com/itm/405856139768"
+  },
+  "item-985": {
+    "competitorItem": "https://www.ebay.com/itm/404181630757"
+  },
+  "item-986": {
+    "competitorItem": "https://www.ebay.com/itm/403894859723"
+  },
+  "item-987": {
+    "competitorItem": "https://www.ebay.com/itm/405895782995"
+  },
+  "item-988": {
+    "competitorItem": "https://www.ebay.com/itm/405848014353"
+  },
+  "item-989": {
+    "competitorItem": "https://www.ebay.com/itm/405915674675"
+  },
+  "item-990": {
+    "competitorItem": "https://www.ebay.com/itm/405824527950"
+  },
+  "item-992": {
+    "competitorItem": "https://www.ebay.com/itm/406086412308"
+  },
+  "item-993": {
+    "competitorItem": "https://www.ebay.com/itm/405833121937"
+  },
+  "item-994": {
+    "competitorItem": "https://www.ebay.com/itm/405582611726"
+  },
+  "item-996": {
+    "competitorItem": "https://www.ebay.com/itm/404022616591"
+  },
+  "item-997": {
+    "competitorItem": "https://www.ebay.com/itm/405874284841"
+  },
+  "item-998": {
+    "competitorItem": "https://www.ebay.com/itm/405813896416"
+  },
+  "item-999": {
+    "competitorItem": "https://www.ebay.com/itm/405799879650"
+  },
+  "item-1001": {
+    "competitorItem": "https://www.ebay.com/itm/405517212547"
+  },
+  "item-1002": {
+    "competitorItem": "https://www.ebay.com/itm/405865853441"
+  },
+  "item-1003": {
+    "competitorItem": "https://www.ebay.com/itm/404126792709"
+  },
+  "item-1004": {
+    "competitorItem": "https://www.ebay.com/itm/405828711030"
+  },
+  "item-1005": {
+    "competitorItem": "https://www.ebay.com/itm/405846396555"
+  },
+  "item-1007": {
+    "competitorItem": "https://www.ebay.com/itm/405469933953"
+  },
+  "item-1009": {
+    "competitorItem": "https://www.ebay.com/itm/405343967723"
+  },
+  "item-1010": {
+    "competitorItem": "https://www.ebay.com/itm/405680751404"
+  },
+  "item-1011": {
+    "competitorItem": "https://www.ebay.com/itm/404089817305"
+  },
+  "item-1012": {
+    "competitorItem": "https://www.ebay.com/itm/405677989820"
+  },
+  "item-1014": {
+    "competitorItem": "https://www.ebay.com/itm/405456251568"
+  },
+  "item-1015": {
+    "competitorItem": "https://www.ebay.com/itm/404062829109"
+  },
+  "item-1016": {
+    "competitorItem": "https://www.ebay.com/itm/404183254746"
+  },
+  "item-1017": {
+    "competitorItem": "https://www.ebay.com/itm/404181632062"
+  },
+  "item-1018": {
+    "competitorItem": "https://www.ebay.com/itm/404357710335"
+  },
+  "item-1019": {
+    "competitorItem": "https://www.ebay.com/itm/405070250785"
+  },
+  "item-1020": {
+    "competitorItem": "https://www.ebay.com/itm/406710089143"
+  },
+  "item-1023": {
+    "competitorItem": "https://www.ebay.com/itm/405312487193"
+  },
+  "item-1026": {
+    "competitorItem": "https://www.ebay.com/itm/405438857263"
+  },
+  "item-1027": {
+    "competitorItem": "https://www.ebay.com/itm/405438857191"
+  },
+  "item-1028": {
+    "competitorItem": "https://www.ebay.com/itm/403961380768"
+  },
+  "item-1029": {
+    "competitorItem": "https://www.ebay.com/itm/404115049130"
+  },
+  "item-1033": {
+    "competitorItem": "https://www.ebay.com/itm/403944486642"
+  },
+  "item-1035": {
+    "competitorItem": "https://www.ebay.com/itm/405788053382"
+  },
+  "item-1039": {
+    "competitorItem": "https://www.ebay.com/itm/404171587786"
+  },
+  "item-1040": {
+    "competitorItem": "https://www.ebay.com/itm/405895782182"
+  },
+  "item-1043": {
+    "competitorItem": "https://www.ebay.com/itm/405348353340"
+  },
+  "item-1045": {
+    "competitorItem": "https://www.ebay.com/itm/406899687676"
+  },
+  "item-1047": {
+    "competitorItem": "https://www.ebay.com/itm/403767785958"
+  },
+  "item-1049": {
+    "competitorItem": "https://www.ebay.com/itm/404193620162"
+  },
+  "item-1057": {
+    "competitorItem": "https://www.ebay.com/itm/403972659878"
+  },
+  "item-1058": {
+    "competitorItem": "https://www.ebay.com/itm/403972666860"
+  },
+  "item-1061": {
+    "competitorItem": "https://www.ebay.com/itm/405854578930"
+  },
+  "item-1062": {
+    "competitorItem": "https://www.ebay.com/itm/405783383834"
+  },
+  "item-1065": {
+    "competitorItem": "https://www.ebay.com/itm/404452730349"
+  },
+  "item-1066": {
+    "competitorItem": "https://www.ebay.com/itm/404256947887"
+  },
+  "item-1067": {
+    "competitorItem": "https://www.ebay.com/itm/405810960455"
+  },
+  "item-1070": {
+    "competitorItem": "https://www.ebay.com/itm/405785180358"
+  },
+  "item-1079": {
+    "competitorItem": "https://www.ebay.com/itm/403736130338"
+  },
+  "item-1080": {
+    "competitorItem": "https://www.ebay.com/itm/405768664152"
+  },
+  "item-1081": {
+    "competitorItem": "https://www.ebay.com/itm/405422095890"
+  },
+  "item-1084": {
+    "competitorItem": "https://www.ebay.com/itm/403903721090"
+  },
+  "item-1085": {
+    "competitorItem": "https://www.ebay.com/itm/403793345600"
+  },
+  "item-1087": {
+    "competitorItem": "https://www.ebay.com/itm/405679678555"
+  },
+  "item-1091": {
+    "competitorItem": "https://www.ebay.com/itm/405673011552"
+  },
+  "item-1093": {
+    "competitorItem": "https://www.ebay.com/itm/405425043684"
+  },
+  "item-1094": {
+    "competitorItem": "https://www.ebay.com/itm/403972663057"
+  },
+  "item-1095": {
+    "competitorItem": "https://www.ebay.com/itm/403928236598"
+  },
+  "item-1096": {
+    "competitorItem": "https://www.ebay.com/itm/406870449189"
+  },
+  "item-1101": {
+    "competitorItem": "https://www.ebay.com/itm/404742093913"
+  },
+  "item-1108": {
+    "competitorItem": "https://www.ebay.com/itm/404145784233"
+  },
+  "item-1110": {
+    "competitorItem": "https://www.ebay.com/itm/405559596323"
+  },
+  "item-1111": {
+    "competitorItem": "https://www.ebay.com/itm/404115051903"
+  },
+  "item-1113": {
+    "competitorItem": "https://www.ebay.com/itm/405492889272"
+  },
+  "item-1114": {
+    "competitorItem": "https://www.ebay.com/itm/404792576151"
+  },
+  "item-1115": {
+    "competitorItem": "https://www.ebay.com/itm/405333168382"
+  },
+  "item-1116": {
+    "competitorItem": "https://www.ebay.com/itm/405416334430"
+  },
+  "item-1117": {
+    "competitorItem": "https://www.ebay.com/itm/404145784233"
+  },
+  "item-1119": {
+    "competitorItem": "https://www.ebay.com/itm/404939030667"
+  },
+  "item-1120": {
+    "competitorItem": "https://www.ebay.com/itm/403993034629"
+  },
+  "item-1121": {
+    "competitorItem": "https://www.ebay.com/itm/403992999172"
+  },
+  "item-1127": {
+    "competitorItem": "https://www.ebay.com/itm/405457188767"
+  },
+  "item-1128": {
+    "competitorItem": "https://www.ebay.com/itm/404028161357"
+  },
+  "item-1129": {
+    "competitorItem": "https://www.ebay.com/itm/404089829672"
+  },
+  "item-1131": {
+    "competitorItem": "https://www.ebay.com/itm/405353717584"
+  },
+  "item-1133": {
+    "competitorItem": "https://www.ebay.com/itm/406654803735"
+  },
+  "item-1135": {
+    "competitorItem": "https://www.ebay.com/itm/404286244757"
+  },
+  "item-1136": {
+    "competitorItem": "https://www.ebay.com/itm/403979266428"
+  },
+  "item-1137": {
+    "competitorItem": "https://www.ebay.com/itm/405353773626"
+  },
+  "item-1138": {
+    "competitorItem": "https://www.ebay.com/itm/405212387421"
+  },
+  "item-1139": {
+    "competitorItem": "https://www.ebay.com/itm/405314116135"
+  },
+  "item-1140": {
+    "competitorItem": "https://www.ebay.com/itm/405314117747"
+  },
+  "item-1142": {
+    "competitorItem": "https://www.ebay.com/itm/405276385512"
+  },
+  "item-1145": {
+    "competitorItem": "https://www.ebay.com/itm/404583470850"
+  },
+  "item-1146": {
+    "competitorItem": "https://www.ebay.com/itm/404589788000"
+  },
+  "item-1147": {
+    "competitorItem": "https://www.ebay.com/itm/405145763224"
+  },
+  "item-1148": {
+    "competitorItem": "https://www.ebay.com/itm/405204037722"
+  },
+  "item-1149": {
+    "competitorItem": "https://www.ebay.com/itm/405110223716"
+  },
+  "item-1150": {
+    "competitorItem": "https://www.ebay.com/itm/405072749540"
+  },
+  "item-1151": {
+    "competitorItem": "https://www.ebay.com/itm/404705344863"
+  },
+  "item-1152": {
+    "competitorItem": "https://www.ebay.com/itm/405115653731"
+  },
+  "item-1153": {
+    "competitorItem": "https://www.ebay.com/itm/405108590976"
+  },
+  "item-1154": {
+    "competitorItem": "https://www.ebay.com/itm/405091999426"
+  },
+  "item-1155": {
+    "competitorItem": "https://www.ebay.com/itm/404931663281"
+  },
+  "item-1156": {
+    "competitorItem": "https://www.ebay.com/itm/404877784138"
+  },
+  "item-1157": {
+    "competitorItem": "https://www.ebay.com/itm/404808495810"
+  },
+  "item-1158": {
+    "competitorItem": "https://www.ebay.com/itm/405092006709"
+  },
+  "item-1159": {
+    "competitorItem": "https://www.ebay.com/itm/404944815425"
+  },
+  "item-1160": {
+    "competitorItem": "https://www.ebay.com/itm/405092004443"
+  },
+  "item-1161": {
+    "competitorItem": "https://www.ebay.com/itm/405092002127"
+  },
+  "item-1162": {
+    "competitorItem": "https://www.ebay.com/itm/405068264986"
+  },
+  "item-1163": {
+    "competitorItem": "https://www.ebay.com/itm/404835070495"
+  },
+  "item-1164": {
+    "competitorItem": "https://www.ebay.com/itm/405152338404"
+  },
+  "item-1165": {
+    "competitorItem": "https://www.ebay.com/itm/405145190327"
+  },
+  "item-1166": {
+    "competitorItem": "https://www.ebay.com/itm/404181691066"
+  },
+  "item-1167": {
+    "competitorItem": "https://www.ebay.com/itm/404986607914"
+  },
+  "item-1168": {
+    "competitorItem": "https://www.ebay.com/itm/405072769748"
+  },
+  "item-1169": {
+    "competitorItem": "https://www.ebay.com/itm/405035889557"
+  },
+  "item-1170": {
+    "competitorItem": "https://www.ebay.com/itm/404958145617"
+  },
+  "item-1171": {
+    "competitorItem": "https://www.ebay.com/itm/404848911216"
+  },
+  "item-1172": {
+    "competitorItem": "https://www.ebay.com/itm/404566507936"
+  },
+  "item-1173": {
+    "competitorItem": "https://www.ebay.com/itm/404986607914"
+  },
+  "item-1174": {
+    "competitorItem": "https://www.ebay.com/itm/404946396100"
+  },
+  "item-1175": {
+    "competitorItem": "https://www.ebay.com/itm/404644488096"
+  },
+  "item-1176": {
+    "competitorItem": "https://www.ebay.com/itm/404701583773"
+  },
+  "item-1178": {
+    "competitorItem": "https://www.ebay.com/itm/404936811858"
+  },
+  "item-1180": {
+    "competitorItem": "https://www.ebay.com/itm/406830931133"
+  },
+  "item-1182": {
+    "competitorItem": "https://www.ebay.com/itm/403749641592"
+  },
+  "item-1183": {
+    "competitorItem": "https://www.ebay.com/itm/404801161670"
+  },
+  "item-1184": {
+    "competitorItem": "https://www.ebay.com/itm/404818566194"
+  },
+  "item-1185": {
+    "competitorItem": "https://www.ebay.com/itm/404804602300"
+  },
+  "item-1186": {
+    "competitorItem": "https://www.ebay.com/itm/404728221341"
+  },
+  "item-1187": {
+    "competitorItem": "https://www.ebay.com/itm/404692166049"
+  },
+  "item-1188": {
+    "competitorItem": "https://www.ebay.com/itm/404542729619"
+  },
+  "item-1189": {
+    "competitorItem": "https://www.ebay.com/itm/404542751216"
+  },
+  "item-1190": {
+    "competitorItem": "https://www.ebay.com/itm/404459918314"
+  },
+  "item-1191": {
+    "competitorItem": "https://www.ebay.com/itm/404475357087"
+  },
+  "item-1192": {
+    "competitorItem": "https://www.ebay.com/itm/404437377647"
+  },
+  "item-1193": {
+    "competitorItem": "https://www.ebay.com/itm/404364892453"
+  },
+  "item-1194": {
+    "competitorItem": "https://www.ebay.com/itm/404429555151"
+  },
+  "item-1195": {
+    "competitorItem": "https://www.ebay.com/itm/404409852362"
+  },
+  "item-1196": {
+    "competitorItem": "https://www.ebay.com/itm/404344495436"
+  },
+  "item-1197": {
+    "competitorItem": "https://www.ebay.com/itm/404348465106"
+  },
+  "item-1198": {
+    "competitorItem": "https://www.ebay.com/itm/403981110599"
+  },
+  "item-1201": {
+    "competitorItem": "https://www.ebay.com/itm/404339734765"
+  },
+  "item-1202": {
+    "competitorItem": "https://www.ebay.com/itm/404261719350"
+  },
+  "item-1203": {
+    "competitorItem": "https://www.ebay.com/itm/404279914113"
+  },
+  "item-1204": {
+    "competitorItem": "https://www.ebay.com/itm/404279878246"
+  },
+  "item-1206": {
+    "competitorItem": "https://www.ebay.com/itm/404220350130"
+  },
+  "item-1208": {
+    "competitorItem": "https://www.ebay.com/itm/404062865508"
+  },
+  "item-1209": {
+    "competitorItem": "https://www.ebay.com/itm/404193620162"
+  },
+  "item-1210": {
+    "competitorItem": "https://www.ebay.com/itm/404576784898"
+  },
+  "item-1211": {
+    "competitorItem": "https://www.ebay.com/itm/404183264214"
+  },
+  "item-1212": {
+    "competitorItem": "https://www.ebay.com/itm/404181689262"
+  },
+  "item-1213": {
+    "competitorItem": "https://www.ebay.com/itm/404115050905"
+  },
+  "item-1214": {
+    "competitorItem": "https://www.ebay.com/itm/404115052214"
+  },
+  "item-1215": {
+    "competitorItem": "https://www.ebay.com/itm/404062844072"
+  },
+  "item-1216": {
+    "competitorItem": "https://www.ebay.com/itm/404062862379"
+  },
+  "item-1220": {
+    "competitorItem": "https://www.ebay.com/itm/404054651041"
+  },
+  "item-1221": {
+    "competitorItem": "https://www.ebay.com/itm/404008032789"
+  },
+  "item-1223": {
+    "competitorItem": "https://www.ebay.com/itm/403834359477"
   }
 }
