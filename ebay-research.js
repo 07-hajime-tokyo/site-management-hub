@@ -1,4 +1,4 @@
-const DATA_URL = "./data/ebay-research-dashboard.json?v=20260617-review-sync-v1";
+const DATA_URL = "./data/ebay-research-dashboard.json?v=20260617-review-sync-v2";
 const DUPLICATE_CHECK_URL = "./api/listing-duplicates";
 const REVIEW_SAVE_URL = "./api/listing-status";
 const REVIEW_STORAGE_KEY = "ebayResearchManualReviews:v1";
@@ -44,6 +44,7 @@ const el = {
   reviewDigest: document.querySelector("#reviewDigest"),
   reviewEditor: document.querySelector("#reviewEditor"),
   reviewSaveButton: document.querySelector("#saveReviewNowButton"),
+  reviewReloadButton: document.querySelector("#reloadReviewsButton"),
   resultLine: document.querySelector("#resultLine"),
   productList: document.querySelector("#productList"),
   loadingState: document.querySelector("#loadingState"),
@@ -121,6 +122,10 @@ function bindEvents() {
 
   el.reviewSaveButton?.addEventListener("click", () => {
     saveDirtyReviewsToSheet();
+  });
+
+  el.reviewReloadButton?.addEventListener("click", () => {
+    reloadSharedReviewsFromSheet();
   });
 
   document.addEventListener("keydown", handleKeyboardNavigation);
@@ -888,15 +893,50 @@ function scrollSelectedRowIntoView() {
   });
 }
 
-async function loadSharedReviewsFromSheet() {
-  if (!state.meta.sourceSpreadsheetId || !state.meta.sourceSheetName) return;
+async function reloadSharedReviewsFromSheet() {
+  if (state.reviewDirty.size) {
+    const confirmed = window.confirm(
+      "未保存の目視判断があります。スプシから再読込すると画面上の未保存変更は上書きされます。続けますか？",
+    );
+    if (!confirmed) return;
+  }
+
+  setReviewReloadButtonLoading(true);
+  setReviewSync(state.selectedId, {
+    type: "saving",
+    label: "スプシ再読込中",
+    icon: "loader-circle",
+  });
+
+  try {
+    await loadSharedReviewsFromSheet({ showStatus: true });
+    initializeDirtyReviews();
+    render();
+  } finally {
+    setReviewReloadButtonLoading(false);
+  }
+}
+
+async function loadSharedReviewsFromSheet(options = {}) {
+  const showStatus = Boolean(options.showStatus);
+  if (!state.meta.sourceSpreadsheetId || !state.meta.sourceSheetName) {
+    if (showStatus) {
+      setReviewSync(state.selectedId, {
+        type: "error",
+        label: "スプシ情報がありません",
+        icon: "cloud-alert",
+      });
+    }
+    return { loaded: false, applied: 0 };
+  }
   try {
     const payload = await postJson(REVIEW_SAVE_URL, {
       mode: "research-review-load",
       sourceSpreadsheetId: state.meta.sourceSpreadsheetId,
       sourceSheetName: state.meta.sourceSheetName,
     });
-    if (!payload.configured || !payload.loaded || !payload.reviews) return;
+    if (!payload.configured) throw new Error(payload.message || "スプシ接続未設定");
+    if (!payload.loaded || !payload.reviews) throw new Error(payload.error || "スプシ読込失敗");
 
     const incoming = Array.isArray(payload.reviews)
       ? payload.reviews
@@ -913,19 +953,38 @@ async function loadSharedReviewsFromSheet() {
       };
       applied += 1;
     }
-    if (!applied) return;
+    if (!applied) {
+      if (showStatus) {
+        setReviewSync(state.selectedId, {
+          type: "idle",
+          label: "スプシ更新なし",
+          icon: "cloud-check",
+        });
+      }
+      return { loaded: true, applied: 0 };
+    }
     saveReviews();
     setReviewSync(state.selectedId, {
       type: "saved",
-      label: `スプシ読込済み ${formatNumber(applied)}件`,
+      label: `${showStatus ? "スプシ再読込済み" : "スプシ読込済み"} ${formatNumber(applied)}件`,
       icon: "cloud-check",
     });
-  } catch {
-    setReviewSync(state.selectedId, {
-      type: "idle",
-      label: "スプシ読込は未確認",
-      icon: "cloud",
-    });
+    return { loaded: true, applied };
+  } catch (error) {
+    if (showStatus) {
+      setReviewSync(state.selectedId, {
+        type: "error",
+        label: error.message || "スプシ再読込失敗",
+        icon: "cloud-alert",
+      });
+    } else {
+      setReviewSync(state.selectedId, {
+        type: "idle",
+        label: "スプシ読込は未確認",
+        icon: "cloud",
+      });
+    }
+    return { loaded: false, applied: 0 };
   }
 }
 
@@ -1162,6 +1221,17 @@ function renderReviewSaveButton() {
     <i data-lucide="cloud-upload" aria-hidden="true"></i>
     ${escapeHtml(reviewSaveButtonLabel())}
   `;
+}
+
+function setReviewReloadButtonLoading(isLoading) {
+  const button = el.reviewReloadButton;
+  if (!button) return;
+  button.disabled = Boolean(isLoading);
+  button.innerHTML = `
+    <i data-lucide="${isLoading ? "loader-circle" : "refresh-cw"}" aria-hidden="true"></i>
+    ${isLoading ? "再読込中" : "スプシ再読込"}
+  `;
+  renderIcons();
 }
 
 function reviewSaveButtonLabel() {
