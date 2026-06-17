@@ -21,6 +21,10 @@ PAYOUT_RATE = 1 - EBAY_FEE_RATE
 JST = timezone(timedelta(hours=9))
 IMAGE_URL_RE = re.compile(r"https?://[^\s\"'<>),]+", re.IGNORECASE)
 IMAGE_EXT_RE = re.compile(r"\.(?:avif|gif|jpe?g|png|webp)(?:[?#].*)?$", re.IGNORECASE)
+EBAY_ITEM_URL_RE = re.compile(
+    r"https?://(?:www\.)?ebay\.com/itm/(?:[^/?#]+/)?(\d{10,15})",
+    re.IGNORECASE,
+)
 IMAGE_HOST_HINTS = {
     "i.ebayimg.com",
     "thumbs.ebaystatic.com",
@@ -310,6 +314,26 @@ def extract_urls(value: str) -> list[str]:
     return [url.rstrip(".,;") for url in IMAGE_URL_RE.findall(clean_text(value))]
 
 
+def normalize_ebay_item_url(value: str) -> str:
+    text = clean_text(value)
+    if not text:
+        return ""
+    match = EBAY_ITEM_URL_RE.search(text)
+    if match:
+        return f"https://www.ebay.com/itm/{match.group(1)}"
+    if re.fullmatch(r"\d{10,15}", text):
+        return f"https://www.ebay.com/itm/{text}"
+    return ""
+
+
+def find_ebay_item_url(values) -> str:
+    for value in values:
+        url = normalize_ebay_item_url(value)
+        if url:
+            return url
+    return ""
+
+
 def is_image_url(url: str) -> bool:
     parsed = urlparse(url)
     host = parsed.netloc.lower()
@@ -343,6 +367,18 @@ def load_image_overrides(data_dir: Path) -> dict:
     return payload if isinstance(payload, dict) else {}
 
 
+def load_link_overrides(data_dir: Path) -> dict:
+    path = data_dir / "ebay-research-link-overrides.json"
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        print(f"warning: ignored invalid link override file: {path}", file=sys.stderr)
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
 def get_override_image(overrides: dict, item_id: str, normalized_title: str, source_key: str) -> str:
     candidates = [overrides.get(item_id, {}), overrides.get(normalized_title, {})]
     for candidate in candidates:
@@ -359,7 +395,27 @@ def get_override_image(overrides: dict, item_id: str, normalized_title: str, sou
     return ""
 
 
-def row_to_item(row: dict, image_overrides: dict | None = None) -> dict:
+def get_link_override(overrides: dict, item_id: str, normalized_title: str, key: str) -> str:
+    candidates = [overrides.get(item_id, {}), overrides.get(normalized_title, {})]
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            continue
+        value = clean_text(candidate.get(key))
+        if value:
+            return value
+        links = candidate.get("links", {})
+        if isinstance(links, dict):
+            value = clean_text(links.get(key))
+            if value:
+                return value
+    return ""
+
+
+def row_to_item(
+    row: dict,
+    image_overrides: dict | None = None,
+    link_overrides: dict | None = None,
+) -> dict:
     title = clean_text(row.get("商品名"))
     item_no = clean_int(row.get("#"))
     item_id = f"item-{item_no}"
@@ -386,6 +442,12 @@ def row_to_item(row: dict, image_overrides: dict | None = None) -> dict:
     product_research_url = safe_link(row.get("eBayプロダクトリサーチ"))
     specialist_source = build_specialist_source(domestic_kw, title, safe_link(row.get("専門・補助検索")))
     image_overrides = image_overrides or {}
+    link_overrides = link_overrides or {}
+    competitor_item_url = (
+        normalize_ebay_item_url(get_link_override(link_overrides, item_id, normalized_title, "competitorItem"))
+        or normalize_ebay_item_url(competitor_url)
+        or find_ebay_item_url(row.values())
+    )
     source_images = {
         "makse": get_override_image(image_overrides, item_id, normalized_title, "makse")
         or pick_image_url(
@@ -442,6 +504,7 @@ def row_to_item(row: dict, image_overrides: dict | None = None) -> dict:
 
     links = {
         "competitor": competitor_url,
+        "competitorItem": competitor_item_url,
         "ebaySearch": ebay_search_url,
         "productResearch": product_research_url or build_ebay_keyword_research_url(ebay_kw, title),
         "makse": build_makse_url(ebay_kw, title),
@@ -506,10 +569,10 @@ def row_to_item(row: dict, image_overrides: dict | None = None) -> dict:
                 "key": "makse",
                 "label": "makse",
                 "title": "makse2313のSold/競合確認",
-                "url": build_makse_url(ebay_kw, title),
+                "url": competitor_item_url or build_makse_url(ebay_kw, title),
                 "imageUrl": source_images["makse"],
                 "emptyText": "makse画像URL未取得",
-                "note": "元リサーチ対象セラーのSold確認",
+                "note": "eBay item page" if competitor_item_url else "元リサーチ対象セラーのSold確認",
             },
             {
                 "key": "ebay-research-us",
@@ -561,8 +624,9 @@ def main() -> int:
     output_path = Path(sys.argv[2])
     df = pd.read_excel(input_path, sheet_name="還付込利益判定").fillna("")
     image_overrides = load_image_overrides(output_path.parent)
+    link_overrides = load_link_overrides(output_path.parent)
     rows = [
-        row_to_item(row, image_overrides)
+        row_to_item(row, image_overrides, link_overrides)
         for row in df.to_dict("records")
         if clean_text(row.get("商品名"))
     ]

@@ -1,5 +1,23 @@
-const { batchUpdateValues, isSheetsConfigured, quoteSheetName } = require("./google-sheets");
+const {
+  batchUpdateValues,
+  columnLetter,
+  ensureHeaders,
+  isSheetsConfigured,
+  quoteSheetName,
+  readSheetRows,
+} = require("./google-sheets");
 const { getListingConfig, readQueue, stringValue } = require("./listing-shared");
+
+const RESEARCH_REVIEW_HEADERS = [
+  "目視判断",
+  "目視メモ1st",
+  "情報再取得",
+  "再取得理由",
+  "参照URL",
+  "目視更新日時",
+  "Codex Item ID",
+  "Codex Title",
+];
 
 module.exports = async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -21,16 +39,26 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    const body = req.body || {};
+    if (body.mode === "research-review-load") {
+      await handleResearchReviewLoad(res, body);
+      return;
+    }
+    if (body.mode === "research-review-batch") {
+      await handleResearchReviewBatch(res, body);
+      return;
+    }
+
     const config = getListingConfig();
-    const rowNumber = await resolveRowNumber(config, req.body || {});
-    const status = stringValue(req.body?.status) || "下書き作成済み";
-    const memo = stringValue(req.body?.memo);
-    const sellstaListingId = stringValue(req.body?.sellstaListingId);
+    const rowNumber = await resolveRowNumber(config, body);
+    const status = stringValue(body?.status) || "下書き作成済み";
+    const memo = stringValue(body?.memo);
+    const sellstaListingId = stringValue(body?.sellstaListingId);
     const sellstaUrl =
-      stringValue(req.body?.sellstaUrl) ||
+      stringValue(body?.sellstaUrl) ||
       (sellstaListingId ? `https://sellsta.jp/listings/${encodeURIComponent(sellstaListingId)}/edit` : "");
     const draftSavedAt =
-      stringValue(req.body?.draftSavedAt) || new Date().toISOString();
+      stringValue(body?.draftSavedAt) || new Date().toISOString();
 
     const data = [
       {
@@ -66,6 +94,115 @@ module.exports = async function handler(req, res) {
   }
 };
 
+async function handleResearchReviewLoad(res, body) {
+  const spreadsheetId = stringValue(body.sourceSpreadsheetId);
+  const sheetName = stringValue(body.sourceSheetName);
+  if (!spreadsheetId || !sheetName) {
+    res.status(400).json({
+      configured: true,
+      loaded: false,
+      error: "sourceSpreadsheetId and sourceSheetName are required.",
+    });
+    return;
+  }
+
+  const { rows } = await readSheetRows(spreadsheetId, sheetName, "A:ZZ");
+  const reviews = {};
+  for (const row of rows) {
+    const itemNo = stringValue(row["#"] || row["Codex Item No"] || row.itemNo);
+    const itemId = stringValue(row["Codex Item ID"] || row.itemId) || (itemNo ? `item-${itemNo}` : "");
+    if (!itemId) continue;
+    reviews[itemId] = {
+      itemId,
+      itemNo,
+      title: stringValue(row["Codex Title"] || row["商品名"] || row.title),
+      decision: normalizeResearchDecision(row["目視判断"] || row.manualDecision || row.visualDecision),
+      memo: stringValue(row["目視メモ1st"] || row.manualMemo || row.memo),
+      refreshRequested: booleanValue(row["情報再取得"] || row.refreshRequested),
+      refreshReason: stringValue(row["再取得理由"] || row.refreshReason),
+      refreshReferenceUrl: stringValue(row["参照URL"] || row.refreshReferenceUrl),
+      updatedAt: stringValue(row["目視更新日時"] || row.reviewUpdatedAt),
+      rowNumber: row.__rowNumber,
+    };
+  }
+
+  res.status(200).json({
+    configured: true,
+    loaded: true,
+    reviewCount: Object.keys(reviews).length,
+    reviews,
+  });
+}
+
+async function handleResearchReviewBatch(res, body) {
+  const spreadsheetId = stringValue(body.sourceSpreadsheetId);
+  const sheetName = stringValue(body.sourceSheetName);
+  const reviews = Array.isArray(body.reviews) ? body.reviews : [];
+  if (!spreadsheetId || !sheetName) {
+    res.status(400).json({
+      configured: true,
+      saved: false,
+      error: "sourceSpreadsheetId and sourceSheetName are required.",
+    });
+    return;
+  }
+  if (!reviews.length) {
+    res.status(200).json({
+      configured: true,
+      saved: true,
+      savedCount: 0,
+      savedItems: [],
+      errors: [],
+    });
+    return;
+  }
+
+  await ensureHeaders(spreadsheetId, sheetName, RESEARCH_REVIEW_HEADERS);
+  const { headers, rows } = await readSheetRows(spreadsheetId, sheetName, "A:ZZ");
+  const headerIndex = buildHeaderIndex(headers);
+  const updates = [];
+  const savedItems = [];
+  const errors = [];
+  const updatedAt = new Date().toISOString();
+
+  for (const review of reviews) {
+    const rowNumber = findResearchReviewRow(rows, review);
+    const itemId = stringValue(review.itemId);
+    if (!rowNumber) {
+      errors.push({ itemId, error: "Matching source row was not found." });
+      continue;
+    }
+
+    addReviewUpdate(updates, sheetName, headerIndex, rowNumber, "目視判断", normalizeResearchDecision(review.decision));
+    addReviewUpdate(updates, sheetName, headerIndex, rowNumber, "目視メモ1st", stringValue(review.memo));
+    addReviewUpdate(updates, sheetName, headerIndex, rowNumber, "情報再取得", booleanValue(review.refreshRequested) ? "TRUE" : "");
+    addReviewUpdate(updates, sheetName, headerIndex, rowNumber, "再取得理由", stringValue(review.refreshReason));
+    addReviewUpdate(updates, sheetName, headerIndex, rowNumber, "参照URL", stringValue(review.refreshReferenceUrl));
+    addReviewUpdate(updates, sheetName, headerIndex, rowNumber, "目視更新日時", updatedAt);
+    addReviewUpdate(updates, sheetName, headerIndex, rowNumber, "Codex Item ID", itemId);
+    addReviewUpdate(updates, sheetName, headerIndex, rowNumber, "Codex Title", stringValue(review.title));
+
+    savedItems.push({
+      itemId,
+      itemNo: stringValue(review.itemNo),
+      rowNumber,
+      updatedAt,
+    });
+  }
+
+  if (updates.length) {
+    await batchUpdateValues(spreadsheetId, updates);
+  }
+
+  res.status(200).json({
+    configured: true,
+    saved: savedItems.length > 0 || errors.length === 0,
+    savedCount: savedItems.length,
+    savedItems,
+    errors,
+  });
+}
+
 async function resolveRowNumber(config, body) {
   const numericRow = Number(body.rowNumber);
   if (Number.isInteger(numericRow) && numericRow >= 2) return numericRow;
@@ -81,4 +218,55 @@ async function resolveRowNumber(config, body) {
   }
 
   throw new Error("rowNumber or sourceId/sourceRow is required.");
+}
+
+function buildHeaderIndex(headers) {
+  return headers.reduce((acc, header, index) => {
+    if (header) acc[header] = index;
+    return acc;
+  }, {});
+}
+
+function addReviewUpdate(updates, sheetName, headerIndex, rowNumber, header, value) {
+  const columnIndex = headerIndex[header];
+  if (columnIndex === undefined) return;
+  const column = columnLetter(columnIndex);
+  updates.push({
+    range: `${quoteSheetName(sheetName)}!${column}${rowNumber}:${column}${rowNumber}`,
+    values: [[value]],
+  });
+}
+
+function findResearchReviewRow(rows, review) {
+  const itemId = stringValue(review.itemId);
+  const itemNo = stringValue(review.itemNo);
+  const title = stringValue(review.title).toLowerCase();
+  const byCodexId = itemId
+    ? rows.find((row) => stringValue(row["Codex Item ID"] || row.itemId) === itemId)
+    : null;
+  if (byCodexId) return byCodexId.__rowNumber;
+
+  const byNumber = itemNo
+    ? rows.find((row) => stringValue(row["#"] || row["Codex Item No"] || row.itemNo) === itemNo)
+    : null;
+  if (byNumber) return byNumber.__rowNumber;
+
+  const byTitle = title
+    ? rows.find((row) => stringValue(row["商品名"] || row["Codex Title"] || row.title).toLowerCase() === title)
+    : null;
+  return byTitle?.__rowNumber || 0;
+}
+
+function normalizeResearchDecision(value) {
+  const text = stringValue(value);
+  if (["○", "〇"].includes(text)) return "◯";
+  if (/^(ok|yes|true)$/i.test(text)) return "◯";
+  if (/^(ng|no|false|x)$/i.test(text)) return "✗";
+  return text;
+}
+
+function booleanValue(value) {
+  if (value === true) return true;
+  const text = stringValue(value).toLowerCase();
+  return ["1", "true", "yes", "y", "on", "checked", "ok", "◯", "○", "〇"].includes(text);
 }

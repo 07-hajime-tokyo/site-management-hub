@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "check": "node --check app.js && node --check ebay-research.js && node --check ebay-listing-prep.js && node --check progress.js && node --check api/shared-tools.js && node --check api/progress.js && node --check api/memos.js && node --check api/rebuild.js && node --check api/google-sheets.js && node --check api/listing-shared.js && node --check api/listing-sources.js && node --check api/listing-import.js && node --check api/listing-queue.js && node --check api/listing-status.js && node --check api/listing-duplicates.js && node --check local-server.mjs",
+    "check": "node --check app.js && node --check ebay-research.js && node --check ebay-confirm-links.js && node --check ebay-listing-prep.js && node --check progress.js && node --check api/shared-tools.js && node --check api/progress.js && node --check api/memos.js && node --check api/rebuild.js && node --check api/google-sheets.js && node --check api/listing-shared.js && node --check api/listing-sources.js && node --check api/listing-import.js && node --check api/listing-queue.js && node --check api/listing-status.js && node --check api/listing-duplicates.js && node --check local-server.mjs",
     "dev": "node local-server.mjs"
   }
 }

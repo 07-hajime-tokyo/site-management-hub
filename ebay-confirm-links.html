@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>仕入れ確認リンク</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./ebay-confirm-links.css?v=20260617-sidebar-v2" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <script src="./ebay-confirm-links.js?v=20260617-sidebar-v2" defer></script>
+  </head>
+  <body>
+    <main class="link-hub-shell">
+      <header class="link-hub-head">
+        <a class="back-link" href="./ebay-research.html">
+          <i data-lucide="arrow-left" aria-hidden="true"></i>
+          リサーチ判定ボード
+        </a>
+        <div>
+          <p id="itemNo">確認リンク</p>
+          <h1 id="itemTitle">読み込み中</h1>
+        </div>
+        <button class="copy-button" id="copyLinksButton" type="button">
+          <i data-lucide="copy" aria-hidden="true"></i>
+          URL一括コピー
+        </button>
+      </header>
+
+      <div class="link-hub-content">
+        <section class="link-main" aria-label="仕入れ確認リンク" data-focus-zone="main" tabindex="-1">
+          <section class="links" id="linkList" aria-label="確認リンク"></section>
+
+          <label class="url-output">
+            <span>URL一覧</span>
+            <textarea id="urlList" readonly></textarea>
+          </label>
+        </section>
+
+        <aside class="profit-sidebar" id="profitSidebar" aria-label="仕入れ利益ライン" data-focus-zone="right" tabindex="-1"></aside>
+      </div>
+    </main>
+  </body>
+</html>

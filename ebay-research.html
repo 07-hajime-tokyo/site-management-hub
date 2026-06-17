@@ -3,20 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>eBayリサーチ判定ビュー</title>
+    <title>リサーチ判定ボード</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./ebay-research.css?v=20260610-1" />
+    <link rel="stylesheet" href="./ebay-research.css?v=20260617-review-sync-v1" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
-    <script src="./ebay-research.js?v=20260610-1" defer></script>
+    <script src="./ebay-research.js?v=20260617-review-sync-v1" defer></script>
   </head>
   <body>
     <main class="research-shell">
-      <aside class="product-panel" aria-label="出品候補一覧">
+      <aside class="product-panel" aria-label="出品候補一覧" data-focus-zone="left" tabindex="-1">
         <header class="panel-head">
           <a class="back-link" href="./index.html">
             <i data-lucide="arrow-left" aria-hidden="true"></i>
@@ -28,82 +28,163 @@
           </a>
           <a class="back-link" href="./ebay-listing-prep.html">
             <i data-lucide="clipboard-list" aria-hidden="true"></i>
-            出品準備ビュー
+            出品下書き準備
           </a>
           <div>
-            <p class="eyebrow">EBAY RESEARCH</p>
-            <h1>出品判定ビュー</h1>
+            <p class="eyebrow">リサーチフェーズ</p>
+            <h1>リサーチ判定ボード</h1>
           </div>
         </header>
 
-        <section class="summary-strip" aria-label="判定集計">
-          <div class="summary-card">
-            <span>総数</span>
-            <strong id="summaryTotal">--</strong>
-          </div>
-          <div class="summary-card ok">
-            <span>◯</span>
-            <strong id="summaryOk">--</strong>
-          </div>
-          <div class="summary-card warn">
-            <span>△</span>
-            <strong id="summaryMaybe">--</strong>
-          </div>
-          <div class="summary-card ng">
-            <span>✗</span>
-            <strong id="summaryNo">--</strong>
-          </div>
-        </section>
+        <div class="quick-link-row" aria-label="関連リンク">
+          <a class="quick-link-button" id="sourceSheetLink" href="#" target="_blank" rel="noreferrer" aria-disabled="true">
+            <i data-lucide="table-2" aria-hidden="true"></i>
+            スプシ
+          </a>
+          <a class="quick-link-button" href="./ebay-listing-prep.html?guide-v1=1">
+            <i data-lucide="clipboard-list" aria-hidden="true"></i>
+            出品準備
+          </a>
+        </div>
+
+        <details class="panel-toggle filter-toggle" id="summaryToggle">
+          <summary>
+            <span>選択</span>
+            <strong id="summaryDigest">--</strong>
+            <i data-lucide="chevron-down" aria-hidden="true"></i>
+          </summary>
+          <section class="filter-panel" aria-label="絞り込みと並び替え">
+            <section class="summary-strip compact-summary" aria-label="判定集計">
+              <div class="summary-card">
+                <span>総数</span>
+                <strong id="summaryTotal">--</strong>
+              </div>
+              <div class="summary-card ok">
+                <span>◯</span>
+                <strong id="summaryOk">--</strong>
+              </div>
+              <div class="summary-card warn">
+                <span>△</span>
+                <strong id="summaryMaybe">--</strong>
+              </div>
+              <div class="summary-card ng">
+                <span>✗</span>
+                <strong id="summaryNo">--</strong>
+              </div>
+            </section>
+
+            <div class="filter-group">
+              <span class="filter-group-title">AI判定</span>
+              <div class="filter-bar" aria-label="AI判定の絞り込み">
+                <button class="chip is-active" type="button" data-filter="decision" data-value="all">すべて</button>
+                <button class="chip" type="button" data-filter="decision" data-value="◯">◯</button>
+                <button class="chip" type="button" data-filter="decision" data-value="△">△</button>
+                <button class="chip" type="button" data-filter="decision" data-value="✗">✗</button>
+                <button class="chip" type="button" data-filter="decision" data-value="保留">保留</button>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-group-title">目視状態</span>
+              <div class="filter-bar review-status-filter" aria-label="目視判断の絞り込み">
+                <button class="chip is-active" type="button" data-filter="reviewStatus" data-value="all">すべて</button>
+                <button class="chip" type="button" data-filter="reviewStatus" data-value="pending">未</button>
+                <button class="chip" type="button" data-filter="reviewStatus" data-value="done">済</button>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-group-title">送料区分</span>
+              <div class="filter-bar" aria-label="送料区分の絞り込み">
+                <button class="chip is-active" type="button" data-filter="shippingClass" data-value="all">すべて</button>
+                <button class="chip" type="button" data-filter="shippingClass" data-value="小型">小型</button>
+                <button class="chip" type="button" data-filter="shippingClass" data-value="中型">中型</button>
+                <button class="chip" type="button" data-filter="shippingClass" data-value="長尺">長尺</button>
+                <button class="chip" type="button" data-filter="shippingClass" data-value="大型">大型</button>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-group-title">並び順</span>
+              <div class="filter-bar sort-filter" aria-label="並び順">
+                <button class="chip is-active" type="button" data-filter="sort" data-value="sheet">シート順</button>
+                <button class="chip" type="button" data-filter="sort" data-value="profit">利益順</button>
+                <button class="chip" type="button" data-filter="sort" data-value="sold">Sold順</button>
+                <button class="chip" type="button" data-filter="sort" data-value="price">売価順</button>
+                <button class="chip" type="button" data-filter="sort" data-value="dutyProfit">関税込み利益順</button>
+              </div>
+            </div>
+
+            <p class="filter-help">
+              一度決めたら頻繁に触らない条件はここに格納しています。商品カードの移動と目視判断はキーボードでも操作できます。
+            </p>
+          </section>
+        </details>
 
         <label class="search-field" for="productSearch">
           <i data-lucide="search" aria-hidden="true"></i>
           <input id="productSearch" type="search" autocomplete="off" placeholder="タイトル・型番・キーワード" />
         </label>
 
-        <div class="filter-bar" aria-label="絞り込み">
-          <button class="chip is-active" type="button" data-filter="decision" data-value="all">すべて</button>
-          <button class="chip" type="button" data-filter="decision" data-value="◯">◯</button>
-          <button class="chip" type="button" data-filter="decision" data-value="△">△</button>
-          <button class="chip" type="button" data-filter="decision" data-value="✗">✗</button>
-          <button class="chip" type="button" data-filter="decision" data-value="保留">保留</button>
+        <details class="panel-toggle review-toggle" id="reviewToggle">
+          <summary>
+            <span>目視入力</span>
+            <strong id="reviewDigest">未入力</strong>
+            <i data-lucide="chevron-down" aria-hidden="true"></i>
+          </summary>
+          <section class="review-editor" id="reviewEditor" aria-label="目視判断入力"></section>
+        </details>
+        <div class="review-save-bar" id="reviewSaveBar" aria-label="目視判断の一括保存">
+          <button class="review-save-button" id="saveReviewNowButton" type="button" disabled>
+            <i data-lucide="cloud-upload" aria-hidden="true"></i>
+            未保存なし
+          </button>
         </div>
 
-        <div class="select-row">
-          <label>
-            <span>送料区分</span>
-            <select id="classFilter">
-              <option value="all">すべて</option>
-              <option value="小型">小型</option>
-              <option value="中型">中型</option>
-              <option value="長尺">長尺</option>
-              <option value="大型">大型</option>
-            </select>
-          </label>
-          <label>
-            <span>並び順</span>
-            <select id="sortSelect">
-              <option value="sheet">シート順</option>
-              <option value="profit">利益順</option>
-              <option value="sold">Sold順</option>
-              <option value="price">売価順</option>
-              <option value="dutyProfit">関税込み利益順</option>
-            </select>
-          </label>
-        </div>
-
-        <section class="review-editor" id="reviewEditor" aria-label="目視判断入力"></section>
+        <section class="sidebar-help-card" aria-label="操作メモ">
+          <i data-lucide="keyboard" aria-hidden="true"></i>
+          <p>
+            <kbd>Shift</kbd> + <kbd>↑↓</kbd>でカード移動、<kbd>Shift</kbd> + <kbd>←→</kbd>で目視ステータス変更。<kbd>Cmd/Ctrl</kbd> + <kbd>←→</kbd>で左・中央・右のフォーカス移動。
+          </p>
+        </section>
 
         <div class="result-line" id="resultLine">読み込み中</div>
         <div class="product-list" id="productList"></div>
       </aside>
 
-      <section class="preview-panel" aria-live="polite">
+      <button
+        class="sidebar-resizer"
+        type="button"
+        role="separator"
+        aria-label="左サイドバーの幅を変更"
+        aria-orientation="vertical"
+        aria-valuemin="320"
+        aria-valuemax="720"
+        aria-valuenow="420"
+      ></button>
+
+      <section class="preview-panel" aria-live="polite" data-focus-zone="main" tabindex="-1">
         <div class="loading-state" id="loadingState">
           <i data-lucide="loader-circle" aria-hidden="true"></i>
           <p>データを読み込んでいます</p>
         </div>
         <article class="product-preview" id="productPreview" hidden></article>
       </section>
+
+      <button
+        class="right-sidebar-resizer"
+        type="button"
+        role="separator"
+        aria-label="右サイドバーの幅を変更"
+        aria-orientation="vertical"
+        aria-valuemin="300"
+        aria-valuemax="640"
+        aria-valuenow="340"
+      ></button>
+
+      <aside class="research-side-panel" aria-label="リンクと補助情報" data-focus-zone="right" tabindex="-1">
+        <div class="side-panel-inner" id="rightSidebar"></div>
+      </aside>
     </main>
   </body>
 </html>
