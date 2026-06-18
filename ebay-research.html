@@ -10,9 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./ebay-research.css?v=20260617-review-sync-v3" />
+    <link rel="stylesheet" href="./ebay-research.css?v=20260618-sourcing-ui-v2" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
-    <script src="./ebay-research.js?v=20260617-review-sync-v3" defer></script>
+    <script src="./ebay-research.js?v=20260618-sourcing-ui-v2" defer></script>
   </head>
   <body>
     <main class="research-shell">
@@ -105,6 +105,14 @@
             </div>
 
             <div class="filter-group">
+              <span class="filter-group-title">仕入れ候補</span>
+              <div class="filter-bar sourcing-filter" aria-label="仕入れ候補の絞り込み">
+                <button class="chip is-active" type="button" data-filter="sourcingStatus" data-value="all">すべて</button>
+                <button class="chip" type="button" data-filter="sourcingStatus" data-value="candidate">仕入れ</button>
+              </div>
+            </div>
+
+            <div class="filter-group">
               <span class="filter-group-title">並び順</span>
               <div class="filter-bar sort-filter" aria-label="並び順">
                 <button class="chip is-active" type="button" data-filter="sort" data-value="sheet">シート順</button>
@@ -112,6 +120,7 @@
                 <button class="chip" type="button" data-filter="sort" data-value="sold">Sold順</button>
                 <button class="chip" type="button" data-filter="sort" data-value="price">売価順</button>
                 <button class="chip" type="button" data-filter="sort" data-value="dutyProfit">関税込み利益順</button>
+                <button class="chip" type="button" data-filter="sort" data-value="sourcing">仕入れ候補順</button>
               </div>
             </div>
 

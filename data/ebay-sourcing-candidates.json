@@ -1,0 +1,259 @@
+{
+  "meta": {
+    "title": "仕入れ候補URL",
+    "sourceSpreadsheetId": "1Xm_cdYS3tkmTDYLcyXZi85Ctxy1s3bKNyEHOIwBoQPg",
+    "sourceSpreadsheetUrl": "https://docs.google.com/spreadsheets/d/1Xm_cdYS3tkmTDYLcyXZi85Ctxy1s3bKNyEHOIwBoQPg/edit?gid=1294305931#gid=1294305931",
+    "sourceSheetName": "eBay AI◯ 国内仕入リサーチ依頼 Sold1/10 URL枠 2026-06-07",
+    "updatedAt": "2026-06-18T10:20:00+09:00",
+    "staff": "野田",
+    "notes": [
+      "C列のリサーチ担当者が野田の行から、URLがある仕入れ候補だけをリサーチ判定ボード用に整理しています。",
+      "currentPriceTextはスプレッドシート入力値を優先し、currentPriceJpyは比較用の数値です。",
+      "statusはスプレッドシート追記時の仕入れ上限比較・目視メモを反映しています。"
+    ]
+  },
+  "items": {
+    "item-8": [
+      {
+        "url": "https://paypayfleamarket.yahoo.co.jp/item/z626472218",
+        "platform": "Yahooフリマ",
+        "currentPriceText": "29,800円",
+        "currentPriceJpy": 29800,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "Qi10 MAX 10.5ヘッド"
+      }
+    ],
+    "item-9": [
+      {
+        "url": "https://www.amazon.co.jp/dp/B0CQSXM6FJ",
+        "platform": "Amazon",
+        "currentPriceText": "35,400円",
+        "currentPriceJpy": 35400,
+        "kind": "シャフト付き",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "Qi10 MAX 9ヘッド相当"
+      },
+      {
+        "url": "https://auctions.yahoo.co.jp/jp/auction/j1228457097",
+        "platform": "Yahooオークション",
+        "currentPriceText": "34,800円",
+        "currentPriceJpy": 34800,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "Qi10 MAX 9ヘッド"
+      }
+    ],
+    "item-12": [
+      {
+        "url": "https://store.shopping.yahoo.co.jp/golfmap-japan/b17115385b.html",
+        "platform": "Yahooショッピング",
+        "currentPriceText": "27,900円",
+        "currentPriceJpy": 27900,
+        "kind": "シャフト付き",
+        "status": "対象外",
+        "staff": "野田",
+        "memo": "G430 MAX 3W。ドライバーヘッド条件からは対象外"
+      },
+      {
+        "url": "https://store.shopping.yahoo.co.jp/golfkace02/2026050800958652.html",
+        "platform": "Yahooショッピング",
+        "currentPriceText": "28,930円",
+        "currentPriceJpy": 28930,
+        "kind": "シャフト付き",
+        "status": "対象外",
+        "staff": "野田",
+        "memo": "G430 MAX 3W。ドライバーヘッド条件からは対象外"
+      }
+    ],
+    "item-15": [
+      {
+        "url": "https://store.shopping.yahoo.co.jp/golfpartner/2100409793768.html",
+        "platform": "Yahooショッピング",
+        "currentPriceText": "10,849円",
+        "currentPriceJpy": 10849,
+        "kind": "シャフト付き",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "M5 10.5ヘッド相当"
+      },
+      {
+        "url": "https://store.shopping.yahoo.co.jp/golfpartner/2100416287069.html",
+        "platform": "Yahooショッピング",
+        "currentPriceText": "11,947円",
+        "currentPriceJpy": 11947,
+        "kind": "シャフト付き",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "M5 10.5ヘッド相当"
+      }
+    ],
+    "item-16": [
+      {
+        "url": "https://auctions.yahoo.co.jp/jp/auction/r1233159068",
+        "platform": "Yahooオークション",
+        "currentPriceText": "10,000円",
+        "currentPriceJpy": 10000,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "M5 9ヘッド"
+      },
+      {
+        "url": "https://store.shopping.yahoo.co.jp/golfpartner/2100406339976.html",
+        "platform": "Yahooショッピング",
+        "currentPriceText": "10,827円",
+        "currentPriceJpy": 10827,
+        "kind": "シャフト付き",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "M5 9ヘッド相当"
+      }
+    ],
+    "item-17": [
+      {
+        "url": "https://jp.mercari.com/item/m85609155658",
+        "platform": "メルカリ",
+        "currentPriceText": "25,800円",
+        "currentPriceJpy": 25800,
+        "kind": "ヘッドのみ",
+        "status": "対象外",
+        "staff": "野田",
+        "memo": "G430 MAX 5W。ドライバーヘッド条件からは対象外"
+      },
+      {
+        "url": "https://jp.mercari.com/shops/product/2JKrcNcqxqCkn438EPQqt3",
+        "platform": "メルカリShops",
+        "currentPriceText": "26,730円",
+        "currentPriceJpy": 26730,
+        "kind": "ヘッドのみ",
+        "status": "対象外",
+        "staff": "野田",
+        "memo": "G430 MAX 5W。ドライバーヘッド条件からは対象外"
+      }
+    ],
+    "item-24": [
+      {
+        "url": "https://www.amazon.co.jp/dp/B0DQWY427B",
+        "platform": "Amazon",
+        "currentPriceText": "31,900円",
+        "currentPriceJpy": 31900,
+        "kind": "シャフト付き",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "ELYTE MAX FAST 10.5ヘッド相当"
+      },
+      {
+        "url": "https://store.shopping.yahoo.co.jp/alpen-group/6010860415.html",
+        "platform": "Yahooショッピング",
+        "currentPriceText": "34,800円",
+        "currentPriceJpy": 34800,
+        "kind": "シャフト付き",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "ELYTE MAX FAST 10.5ヘッド相当"
+      }
+    ],
+    "item-25": [
+      {
+        "url": "https://paypayfleamarket.yahoo.co.jp/item/z589207704",
+        "platform": "Yahooフリマ",
+        "currentPriceText": "28,9000円",
+        "currentPriceJpy": 289000,
+        "kind": "ヘッドのみ",
+        "status": "要確認",
+        "staff": "野田",
+        "memo": "ELYTE Triple Diamond 9ヘッド。スプシ価格表記の桁を要確認"
+      },
+      {
+        "url": "https://paypayfleamarket.yahoo.co.jp/item/z621894564",
+        "platform": "Yahooフリマ",
+        "currentPriceText": "29,800円",
+        "currentPriceJpy": 29800,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "ELYTE Triple Diamond 9ヘッド"
+      }
+    ],
+    "item-28": [
+      {
+        "url": "https://store.shopping.yahoo.co.jp/golfpartner/2100410703336.html",
+        "platform": "Yahooショッピング",
+        "currentPriceText": "14,186円",
+        "currentPriceJpy": 14186,
+        "kind": "シャフト付き",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "SIM 9ヘッド相当"
+      },
+      {
+        "url": "https://store.shopping.yahoo.co.jp/golfpartner/2100399708193.html",
+        "platform": "Yahooショッピング",
+        "currentPriceText": "14,186円",
+        "currentPriceJpy": 14186,
+        "kind": "シャフト付き",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "SIM 9ヘッド相当"
+      }
+    ],
+    "item-29": [
+      {
+        "url": "https://jp.mercari.com/item/m98420699586",
+        "platform": "メルカリ",
+        "currentPriceText": "17,600円",
+        "currentPriceJpy": 17600,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "G425 LST 9ヘッド"
+      },
+      {
+        "url": "https://jp.mercari.com/item/m91673677519",
+        "platform": "メルカリ",
+        "currentPriceText": "17,700円",
+        "currentPriceJpy": 17700,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "G425 LST 9ヘッド"
+      }
+    ],
+    "item-30": [
+      {
+        "url": "https://paypayfleamarket.yahoo.co.jp/item/z616522638",
+        "platform": "Yahooフリマ",
+        "currentPriceText": "34,500円",
+        "currentPriceJpy": 34500,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "ELYTE mini 13.5ヘッド"
+      },
+      {
+        "url": "https://paypayfleamarket.yahoo.co.jp/item/z614271848",
+        "platform": "Yahooフリマ",
+        "currentPriceText": "35,800円",
+        "currentPriceJpy": 35800,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "ELYTE mini 13.5ヘッド"
+      },
+      {
+        "url": "https://jp.mercari.com/item/m53266243132",
+        "platform": "メルカリ",
+        "currentPriceText": "36,000円",
+        "currentPriceJpy": 36000,
+        "kind": "ヘッドのみ",
+        "status": "OK",
+        "staff": "野田",
+        "memo": "ELYTE mini 13.5ヘッド"
+      }
+    ]
+  }
+}

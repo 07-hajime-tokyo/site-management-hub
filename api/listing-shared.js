@@ -375,7 +375,7 @@ function computeDuplicateCheck(candidate, activeRows) {
 
   return {
     status: "重複なし",
-    matchType: "Active 115件内に高一致なし",
+    matchType: `Active ${active.length}件内に高一致なし`,
     itemId: "",
     title: "",
     url: "",

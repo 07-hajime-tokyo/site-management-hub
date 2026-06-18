@@ -1,7 +1,9 @@
 const DATA_URL = "./data/ebay-research-dashboard.json?v=20260617-review-sync-v3";
+const SOURCING_CANDIDATES_URL = "./data/ebay-sourcing-candidates.json?v=20260618-sourcing-v2";
 const DUPLICATE_CHECK_URL = "./api/listing-duplicates";
 const REVIEW_SAVE_URL = "./api/listing-status";
 const REVIEW_STORAGE_KEY = "ebayResearchManualReviews:v1";
+const UI_STATE_STORAGE_KEY = "ebayResearchUiState:v1";
 const PANEL_PREFS_STORAGE_KEY = "ebayResearchPanelPrefs:v1";
 const SIDEBAR_STORAGE_KEY = "ebayResearchSidebarWidth:v1";
 const RIGHT_SIDEBAR_STORAGE_KEY = "ebayResearchRightSidebarWidth:v1";
@@ -18,11 +20,14 @@ const state = {
   items: [],
   meta: {},
   reviews: {},
+  sourcingCandidates: {},
+  sourcingMeta: {},
   selectedId: "",
   query: "",
   decision: "all",
   reviewStatus: "all",
   shippingClass: "all",
+  sourcingStatus: "all",
   sort: "sheet",
   reviewSync: {},
   reviewDirty: new Set(),
@@ -57,6 +62,8 @@ init();
 
 async function init() {
   state.reviews = loadReviews();
+  restoreUiState();
+  hydrateFilterControls();
   bindEvents();
   initSidebarResize();
   initRightSidebarResize();
@@ -67,7 +74,10 @@ async function init() {
     const data = await response.json();
     state.items = data.items || [];
     state.meta = data.meta || {};
-    state.selectedId = state.items[0]?.id || "";
+    state.sourcingCandidates = await loadSourcingCandidates();
+    state.selectedId = state.items.some((item) => item.id === state.selectedId) ? state.selectedId : state.items[0]?.id || "";
+    syncSelection();
+    saveUiState();
     await loadSharedItemLinksFromSheet();
     await loadSharedReviewsFromSheet();
     initializeDirtyReviews();
@@ -79,6 +89,18 @@ async function init() {
       <p>データを読み込めませんでした</p>
     `;
     renderIcons();
+  }
+}
+
+async function loadSourcingCandidates() {
+  try {
+    const response = await fetch(SOURCING_CANDIDATES_URL);
+    if (!response.ok) return {};
+    const payload = await response.json();
+    state.sourcingMeta = payload.meta || {};
+    return payload.items || {};
+  } catch {
+    return {};
   }
 }
 
@@ -109,15 +131,17 @@ function bindEvents() {
   el.productSearch.addEventListener("input", (event) => {
     state.query = event.target.value.trim().toLowerCase();
     syncSelection();
+    saveUiState();
     render();
   });
 
   document.querySelectorAll("[data-filter]").forEach((button) => {
     button.addEventListener("click", () => {
       const key = button.dataset.filter;
-      if (!["decision", "reviewStatus", "shippingClass", "sort"].includes(key)) return;
+      if (!["decision", "reviewStatus", "shippingClass", "sourcingStatus", "sort"].includes(key)) return;
       state[key] = button.dataset.value || defaultFilterValue(key);
       syncSelection();
+      saveUiState();
       render();
     });
   });
@@ -131,6 +155,48 @@ function bindEvents() {
   });
 
   document.addEventListener("keydown", handleKeyboardNavigation);
+}
+
+function restoreUiState() {
+  const saved = loadUiState();
+  if (typeof saved.query === "string") state.query = saved.query.trim().toLowerCase();
+  if (typeof saved.selectedId === "string") state.selectedId = saved.selectedId;
+  if (["all", "◯", "△", "✗", "保留"].includes(saved.decision)) state.decision = saved.decision;
+  if (["all", "pending", "done"].includes(saved.reviewStatus)) state.reviewStatus = saved.reviewStatus;
+  if (["all", "小型", "中型", "長尺", "大型"].includes(saved.shippingClass)) state.shippingClass = saved.shippingClass;
+  if (["all", "candidate"].includes(saved.sourcingStatus)) state.sourcingStatus = saved.sourcingStatus;
+  if (["sheet", "profit", "sold", "price", "dutyProfit", "sourcing"].includes(saved.sort)) state.sort = saved.sort;
+}
+
+function hydrateFilterControls() {
+  if (el.productSearch) el.productSearch.value = state.query;
+}
+
+function loadUiState() {
+  try {
+    return JSON.parse(localStorage.getItem(UI_STATE_STORAGE_KEY) || "{}") || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveUiState() {
+  try {
+    localStorage.setItem(
+      UI_STATE_STORAGE_KEY,
+      JSON.stringify({
+        selectedId: state.selectedId,
+        query: state.query,
+        decision: state.decision,
+        reviewStatus: state.reviewStatus,
+        shippingClass: state.shippingClass,
+        sourcingStatus: state.sourcingStatus,
+        sort: state.sort,
+      }),
+    );
+  } catch {
+    // The board still works when browser storage is unavailable.
+  }
 }
 
 function initPanelToggles() {
@@ -303,9 +369,11 @@ function clampRightSidebarWidth(width) {
 
 function syncSelection() {
   const visible = getVisibleItems();
+  const previousId = state.selectedId;
   if (!visible.some((item) => item.id === state.selectedId)) {
     state.selectedId = visible[0]?.id || "";
   }
+  if (state.selectedId !== previousId) saveUiState();
 }
 
 function render() {
@@ -370,6 +438,7 @@ function filterDigestText() {
   if (state.decision !== "all") parts.push(`AI ${state.decision}`);
   if (state.reviewStatus !== "all") parts.push(state.reviewStatus === "done" ? "目視済" : "目視未");
   if (state.shippingClass !== "all") parts.push(state.shippingClass);
+  if (state.sourcingStatus === "candidate") parts.push("仕入れ候補");
   if (!parts.length) parts.push("すべて");
   parts.push(sortLabel(state.sort));
   return parts.join(" / ");
@@ -382,6 +451,7 @@ function sortLabel(value) {
     sold: "Sold順",
     price: "売価順",
     dutyProfit: "関税込み利益順",
+    sourcing: "仕入れ候補順",
   };
   return labels[value] || "シート順";
 }
@@ -397,6 +467,9 @@ function renderList() {
       const refreshBadge = hasReviewRefreshRequest(review)
         ? `<span class="refresh-inline-badge">再取得</span>`
         : "";
+      const sourcingBadge = hasSourcingCandidates(item)
+        ? `<span class="sourcing-inline-badge">仕入 ${formatNumber(getSourcingCandidates(item).length)}</span>`
+        : "";
       return `
         <button class="product-row${active}" type="button" data-id="${escapeAttribute(item.id)}">
           <span class="decision-badge decision-${decisionClass(item.decision)}" aria-label="AI判断 ${escapeAttribute(item.decision)}">${escapeHtml(item.decision)}</span>
@@ -405,6 +478,7 @@ function renderList() {
             <span>
               PR30 ${formatSoldCount(getTerapeakSold30(item))}・競合 ${formatSoldCount(getCompetitorSoldTotal(item))}・利益 ${formatYen(item.profit.profitAfterDutyJpy)}
               ${refreshBadge}
+              ${sourcingBadge}
             </span>
           </span>
           <span class="decision-badge manual-badge decision-${decisionClass(review.decision)}" aria-label="目視判断 ${escapeAttribute(review.decision)}">${escapeHtml(shortDecision(review.decision))}</span>
@@ -734,6 +808,7 @@ function renderRightSidebar() {
   }
   const sourcingLinks = getSourcingLinks(item);
   const sourcing = calculateSourcingTarget(item);
+  const sourcingCandidates = getSourcingCandidates(item);
   const purchaseGap = calculatePurchaseGap(sourcing);
   el.rightSidebar.innerHTML = `
     <section class="side-section sourcing-target-section">
@@ -754,6 +829,8 @@ function renderRightSidebar() {
       </dl>
       <p class="side-note">上限差額がマイナスの場合は、値下げ交渉か入札上限の見直しが必要です。</p>
     </section>
+
+    ${renderSourcingCandidateSection(item, sourcing, sourcingCandidates)}
 
     <section class="side-section">
       <div class="side-section-head">
@@ -812,9 +889,106 @@ function renderRightSidebar() {
   bindRightSidebarActions(item);
 }
 
+function renderSourcingCandidateSection(item, sourcing, candidates) {
+  const sheetUrl = state.sourcingMeta?.sourceSpreadsheetUrl || "";
+  const sheetLink = sheetUrl
+    ? `<a class="mini-text-link" href="${escapeAttribute(sheetUrl)}" target="_blank" rel="noreferrer">候補スプシ</a>`
+    : "";
+
+  if (!candidates.length) {
+    return `
+      <section class="side-section sourcing-candidate-section">
+        <div class="side-section-head">
+          <div class="card-title">
+            <i data-lucide="tag" aria-hidden="true"></i>
+            <h3>仕入れ候補</h3>
+          </div>
+          ${sheetLink}
+        </div>
+        <p class="side-note">この商品にはスプシ入力済みの仕入れ候補URLがありません。</p>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="side-section sourcing-candidate-section">
+      <div class="side-section-head">
+        <div class="card-title">
+          <i data-lucide="tag" aria-hidden="true"></i>
+          <h3>仕入れ候補</h3>
+        </div>
+        ${sheetLink}
+      </div>
+      <p class="candidate-keyword">${escapeHtml(domesticSearchQuery(item))}</p>
+      <div class="sourcing-candidate-list">
+        ${candidates.map((candidate) => sourcingCandidateCard(candidate, sourcing)).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function sourcingCandidateCard(candidate, sourcing) {
+  const margin = getSourcingCandidateMargin(candidate, sourcing);
+  const currentPrice = numericOrNull(candidate.currentPriceJpy);
+  const priceText = candidate.currentPriceText || (currentPrice === null ? "未入力" : formatYen(currentPrice));
+  const status = candidate.status || (margin === null ? "未判定" : margin >= 0 ? "上限内" : "要確認");
+  const statusClass = sourcingCandidateStatusClass(status, margin);
+  const memo = candidate.memo ? `<p class="candidate-memo">${escapeHtml(candidate.memo)}</p>` : "";
+  const url = candidate.url || "";
+
+  return `
+    <article class="sourcing-candidate-item ${statusClass}">
+      <div class="sourcing-candidate-head">
+        <strong>${escapeHtml(candidate.platform || "候補URL")}</strong>
+        <span>${escapeHtml(status)}</span>
+      </div>
+      <dl class="side-metric-list">
+        ${detailRow("現在価格", priceText)}
+        ${detailRow("仕入上限", sourcing.maxPurchasePriceJpy === null ? "未計算" : formatYen(sourcing.maxPurchasePriceJpy))}
+        ${detailRow("差額", margin === null ? "未計算" : formatSignedYen(margin))}
+        ${detailRow("種別", candidate.kind || "未入力")}
+      </dl>
+      ${memo}
+      ${
+        url
+          ? `<a class="candidate-open-link" href="${escapeAttribute(url)}" target="_blank" rel="noreferrer">
+              <i data-lucide="external-link" aria-hidden="true"></i>
+              <span>候補ページを開く</span>
+            </a>`
+          : ""
+      }
+    </article>
+  `;
+}
+
+function getSourcingCandidates(item) {
+  const candidates = state.sourcingCandidates?.[item.id];
+  return Array.isArray(candidates) ? candidates.filter((candidate) => candidate?.url) : [];
+}
+
+function hasSourcingCandidates(item) {
+  return getSourcingCandidates(item).length > 0;
+}
+
+function getSourcingCandidateMargin(candidate, sourcing) {
+  const maxPurchasePrice = numericOrNull(sourcing.maxPurchasePriceJpy);
+  const currentPrice = numericOrNull(candidate.currentPriceJpy);
+  if (maxPurchasePrice === null || currentPrice === null) return null;
+  return maxPurchasePrice - currentPrice;
+}
+
+function sourcingCandidateStatusClass(status, margin) {
+  const value = String(status || "").toLowerCase();
+  if (value.includes("対象外") || value.includes("除外") || value.includes("ng")) return "is-muted";
+  if (value.includes("ok") || value.includes("上限内") || margin >= 0) return "is-ok";
+  if (value.includes("要確認") || value.includes("over") || margin < 0) return "is-warn";
+  return "is-neutral";
+}
+
 function selectItem(itemId) {
   if (!itemId || state.selectedId === itemId) return;
   state.selectedId = itemId;
+  saveUiState();
   render();
 }
 
@@ -1342,6 +1516,7 @@ function getVisibleItems() {
     if (state.decision !== "all" && item.decision !== state.decision) return false;
     if (state.reviewStatus !== "all" && getReviewStatus(item) !== state.reviewStatus) return false;
     if (state.shippingClass !== "all" && item.logistics.shippingClass !== state.shippingClass) return false;
+    if (state.sourcingStatus === "candidate" && !hasSourcingCandidates(item)) return false;
     if (!query) return true;
     return [
       item.title,
@@ -1350,16 +1525,52 @@ function getVisibleItems() {
       item.category,
       item.hts.code,
       item.hts.label,
+      ...getSourcingSearchValues(item),
     ].some((value) => String(value || "").toLowerCase().includes(query));
   });
 
   return [...filtered].sort((a, b) => {
+    if (state.sort === "sourcing") return compareSourcingCandidates(a, b);
     if (state.sort === "profit") return b.profit.profitJpy - a.profit.profitJpy;
     if (state.sort === "dutyProfit") return b.profit.profitAfterDutyJpy - a.profit.profitAfterDutyJpy;
     if (state.sort === "sold") return getSoldSortValue(b) - getSoldSortValue(a);
     if (state.sort === "price") return b.pricing.ebayTotalUsd - a.pricing.ebayTotalUsd;
     return a.no - b.no;
   });
+}
+
+function getSourcingSearchValues(item) {
+  return getSourcingCandidates(item).flatMap((candidate) => [
+    candidate.url,
+    candidate.platform,
+    candidate.currentPriceText,
+    candidate.kind,
+    candidate.status,
+    candidate.staff,
+    candidate.memo,
+  ]);
+}
+
+function compareSourcingCandidates(a, b) {
+  const aHas = hasSourcingCandidates(a) ? 1 : 0;
+  const bHas = hasSourcingCandidates(b) ? 1 : 0;
+  if (aHas !== bHas) return bHas - aHas;
+
+  const marginDiff = getBestSourcingMargin(b) - getBestSourcingMargin(a);
+  if (marginDiff) return marginDiff;
+
+  const soldDiff = getSoldSortValue(b) - getSoldSortValue(a);
+  if (soldDiff) return soldDiff;
+
+  return a.no - b.no;
+}
+
+function getBestSourcingMargin(item) {
+  const sourcing = calculateSourcingTarget(item);
+  return getSourcingCandidates(item).reduce((best, candidate) => {
+    const margin = getSourcingCandidateMargin(candidate, sourcing);
+    return margin === null ? best : Math.max(best, margin);
+  }, Number.NEGATIVE_INFINITY);
 }
 
 function getReviewStatus(item) {

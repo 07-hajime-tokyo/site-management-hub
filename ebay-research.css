@@ -797,19 +797,29 @@ kbd {
   font-size: 0.7rem;
 }
 
-.refresh-inline-badge {
+.refresh-inline-badge,
+.sourcing-inline-badge {
   display: inline-flex;
   align-items: center;
   min-height: 16px;
-  border: 1px solid #dfb47b;
   border-radius: 999px;
-  background: #fff6e7;
-  color: var(--warn);
   margin-left: 6px;
   padding: 1px 6px;
   font-size: 0.62rem;
   font-weight: 900;
   white-space: nowrap;
+}
+
+.refresh-inline-badge {
+  border: 1px solid #dfb47b;
+  background: #fff6e7;
+  color: var(--warn);
+}
+
+.sourcing-inline-badge {
+  border: 1px solid #8ab58e;
+  background: #edf8ef;
+  color: var(--ok);
 }
 
 .decision-ok {
@@ -915,6 +925,118 @@ kbd {
   color: var(--accent-strong);
   font-size: 0.64rem;
   font-weight: 900;
+}
+
+.mini-text-link {
+  flex: 0 0 auto;
+  color: var(--accent-strong);
+  font-size: 0.66rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.mini-text-link:hover {
+  text-decoration: underline;
+}
+
+.candidate-keyword {
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.sourcing-candidate-list {
+  display: grid;
+  gap: 7px;
+}
+
+.sourcing-candidate-item {
+  display: grid;
+  gap: 6px;
+  border-top: 1px solid rgba(226, 216, 200, 0.82);
+  padding-top: 7px;
+}
+
+.sourcing-candidate-item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.sourcing-candidate-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sourcing-candidate-head strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sourcing-candidate-head span {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 2px 6px;
+  background: #f1e8d9;
+  color: var(--text);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.sourcing-candidate-item.is-ok .sourcing-candidate-head span {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.sourcing-candidate-item.is-warn .sourcing-candidate-head span {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.sourcing-candidate-item.is-muted .sourcing-candidate-head span {
+  background: #ece7df;
+  color: var(--muted);
+}
+
+.candidate-memo {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.candidate-open-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.candidate-open-link:hover {
+  border-color: var(--border-strong);
+  color: var(--accent-strong);
+}
+
+.candidate-open-link svg {
+  width: 14px;
+  height: 14px;
 }
 
 .shortcut-section {
@@ -1604,6 +1726,7 @@ kbd {
   }
 
   .product-panel {
+    order: 1;
     max-height: none;
     border-bottom: 1px solid var(--border);
   }
@@ -1618,10 +1741,12 @@ kbd {
   }
 
   .preview-panel {
+    order: 3;
     overflow: visible;
   }
 
   .research-side-panel {
+    order: 2;
     border-left: 0;
     border-top: 1px solid var(--border);
     overflow: visible;
