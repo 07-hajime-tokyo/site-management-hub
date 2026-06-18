@@ -927,6 +927,21 @@ kbd {
   font-weight: 900;
 }
 
+.sourcing-candidate-section {
+  border-color: rgba(95, 138, 103, 0.42);
+  border-left: 4px solid var(--ok);
+  background: #f2f8ee;
+  box-shadow: 0 14px 28px rgba(95, 138, 103, 0.13);
+}
+
+.sourcing-candidate-section .card-title svg {
+  color: var(--ok);
+}
+
+.sourcing-candidate-section .card-title h3 {
+  color: var(--ink);
+}
+
 .mini-text-link {
   flex: 0 0 auto;
   color: var(--accent-strong);
@@ -940,8 +955,12 @@ kbd {
 }
 
 .candidate-keyword {
+  border: 1px solid rgba(95, 138, 103, 0.18);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.6);
   overflow-wrap: anywhere;
   color: var(--text);
+  padding: 5px 7px;
   font-size: 0.68rem;
   font-weight: 800;
   line-height: 1.35;
@@ -955,13 +974,14 @@ kbd {
 .sourcing-candidate-item {
   display: grid;
   gap: 6px;
-  border-top: 1px solid rgba(226, 216, 200, 0.82);
-  padding-top: 7px;
+  border: 1px solid rgba(95, 138, 103, 0.18);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.76);
+  padding: 7px;
 }
 
 .sourcing-candidate-item:first-child {
-  border-top: 0;
-  padding-top: 0;
+  border-top: 1px solid rgba(95, 138, 103, 0.18);
 }
 
 .sourcing-candidate-head {
@@ -996,9 +1016,18 @@ kbd {
   color: var(--ok);
 }
 
+.sourcing-candidate-item.is-ok {
+  border-color: rgba(95, 138, 103, 0.34);
+}
+
 .sourcing-candidate-item.is-warn .sourcing-candidate-head span {
   background: var(--warn-soft);
   color: var(--warn);
+}
+
+.sourcing-candidate-item.is-warn {
+  border-color: rgba(194, 138, 54, 0.35);
+  background: rgba(255, 250, 242, 0.82);
 }
 
 .sourcing-candidate-item.is-muted .sourcing-candidate-head span {
