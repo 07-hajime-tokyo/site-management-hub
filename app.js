@@ -687,7 +687,7 @@ function renderCategoryOptions() {
 
 function renderQuickAccess() {
   const tools = getTools();
-  const items = tools.filter((tool) => tool.pinned).slice(0, 4);
+  const items = tools.filter((tool) => tool.pinned);
 
   if (items.length === 0) {
     el.quickGrid.innerHTML = "";
