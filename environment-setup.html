@@ -389,6 +389,7 @@
             <h3>例外アカウント</h3>
             <ul>
               <li>`01.murakami@gmail.com` は人間が明示した場面だけ使う</li>
+              <li>01用Chromeプロファイルは、人間の目視確認用として追加してよい</li>
               <li>AIは「01を使う」と指示されていない限り、01を選ばない</li>
               <li>使う前に対象サービスと目的を確認し、作業後は07アカウントへ戻す</li>
             </ul>
@@ -406,7 +407,8 @@
             <ul>
               <li>`back-office/.local/chrome-profile.json` に、そのPCで07に対応するChromeプロファイルだけを書く</li>
               <li>`.local/` はGitHubへ入れず、PCごとの差分として扱う</li>
-              <li>Macでは `/Users/&lt;user&gt;/Library/Preferences/com.google.Chrome.plist` の `BrowserAddPersonEnabled=false`、`BrowserGuestModeEnabled=false` で勝手な追加を抑える</li>
+              <li>Macでは `/Users/&lt;user&gt;/Library/Preferences/com.google.Chrome.plist` の `BrowserAddPersonEnabled=true`、`BrowserGuestModeEnabled=false` にする</li>
+              <li>プロファイル追加は人間の明示操作として許可し、AIの自動操作はメールアドレス確認ルールで止める</li>
             </ul>
           </article>
         </div>
@@ -419,6 +421,7 @@
 - 通常作業は 07.hajime.tokyo@gmail.com を使う
 - Chromeの Default/Profile 2/Profile 3 などの番号や名前だけで判断しない
 - 01.murakami@gmail.com は、私が明示的に「01を使う」と言った時だけ使う
+- 01用Chromeプロファイルは存在してよいが、AIが勝手に選ばない
 - talk.japan.999@gmail.com、murakami@komei.jp、不明なアカウントでは業務ページを操作しない
 - 07だと確認できない場合は、eBay/Sellsta/Google Sheets/Notion/GitHubを開く前に止まり、私がするべきログインや認証だけ短く教える</pre>
             <button class="copy-button" type="button" data-copy-target="promptChromeAccount">
