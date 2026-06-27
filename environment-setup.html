@@ -280,6 +280,10 @@
         background: #fff9ea;
       }
 
+      .identity-note {
+        border-left: 5px solid var(--accent);
+      }
+
       .toast {
         position: fixed;
         right: 20px;
@@ -365,6 +369,66 @@
         </div>
       </section>
 
+      <section class="section" id="chrome-account-gate">
+        <div class="section-head">
+          <h2>Chromeアカウント固定ルール</h2>
+        </div>
+        <p class="section-lead">
+          Chromeの `Default`、`Profile 2`、`Profile 3` という名前はPCごとにずれるため、AI操作ではプロファイル番号ではなくGoogleアカウントのメールアドレスで判定します。
+        </p>
+        <div class="manifest-grid" aria-label="Chromeアカウント固定ルール">
+          <article class="manifest-block identity-note">
+            <h3>通常作業の固定先</h3>
+            <ul>
+              <li>GitHub、Vercel、Google Drive/Sheets、Notion、eBay、Sellstaは `07.hajime.tokyo@gmail.com` を既定にする</li>
+              <li>Chrome/Browserで業務ページを開く前に、接続先が07アカウントか確認する</li>
+              <li>確認できない場合はログインが必要なページを開かず、人間に必要な認証だけ短く伝える</li>
+            </ul>
+          </article>
+          <article class="manifest-block">
+            <h3>例外アカウント</h3>
+            <ul>
+              <li>`01.murakami@gmail.com` は人間が明示した場面だけ使う</li>
+              <li>AIは「01を使う」と指示されていない限り、01を選ばない</li>
+              <li>使う前に対象サービスと目的を確認し、作業後は07アカウントへ戻す</li>
+            </ul>
+          </article>
+          <article class="manifest-block safe-note">
+            <h3>自動選択しないアカウント</h3>
+            <ul>
+              <li>`talk.japan.999@gmail.com`</li>
+              <li>`murakami@komei.jp`</li>
+              <li>上記や不明なGoogleアカウントで、eBay/Sellsta/Sheets/Notion/GitHubを操作しない</li>
+            </ul>
+          </article>
+          <article class="manifest-block">
+            <h3>PCごとのローカル固定</h3>
+            <ul>
+              <li>`back-office/.local/chrome-profile.json` に、そのPCで07に対応するChromeプロファイルだけを書く</li>
+              <li>`.local/` はGitHubへ入れず、PCごとの差分として扱う</li>
+              <li>Macでは `/Users/&lt;user&gt;/Library/Preferences/com.google.Chrome.plist` の `BrowserAddPersonEnabled=false`、`BrowserGuestModeEnabled=false` で勝手な追加を抑える</li>
+            </ul>
+          </article>
+        </div>
+        <div class="prompt-grid">
+          <article class="prompt-block is-wide">
+            <h3>Chromeアカウント確認プロンプト</h3>
+            <pre class="prompt-box is-compact" id="promptChromeAccount">Chrome/Browserでログインが必要な作業を始める前に、接続先のGoogleアカウントを確認して。
+
+ルール:
+- 通常作業は 07.hajime.tokyo@gmail.com を使う
+- Chromeの Default/Profile 2/Profile 3 などの番号や名前だけで判断しない
+- 01.murakami@gmail.com は、私が明示的に「01を使う」と言った時だけ使う
+- talk.japan.999@gmail.com、murakami@komei.jp、不明なアカウントでは業務ページを操作しない
+- 07だと確認できない場合は、eBay/Sellsta/Google Sheets/Notion/GitHubを開く前に止まり、私がするべきログインや認証だけ短く教える</pre>
+            <button class="copy-button" type="button" data-copy-target="promptChromeAccount">
+              <i data-lucide="copy" aria-hidden="true"></i>
+              コピー
+            </button>
+          </article>
+        </div>
+      </section>
+
       <section class="section" id="claude-code">
         <div class="section-head">
           <h2>Claude CodeにこのURLを読ませる</h2>
@@ -382,6 +446,7 @@ URL: https://site-management-hub.vercel.app/environment-setup.html
 - このページの「Claude CodeにこのURLを読ませる」「他PCで人間がすること」「守ること」を前提にする
 - GitHub CLI の認証状態を `gh auth status` で確認し、07-hajime-tokyo の private repo を clone/pull できるか確認する
 - 作業対象 repo の README、setup/new-pc-checklist.md、setup/sync-runbook.md、CLAUDE.md、AGENTS.md、.codex/skills、.claude/skills を探して読む
+- Chrome/Browserはプロファイル番号ではなくGoogleアカウントで判定し、通常作業は 07.hajime.tokyo@gmail.com を使う。01.murakami@gmail.com は明示指示がある時だけ使う
 - CodexスキルをClaude Codeで使える形に同期する。既存の .claude/skills があれば上書きせず差分を確認する
 - GitHub、Chrome/Browser、Google Drive/Sheets、Notion、Vercel、Spreadsheets に相当する接続やMCPが使えるか確認する
 - 接続、ログイン、権限不足だけを私に短く確認し、秘密情報は表示・保存しない
@@ -417,7 +482,7 @@ URL: https://site-management-hub.vercel.app/environment-setup.html
             <h3>接続を確認するもの</h3>
             <ul>
               <li>GitHub: CLI、MCP/コネクタ、private repo権限</li>
-              <li>Chrome/Browser: eBay、Sellsta、Ninja Express、Google Sheets、Notionのログイン状態</li>
+              <li>Chrome/Browser: 07アカウント固定、01例外運用、eBay、Sellsta、Ninja Express、Google Sheets、Notionのログイン状態</li>
               <li>Google Drive/Sheets: 実データ、素材、台帳の読み書き</li>
               <li>Notion: 判断ログ、運用wiki、Gantt/食事ログ</li>
               <li>Vercel: サイト管理、デプロイ確認、環境変数は値を表示しない</li>
@@ -451,7 +516,9 @@ GitHubのprivate repoから作業環境を取得し、back-officeのREADME、set
 - back-office/setup/bootstrap-local.sh を実行できる場合は実行する
 - .env があるか確認し、なければ .env.example から作る
 - .env、tmp、大容量ファイル、個人情報がGitHub管理対象になっていないか確認する
-- Chrome、Google Drive、GitHub、Notion、Spreadsheetsの接続状態を確認する
+- Chromeはプロファイル番号ではなくGoogleアカウントで判定し、通常作業が 07.hajime.tokyo@gmail.com で開けるか確認する
+- 01.murakami@gmail.com は明示指示がある時だけ使い、勝手に選ばない
+- Google Drive、GitHub、Notion、Spreadsheetsの接続状態を確認する
 - eBay、Sellsta、Ninja Express、Google Sheets、Notionでログインが必要なものだけ私に教える
 
 秘密情報、Cookie、APIキー、パスワード、注文の個人情報はGitHub、Google Drive、Notionに保存しないでください。</pre>
@@ -468,7 +535,9 @@ GitHubのprivate repoから作業環境を取得し、back-officeのREADME、set
 やってほしいこと:
 - GitHubの最新状態を取り込む
 - 作業対象のREADMEや関連するsetup/ops/promptsを読む
-- Chromeで必要なログイン状態を確認する
+- Chromeは Default/Profile 2/Profile 3 などの番号ではなく、Googleアカウントのメールアドレスで確認する
+- 通常作業は 07.hajime.tokyo@gmail.com を使う。01.murakami@gmail.com は、私が明示的に「01を使う」と言った時だけ使う
+- 07だと確認できない場合は、ログインが必要な業務ページを開く前に止まる
 - Google Drive/Sheets/Notion/GitHubプラグインが使えるか確認する
 - 今日の作業に必要なシート、Driveフォルダ、Notionページ、eBay/Sellstaページを開けるか確認する
 - 問題があれば、私がするべきログインや認証だけ短く教える
@@ -507,7 +576,9 @@ push前に、何をGitHubへ反映するか短く確認してください。</pr
 - GitHub repoのremote、branch、最新状態
 - back-office/setup/new-pc-checklist.md と sync-runbook.md の内容
 - .env が存在し、GitHub管理対象外になっているか
-- ChromeでeBay、Sellsta、Ninja Express、Google Sheets、Notionにアクセスできるか
+- Chrome/Browserの接続先が 07.hajime.tokyo@gmail.com か。Default/Profile番号だけで判断していないか
+- 01.murakami@gmail.com は明示指示がある時だけ使える例外として扱われているか
+- eBay、Sellsta、Ninja Express、Google Sheets、Notionにアクセスできるか
 - Google Drive、GitHub、Notion、Spreadsheetsプラグインが使えるか
 - Google Drive/Sheets/Notionに実データ、GitHubに手順・プロンプトという分担になっているか
 
@@ -528,7 +599,8 @@ push前に、何をGitHubへ反映するか短く確認してください。</pr
           <article class="note-block">
             <h3>ログイン</h3>
             <ul>
-              <li>ChromeでGoogleアカウントへログイン</li>
+              <li>Chromeの通常作業アカウントは `07.hajime.tokyo@gmail.com` にする</li>
+              <li>`01.murakami@gmail.com` は、使う場面を明示した時だけ開く</li>
               <li>eBay、Sellsta、Ninja Expressへログイン</li>
               <li>NotionとGoogle Sheetsを開けるか確認</li>
             </ul>
